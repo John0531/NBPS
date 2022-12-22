@@ -1,0 +1,66 @@
+{
+  "name": "nbps_project",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve-pro": "vue-cli-service serve --mode production",
+    "serve": "vue-cli-service serve --port 8080",
+    "build-dev": "vue-cli-service build --mode dev",
+    "build-uat": "vue-cli-service build --mode uat",
+    "build-production": "vue-cli-service build --mode production",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@vee-validate/i18n": "^4.7.0",
+    "@vee-validate/rules": "^4.7.0",
+    "@vuepic/vue-datepicker": "^3.5.2",
+    "axios": "^1.1.2",
+    "bootstrap": "^5.2.2",
+    "core-js": "^3.6.5",
+    "gridjs": "^5.1.0",
+    "node-forge": "^1.3.1",
+    "sweetalert2": "^11.5.1",
+    "vee-validate": "^4.5.8",
+    "vue": "^3.0.0",
+    "vue-axios": "^3.5.0",
+    "vue-router": "^4.0.0-0",
+    "vue-sweetalert2": "^5.0.5",
+    "vuejs-paginate-next": "^1.0.2",
+    "vuex": "^4.0.0-0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.13",
+    "@vue/cli-plugin-eslint": "~4.5.13",
+    "@vue/cli-plugin-router": "~4.5.13",
+    "@vue/cli-plugin-vuex": "~4.5.13",
+    "@vue/cli-service": "~4.5.13",
+    "@vue/compiler-sfc": "^3.0.0",
+    "@vue/eslint-config-standard": "^5.1.2",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "eslint-plugin-vue": "^7.0.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "@vue/standard"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
