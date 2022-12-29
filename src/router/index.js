@@ -2,15 +2,15 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   {
-    path: '/nbps-ui',
-    redirect: '/nbps-ui/login',
+    path: '/nbps',
+    redirect: '/nbps/login',
     children: [
       {
-        path: '/nbps-ui/login',
+        path: '/nbps/login',
         component: () => import('../views/Login.vue')
       },
       {
-        path: '/nbps-ui/nbps',
+        path: '/nbps/nbps',
         component: () => import('../Template/System.vue'),
         children: [
           {
@@ -50,6 +50,10 @@ const routes = [
             component: () => import('../views/C/C3.vue')
           },
           {
+            path: 'F1',
+            component: () => import('../views/F/F1.vue')
+          },
+          {
             path: 'F2',
             component: () => import('../views/F/F2.vue')
           },
@@ -82,15 +86,15 @@ const router = createRouter(routeCfg)
 //   const loginUser = JSON.parse(localStorage.getItem('ELIXIR_USER'))
 //   if (to.path === '/elixir-ui/login' && loginUser) {
 //     if (loginUser.roles === 'ADMIN') {
-//       router.push('/nbps-ui/nbps/A1')
+//       router.push('/nbps/nbps/A1')
 //     } else if (loginUser.roles === 'API-USER') {
-//       router.push('/nbps-ui/nbps/B1')
+//       router.push('/nbps/nbps/B1')
 //     }
 //     return
 //   }
 //   // * 設定 API-USER 權限不可導入特定頁面
-//   if (loginUser && loginUser.roles === 'API-USER' && to.path === '/nbps-ui/nbps/A1') {
-//     router.push('/nbps-ui/nbps/error')
+//   if (loginUser && loginUser.roles === 'API-USER' && to.path === '/nbps/nbps/A1') {
+//     router.push('/nbps/nbps/error')
 //     return
 //   }
 //   // * 非公開頁面且無登入資訊走這

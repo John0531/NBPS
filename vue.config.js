@@ -15,14 +15,14 @@ module.exports = {
       chunks: ['chunk-vendors', 'chunk-common', 'index']
     }
   },
-  publicPath: '/nbps-ui/'
-  // productionSourceMap: false,
-  // devServer: {
-  //   proxy: {
-  //     '^/elixir-ui-api': {
-  //       target: process.env.VUE_APP_BASE_URL,
-  //       changeOrigin: true
-  //     }
-  //   }
-  // }
+  publicPath: '/nbps/',
+  productionSourceMap: false,
+  devServer: {
+    proxy: {
+      '^/nbps-api': {
+        target: process.env.VUE_APP_BASE_URL,
+        changeOrigin: true
+      }
+    }
+  }
 }

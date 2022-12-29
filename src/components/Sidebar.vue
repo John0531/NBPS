@@ -4,34 +4,37 @@
     <h4 class="fw-bold text-center">聯邦銀行信用卡批次授權系統</h4>
     <ul class="list-unstyled mt-4 ms-3 mb-4">
       <li class="mb-3">
-        <router-link to="/nbps-ui/nbps/A1" class="fs-5 text-dark text-decoration-none">批次交易檔上傳作業A1</router-link>
+        <router-link to="/nbps/nbps/A1" class="fs-5 text-dark text-decoration-none">批次交易檔上傳作業A1</router-link>
       </li>
       <li class="mb-3">
-        <router-link to="/nbps-ui/nbps/A2" class="fs-5 text-dark text-decoration-none">批次交易查詢作業A2</router-link>
+        <router-link to="/nbps/nbps/A2" class="fs-5 text-dark text-decoration-none">批次交易查詢作業A2</router-link>
       </li>
       <li class="mb-3">
-        <router-link to="/nbps-ui/nbps/A3" class="fs-5 text-dark text-decoration-none">批次交易取消作業A3</router-link>
+        <router-link to="/nbps/nbps/A3" class="fs-5 text-dark text-decoration-none">批次交易取消作業A3</router-link>
       </li>
       <li class="mb-3">
-        <router-link to="/nbps-ui/nbps/A4" class="fs-5 text-dark text-decoration-none">分析報表下載作業A4</router-link>
+        <router-link to="/nbps/nbps/A4" class="fs-5 text-dark text-decoration-none">分析報表下載作業A4</router-link>
       </li>
       <li class="mb-3">
-        <router-link to="/nbps-ui/nbps/B1" class="fs-5 text-dark text-decoration-none">批次交易檔上傳作業B1</router-link>
+        <router-link to="/nbps/nbps/B1" class="fs-5 text-dark text-decoration-none">批次交易檔上傳作業B1</router-link>
       </li>
       <li class="mb-3">
-        <router-link to="/nbps-ui/nbps/B4" class="fs-5 text-dark text-decoration-none">請款對帳單B4</router-link>
+        <router-link to="/nbps/nbps/B4" class="fs-5 text-dark text-decoration-none">請款對帳單B4</router-link>
       </li>
       <li class="mb-3">
-        <router-link to="/nbps-ui/nbps/C1" class="fs-5 text-dark text-decoration-none">特店資料維護C1</router-link>
+        <router-link to="/nbps/nbps/C1" class="fs-5 text-dark text-decoration-none">特店資料維護C1</router-link>
       </li>
       <li class="mb-3">
-        <router-link to="/nbps-ui/nbps/C2" class="fs-5 text-dark text-decoration-none">特店帳號維護C2</router-link>
+        <router-link to="/nbps/nbps/C2" class="fs-5 text-dark text-decoration-none">特店帳號維護C2</router-link>
       </li>
       <li class="mb-3">
-        <router-link to="/nbps-ui/nbps/C3" class="fs-5 text-dark text-decoration-none">特店群組權限維護C3</router-link>
+        <router-link to="/nbps/nbps/C3" class="fs-5 text-dark text-decoration-none">特店群組權限維護C3</router-link>
       </li>
       <li class="mb-3">
-        <router-link to="/nbps-ui/nbps/F2" class="fs-5 text-dark text-decoration-none">群組權限維護F2</router-link>
+        <router-link to="/nbps/nbps/F1" class="fs-5 text-dark text-decoration-none">帳號維護F1</router-link>
+      </li>
+      <li class="mb-3">
+        <router-link to="/nbps/nbps/F2" class="fs-5 text-dark text-decoration-none">群組權限維護F2</router-link>
       </li>
     </ul>
     <div class="border-top border-1 border-secondary pt-3">
@@ -61,7 +64,7 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           AuthService.logout()
-          this.$router.push('/elixir-ui/login')
+          this.$router.push('/nbps/login')
         }
       })
     }

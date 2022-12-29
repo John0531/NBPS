@@ -28,6 +28,8 @@ import Paginate from 'vuejs-paginate-next'
 import './axios.setting'
 import validate from './utilities/validate'
 
+import { v4 as uuidv4 } from 'uuid'
+
 defineRule('required', required)
 defineRule('length', length)
 defineRule('email', email)
@@ -41,7 +43,8 @@ const app = createApp(App)
 // ?自訂全域屬性
 app.config.globalProperties.$custom = {
   validate,
-  bootstrap
+  bootstrap,
+  uuidv4
 }
 
 app.config.globalProperties.$grid = {
