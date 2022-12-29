@@ -19,7 +19,7 @@ const service = {
       // }
     } catch (err) {
       if (err.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
           return service.getDefaultPermission()
         }

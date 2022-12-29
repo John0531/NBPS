@@ -15,7 +15,7 @@ module.exports = {
       chunks: ['chunk-vendors', 'chunk-common', 'index']
     }
   },
-  publicPath: '/nbps/',
+  publicPath: `${process.env.VUE_APP_BASE_ROUTE}/`,
   productionSourceMap: false,
   devServer: {
     proxy: {

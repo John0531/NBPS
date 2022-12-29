@@ -2,15 +2,15 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   {
-    path: '/nbps',
-    redirect: '/nbps/login',
+    path: `${process.env.VUE_APP_BASE_ROUTE}`,
+    redirect: `${process.env.VUE_APP_BASE_ROUTE}/login`,
     children: [
       {
-        path: '/nbps/login',
+        path: `${process.env.VUE_APP_BASE_ROUTE}/login`,
         component: () => import('../views/Login.vue')
       },
       {
-        path: '/nbps/nbps',
+        path: `${process.env.VUE_APP_BASE_ROUTE}/nbps-system`,
         component: () => import('../Template/System.vue'),
         children: [
           {

@@ -3,10 +3,11 @@ import router from './router'
 
 import AuthService from '@/services/auth.service'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
+import { v4 as uuidv4 } from 'uuid'
 
 axios.interceptors.request.use(
   config => {
-    const user = JSON.parse(localStorage.getItem('ELIXIR_USER')) // ? 取得 LocalStorage 中的登入會員資訊
+    const user = JSON.parse(localStorage.getItem('NBPS_USER')) // ? 取得 LocalStorage 中的登入會員資訊
     if (user) {
       config.headers.Authorization = `Bearer ${user.at}`
     }
@@ -36,14 +37,15 @@ axios.interceptors.response.use(
     }
     if (err.response && err.response.status === 401) {
       /* token 到期，取得 refreshtoken 換發 */
-      const user = JSON.parse(localStorage.getItem('ELIXIR_USER')) // ? 取得 LocalStorage 中的登入會員資訊
+      const user = JSON.parse(localStorage.getItem('NBPS_USER')) // ? 取得 LocalStorage 中的登入會員資訊
       if (user) {
         const refreshToken = user.rt
         if (refreshToken) {
           const obj = {
             userName: user.username,
             token: user.at,
-            refreshToken: user.rt
+            refreshToken: user.rt,
+            msgId: uuidv4()
           }
           const rftk = await AuthService.refreshTokenCheck(obj)
           if (rftk) {

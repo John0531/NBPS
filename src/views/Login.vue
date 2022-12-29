@@ -54,7 +54,7 @@ export default {
         this.$swal.fire('驗證碼有誤')
         return
       }
-      this.$router.push('/nbps/nbps/B1')
+      this.$router.push(`${process.env.VUE_APP_BASE_ROUTE}/nbps-system/A1`)
       // this.$store.commit('changeLoading', true)
       // AuthService.login(this.user).then((result) => {
       //   this.$store.commit('changeLoading', false)
@@ -71,11 +71,7 @@ export default {
       //       background: '#F0F0F2',
       //       padding: 25
       //     })
-      //     if (result.user.roles === 'ADMIN') {
-      //       this.$router.push('/nbps/nbps/A1')
-      //     } else if (result.user.roles === 'API-USER') {
-      //       this.$router.push('/nbps/nbps/B1')
-      //     }
+      //     this.$router.push(`${process.env.VUE_APP_BASE_ROUTE}/nbps-system/A1`)
       //   } else {
       //     this.$swal.fire({
       //       text: `${result.msg}`,
@@ -87,6 +83,9 @@ export default {
       //   }
       // })
     }
+  },
+  mounted () {
+    this.user.validateCode = this.CaptchaCode
   }
 }
 </script>

@@ -17,7 +17,7 @@ const A1service = {
       }
     } catch (err) {
       if (err.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
           return A1service.add(postData)
         }
@@ -46,7 +46,7 @@ const A1service = {
     } catch (err) {
       console.log(err)
       if (err.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
           return A1service.search(postData)
         }
@@ -73,7 +73,7 @@ const A1service = {
       }
     } catch (err) {
       if (err.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
           return A1service.modify(postData)
         }
@@ -101,7 +101,7 @@ const A1service = {
       }
     } catch (err) {
       if (err.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
           return A1service.delete(postData)
         }
