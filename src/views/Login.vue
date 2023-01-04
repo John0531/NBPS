@@ -12,7 +12,8 @@
                 <ErrorMessage name="帳號" class="invalid-feedback"></ErrorMessage>
               </div>
               <div class="mb-4">
-                <Field name="密碼" :class="{ 'is-invalid': errors['密碼'] }" class="form-control form-control-lg" type="password" placeholder="密碼" :rules="$custom.validate.CheckPwd" v-model="user.pd"></Field>
+                <!-- <Field name="密碼" :class="{ 'is-invalid': errors['密碼'] }" class="form-control form-control-lg" type="password" placeholder="密碼" :rules="$custom.validate.CheckPwd" v-model="user.pd"></Field> -->
+                <Field name="密碼" :class="{ 'is-invalid': errors['密碼'] }" class="form-control form-control-lg" type="password" placeholder="密碼" rules="required" v-model="user.pd"></Field>
                 <ErrorMessage name="密碼" class="invalid-feedback"></ErrorMessage>
               </div>
               <div class="mb-4 input-group">
@@ -32,7 +33,7 @@
 </template>
 
 <script>
-// import AuthService from '@/services/auth.service'
+import AuthService from '@/services/auth.service'
 import CaptchaCode from 'vue-captcha-code'
 export default {
   components: {
@@ -54,34 +55,33 @@ export default {
         this.$swal.fire('驗證碼有誤')
         return
       }
-      this.$router.push(`${process.env.VUE_APP_BASE_ROUTE}/nbps-system/A1`)
-      // this.$store.commit('changeLoading', true)
-      // AuthService.login(this.user).then((result) => {
-      //   this.$store.commit('changeLoading', false)
-      //   if (result.isSuccess) {
-      //     console.log(result)
-      //     this.$swal.fire({
-      //       toast: true,
-      //       position: 'center',
-      //       icon: 'success',
-      //       title: '登入成功！',
-      //       showConfirmButton: false,
-      //       timer: 1500,
-      //       width: 500,
-      //       background: '#F0F0F2',
-      //       padding: 25
-      //     })
-      //     this.$router.push(`${process.env.VUE_APP_BASE_ROUTE}/nbps-system/A1`)
-      //   } else {
-      //     this.$swal.fire({
-      //       text: `${result.msg}`,
-      //       allowOutsideClick: false,
-      //       confirmButtonColor: '#0d6efd',
-      //       confirmButtonText: '確認',
-      //       width: 400
-      //     })
-      //   }
-      // })
+      this.$store.commit('changeLoading', true)
+      AuthService.login(this.user).then((result) => {
+        this.$store.commit('changeLoading', false)
+        if (result.isSuccess) {
+          console.log(result)
+          this.$swal.fire({
+            toast: true,
+            position: 'center',
+            icon: 'success',
+            title: '登入成功！',
+            showConfirmButton: false,
+            timer: 1500,
+            width: 500,
+            background: '#F0F0F2',
+            padding: 25
+          })
+          this.$router.push(`${process.env.VUE_APP_BASE_ROUTE}/nbps-system/${result.userData.envData.permissions[0].pageCode}`)
+        } else {
+          this.$swal.fire({
+            text: `${result.msg}`,
+            allowOutsideClick: false,
+            confirmButtonColor: '#0d6efd',
+            confirmButtonText: '確認',
+            width: 400
+          })
+        }
+      })
     }
   },
   mounted () {

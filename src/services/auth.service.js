@@ -3,14 +3,13 @@ import forge from 'node-forge'
 import { v4 as uuidv4 } from 'uuid'
 
 const AuthService = {
-  getPublicKey () {
-    return axios.post('/nbps-api/z1/env', { msgId: uuidv4() })
-      .then((res) => {
-        if (res == null || res.data == null) {
-          return null
-        }
-        return res.data.pk
-      })
+  async getPublicKey () {
+    const url = `${process.env.VUE_APP_BASE_API}/z1/env`
+    const res = await axios.post(url, { msgId: uuidv4() })
+    if (res == null || res.data == null) {
+      return null
+    }
+    return res.data.pk
   },
   async login (user) {
     try {
@@ -19,22 +18,23 @@ const AuthService = {
       const ubEDEPublicKey = forge.pki.publicKeyFromPem(ubPublicKey)
       const encryptedPd = forge.util.encode64(ubEDEPublicKey.encrypt(user.pd, 'RSAES-PKCS1-V1_5'))
 
-      const res = await axios.post('/nbps-api/d1/login', {
+      const url = `${process.env.VUE_APP_BASE_API}/d1/login`
+      const postData = {
         userName: user.userName,
         pd: encryptedPd,
         msgId: uuidv4()
-      })
-      console.log(res)
+      }
+      const res = await axios.post(url, postData)
       if (res.data && res.data.token && res.data.refreshToken) {
         localStorage.setItem('NBPS_USER', JSON.stringify(res.data)) // ? 將物件傳為 json 字串存入
         return {
           isSuccess: true,
-          user: res.data
+          userData: res.data
         }
       } else {
         return {
           isSuccess: false,
-          msg: `${res.data.message}(${res.data.codeH})`
+          msg: res.data
         }
       }
     } catch (error) {
@@ -47,22 +47,21 @@ const AuthService = {
   logout () {
     localStorage.removeItem('NBPS_USER')
   },
-  async refreshTokenCheck (refreshTokenDto) {
+  async refreshTokenCheck () {
     try {
-      const res = await axios.post('/nbps-api/d1/refresh', refreshTokenDto)
-      console.log(res)
+      const postData = {
+        msgId: uuidv4(),
+        userName: localStorage.getItem('NBPS_USER').user.userName,
+        token: localStorage.getItem('NBPS_USER').token,
+        refreshToken: localStorage.getItem('NBPS_USER').refreshToken
+      }
+      const res = await axios.post(`${process.env.VUE_APP_BASE_API}/d1/refresh`, postData)
       if (res == null || res.data == null) {
         return null
       }
       if (res.data.token) {
-        const user = {
-          at: res.data.token,
-          rt: res.data.refreshToken,
-          roles: res.data.envData.permission,
-          username: res.data.user.userName
-        }
-        localStorage.setItem('NBPS_USER', JSON.stringify(user))
-        return user
+        localStorage.setItem('NBPS_USER', JSON.stringify(res.data))
+        return res.data
       } else {
         return null
       }

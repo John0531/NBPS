@@ -3,10 +3,10 @@
   <div class="shadow pt-4 menu position-fixed">
     <h4 class="fw-bold text-center">聯邦銀行信用卡批次授權系統</h4>
     <ul class="list-unstyled mt-4 ms-3 mb-4">
-      <li class="mb-3">
-        <router-link :to="`${$store.state.base_route}/nbps-system/A1`" class="fs-5 text-dark text-decoration-none">批次交易檔上傳作業A1</router-link>
+      <li v-for="item in permissions" :key="item.pageCode" class="mb-3">
+        <router-link :to="`${$store.state.base_route}/nbps-system/${item.pageCode}`" class="fs-5 text-dark text-decoration-none">{{item.pageName}}{{item.pageCode}}</router-link>
       </li>
-      <li class="mb-3">
+      <!-- <li class="mb-3">
         <router-link :to="`${$store.state.base_route}/nbps-system/A2`" class="fs-5 text-dark text-decoration-none">批次交易查詢作業A2</router-link>
       </li>
       <li class="mb-3">
@@ -35,7 +35,7 @@
       </li>
       <li class="mb-3">
         <router-link :to="`${$store.state.base_route}/nbps-system/F2`" class="fs-5 text-dark text-decoration-none">群組權限維護F2</router-link>
-      </li>
+      </li> -->
     </ul>
     <div class="border-top border-1 border-secondary pt-3">
       <button class="btn btn-light" @click="logout">登出</button>
@@ -48,7 +48,7 @@ import AuthService from '../services/auth.service'
 export default {
   data () {
     return {
-      // roles: JSON.parse(localStorage.getItem('NBPS_USER')).roles
+      permissions: JSON.parse(localStorage.getItem('NBPS_USER')).envData.permissions
     }
   },
   methods: {
@@ -64,6 +64,17 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           AuthService.logout()
+          this.$swal.fire({
+            toast: true,
+            position: 'center',
+            icon: 'success',
+            title: '已登出！',
+            showConfirmButton: false,
+            timer: 1500,
+            width: 500,
+            background: '#F0F0F2',
+            padding: 25
+          })
           this.$router.push(`${process.env.VUE_APP_BASE_ROUTE}/login`)
         }
       })

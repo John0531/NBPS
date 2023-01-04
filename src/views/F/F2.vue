@@ -19,7 +19,46 @@
             <button class="btn btn-primary me-3 px-4">匯出群組Excel</button>
           </div>
         </div>
-        <div ref="grid" class="mt-5"></div>
+        <div class="mt-5">
+          <div class="d-flex w-25 mb-3 align-items-center">
+              <label for="" class="text-nowrap me-3 fs-5">每頁資料數 :</label>
+              <select
+              v-model="GroupDataPost.pageSize"
+              @change="changePageElements" class="form-select" aria-label="Default select example">
+                <option selected :value="10">10</option>
+                <option :value="20">20</option>
+                <option :value="50">50</option>
+                <option :value="100">100</option>
+              </select>
+          </div>
+          <div class="tbl-container">
+            <table class="table table-striped table-bordered table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">群組代號</th>
+                  <th scope="col">群組名稱</th>
+                  <th scope="col">簡述</th>
+                  <th scope="col">權限</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in gridData" :key="item.groupNo">
+                  <th scope="row">{{item.groupNo}}</th>
+                  <td>{{item.groupName}}</td>
+                  <td>{{item.description}}</td>
+                  <td>{{item.auth}}</td>
+                  <td>
+                    <button @click="viewAuth(item)" class="btn btn-primary me-2 btn-sm">檢視權限</button>
+                    <button @click="openEditModal(item)" class="btn btn-success me-2 btn-sm">編輯</button>
+                    <button @click="removeGroup(item)" class="btn btn-danger btn-sm">刪除</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <Pagination :Page="pageData" @PageNum="clickPageNum"></Pagination>
+        </div>
       </div>
     </div>
 
@@ -46,7 +85,7 @@
                     rules="required"
                     :class="{ 'is-invalid': errors['群組代號'] }"
                     id="account"
-                    v-model="addForm.code"
+                    v-model="addForm.groupNo"
                   />
                   <ErrorMessage
                     name="群組代號"
@@ -64,11 +103,22 @@
                     rules="required"
                     :class="{ 'is-invalid': errors['群組名稱'] }"
                     id="name"
-                    v-model="addForm.name"
+                    v-model="addForm.groupName"
                   />
                   <ErrorMessage
                     name="群組名稱"
                     class="invalid-feedback"
+                  />
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="description" class="col-sm-2 col-form-label">簡述</label>
+                <div class="col-sm-10">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="description"
+                    v-model="addForm.description"
                   />
                 </div>
               </div>
@@ -142,7 +192,7 @@
                     rules="required"
                     :class="{ 'is-invalid': errors['群組代號'] }"
                     id="account"
-                    v-model="editForm.code"
+                    v-model="viewForm.groupNo"
                     disabled
                   />
                   <ErrorMessage
@@ -161,12 +211,24 @@
                     rules="required"
                     :class="{ 'is-invalid': errors['群組名稱'] }"
                     id="name"
-                    v-model="editForm.name"
+                    v-model="viewForm.groupName"
                     disabled
                   />
                   <ErrorMessage
                     name="群組名稱"
                     class="invalid-feedback"
+                  />
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="description" class="col-sm-2 col-form-label">簡述</label>
+                <div class="col-sm-10">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="description"
+                    v-model="viewForm.description"
+                    disabled
                   />
                 </div>
               </div>
@@ -238,7 +300,7 @@
                     rules="required"
                     :class="{ 'is-invalid': errors['群組代號'] }"
                     id="account"
-                    v-model="editForm.code"
+                    v-model="editForm.groupNo"
                   />
                   <ErrorMessage
                     name="群組代號"
@@ -256,11 +318,22 @@
                     rules="required"
                     :class="{ 'is-invalid': errors['群組名稱'] }"
                     id="name"
-                    v-model="editForm.name"
+                    v-model="editForm.groupName"
                   />
                   <ErrorMessage
                     name="群組名稱"
                     class="invalid-feedback"
+                  />
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="description" class="col-sm-2 col-form-label">簡述</label>
+                <div class="col-sm-10">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="description"
+                    v-model="editForm.description"
                   />
                 </div>
               </div>
@@ -304,7 +377,7 @@
                 </table>
               </div>
               <div class="d-flex justify-content-end">
-                <button class="btn btn-success px-4">新增</button>
+                <button class="btn btn-success px-4">儲存</button>
               </div>
             </Form>
           </div>
@@ -316,13 +389,24 @@
 
 <script>
 import service from '@/services/F/F2.service.js'
+import Pagination from '@/components/Pagination.vue'
 
 export default {
+  components: {
+    Pagination
+  },
   data () {
     return {
+      GroupDataPost: {
+        msgId: '',
+        page: 1,
+        pageSize: 10
+      },
+      pageData: {}, // ?分頁資訊
       gridData: [],
       addModal: '',
       addForm: {},
+      viewForm: {},
       editModal: '',
       editForm: {},
       viewModal: '',
@@ -332,10 +416,20 @@ export default {
   methods: {
     async getData () {
       this.$store.commit('changeLoading', true)
-      this.gridData = await service.getPermissionData()
+      this.GroupDataPost.msgId = this.$custom.uuidv4()
+      const result = await service.getGroupData(this.GroupDataPost)
+      this.gridData = result.groupList
+      // ? 分頁資訊與檢察 ?/
+      this.pageData = result.pageInfo
+      if (this.pageData.pageElements === 0) {
+        this.GroupDataPost.page -= 1
+        this.getData()
+        return
+      }
+      // ? 分頁資訊與檢察 end ?/
       this.gridData.forEach((item1) => {
         item1.auth = []
-        item1.permission.forEach((item2) => {
+        item1.permissions.forEach((item2) => {
           item2.function.forEach((item3) => {
             if (item3.usable.length !== 0) {
               item1.auth.push(item3.pageCode)
@@ -345,123 +439,6 @@ export default {
         item1.auth = item1.auth.toString()
       })
       this.$store.commit('changeLoading', false)
-      this.buildGrid()
-    },
-    buildGrid () {
-      this.$refs.grid.innerHTML = ''
-      const grid = new this.$grid.Grid({
-        columns: [
-          {
-            name: '群組代號',
-            id: 'groupNo'
-          },
-          {
-            name: '群組名稱',
-            id: 'groupName'
-          },
-          {
-            name: '簡述',
-            id: 'desc'
-          },
-          {
-            name: '權限',
-            id: 'auth'
-          },
-          {
-            id: 'permission',
-            hidden: true
-          },
-          {
-            name: '執行',
-            formatter: (cell, row) => {
-              const buttons = []
-              buttons.push(
-                this.$grid.h('button', {
-                  className: 'btn btn-primary mr-3 btn-sm',
-                  onClick: () => {
-                    this.defaultPermission = row.cells[4].data
-                    this.defaultPermission.forEach((item1) => {
-                      item1.checked = true // ? 預設所有都勾選
-                      item1.function.forEach((item2) => {
-                        if (item2.default.length === item2.usable.length) {
-                          item2.checked = true
-                        } else {
-                          item1.checked = false // ? 只要一個不符合，則取消勾選
-                        }
-                      })
-                    })
-                    this.viewModal.show()
-                  }
-                }, '檢視權限')
-              )
-              buttons.push(
-                this.$grid.h('button', {
-                  className: 'btn btn-success mr-3 btn-sm',
-                  onClick: () => {
-                    this.defaultPermission = row.cells[4].data
-                    this.defaultPermission.forEach((item1) => {
-                      item1.checked = true // ? 預設所有都勾選
-                      item1.function.forEach((item2) => {
-                        if (item2.default.length === item2.usable.length) {
-                          item2.checked = true
-                        } else {
-                          item1.checked = false // ? 只要一個不符合，則取消勾選
-                        }
-                      })
-                    })
-                    this.editModal.show()
-                  }
-                }, '編輯')
-              )
-              buttons.push(
-                this.$grid.h('button', {
-                  className: 'btn btn-danger mr-3 btn-sm',
-                  onClick: () => {
-                    // this.editModal.show()
-                  }
-                }, '刪除')
-              )
-              return buttons
-            }
-          }
-        ],
-        data: this.gridData,
-        sort: true,
-        search: true,
-        className: {
-          table: 'table table-hover table-bordered table-striped',
-          th: 'text-center',
-          td: 'text-center'
-        },
-        style: {
-          th: {
-            'background-color': '#1bbbbb',
-            color: '#fff'
-          }
-        },
-        language: {
-          pagination: {
-            previous: '<',
-            next: '>',
-            showing: '顯示',
-            of: '共',
-            to: '到',
-            results: '筆'
-          },
-          noRecordsFound: '查無資訊'
-        },
-        pagination: {
-          enabled: true,
-          limit: 10,
-          summary: true
-        }
-      }).render(this.$refs.grid)
-      // 更新表格資料
-      setTimeout(() => {
-        grid.updateConfig({
-          data: this.gridData
-        }).forceRender()
-      }, 100)
     },
     async openAddModal () {
       this.$store.commit('changeLoading', true)
@@ -469,12 +446,90 @@ export default {
       this.$store.commit('changeLoading', false)
       this.addModal.show()
     },
-    addGroup () {
-      this.addForm = {}
-      this.addModal.hide()
+    viewAuth (item) {
+      this.viewForm = {
+        groupNo: item.groupNo,
+        groupName: item.groupName,
+        description: item.description
+      }
+      this.defaultPermission = JSON.parse(JSON.stringify(item.permissions))
+      this.defaultPermission.forEach((item1) => {
+        item1.checked = true // ? 預設所有都勾選
+        item1.function.forEach((item2) => {
+          if (item2.default.length === item2.usable.length) {
+            item2.checked = true
+          } else {
+            item1.checked = false // ? 只要一個不符合，則取消勾選
+          }
+        })
+      })
+      this.viewModal.show()
     },
-    editGroup () {
-
+    async openEditModal (item) {
+      this.editForm = {
+        groupNo: JSON.parse(JSON.stringify(item.groupNo)),
+        groupName: JSON.parse(JSON.stringify(item.groupName)),
+        description: JSON.parse(JSON.stringify(item.description))
+      }
+      this.defaultPermission = JSON.parse(JSON.stringify(item.permissions))
+      this.defaultPermission.forEach((item1) => {
+        item1.checked = true // ? 預設所有都勾選
+        item1.function.forEach((item2) => {
+          if (item2.default.length === item2.usable.length) {
+            item2.checked = true
+          } else {
+            item1.checked = false // ? 只要一個不符合，則取消勾選
+          }
+        })
+      })
+      this.editModal.show()
+    },
+    async addGroup () {
+      this.$store.commit('changeLoading', true)
+      const postData = {
+        ...this.addForm,
+        msgId: this.$custom.uuidv4(),
+        permissions: this.defaultPermission
+      }
+      await service.addGroup(postData)
+      this.addForm = {}
+      this.$store.commit('changeLoading', false)
+      this.addModal.hide()
+      this.getData()
+    },
+    async editGroup () {
+      this.$store.commit('changeLoading', true)
+      const postData = {
+        ...this.editForm,
+        msgId: this.$custom.uuidv4(),
+        permissions: this.defaultPermission
+      }
+      await service.editGroup(postData)
+      this.$store.commit('changeLoading', false)
+      this.editModal.hide()
+      this.getData()
+    },
+    removeGroup (item) {
+      this.$swal.fire({
+        title: '是否刪除?',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#4D4D4D',
+        confirmButtonText: '刪除',
+        cancelButtonText: '取消',
+        reverseButtons: true
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          this.$store.commit('changeLoading', true)
+          const postData = {
+            ...item,
+            msgId: this.$custom.uuidv4()
+          }
+          await service.removeGroup(postData)
+          this.$store.commit('changeLoading', false)
+          this.getData()
+        }
+      })
     },
     checkPermission (item) {
       if (item.checked) {
@@ -495,6 +550,16 @@ export default {
       } else {
         item2.usable = []
       }
+    },
+    // ? 切換分頁
+    clickPageNum (num) {
+      this.GroupDataPost.page = num
+      this.getData()
+    },
+    // ? 選擇每頁資料數
+    changePageElements () {
+      this.GroupDataPost.page = 1
+      this.getData()
     }
   },
   mounted () {
@@ -502,7 +567,6 @@ export default {
     this.addModal = new this.$custom.bootstrap.Modal(this.$refs.addModal, { backdrop: 'static' })
     this.editModal = new this.$custom.bootstrap.Modal(this.$refs.editModal, { backdrop: 'static' })
     this.viewModal = new this.$custom.bootstrap.Modal(this.$refs.viewModal, { backdrop: 'static' })
-    console.log(this.$custom.uuidv4())
   }
 }
 </script>
@@ -515,7 +579,7 @@ export default {
 }
 
 .group-table {
-  height: 600px;
+  max-height: 600px;
   overflow-y: scroll;
 }
 

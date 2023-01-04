@@ -1,15 +1,15 @@
 import axios from 'axios'
 import router from './router'
+import store from './store'
 
 import AuthService from '@/services/auth.service'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
-import { v4 as uuidv4 } from 'uuid'
 
 axios.interceptors.request.use(
   config => {
     const user = JSON.parse(localStorage.getItem('NBPS_USER')) // ? 取得 LocalStorage 中的登入會員資訊
     if (user) {
-      config.headers.Authorization = `Bearer ${user.at}`
+      config.headers.Authorization = `Bearer ${user.token}`
     }
     return config
   }
@@ -24,8 +24,10 @@ axios.interceptors.response.use(
   async err => {
     // ?非 200 或非 401 的狀態顯示(ex. 500 時顯示)
     if (err.response && (err.response.status !== 200 && err.response.status !== 401)) {
+      store.commit('changeLoading', false)
+      console.log(err)
       Swal.fire({
-        title: '請重新整理頁面',
+        title: err.response.data,
         allowOutsideClick: true,
         confirmButtonColor: '#dc3545',
         confirmButtonText: '確認',
@@ -39,19 +41,13 @@ axios.interceptors.response.use(
       /* token 到期，取得 refreshtoken 換發 */
       const user = JSON.parse(localStorage.getItem('NBPS_USER')) // ? 取得 LocalStorage 中的登入會員資訊
       if (user) {
-        const refreshToken = user.rt
-        if (refreshToken) {
-          const obj = {
-            userName: user.username,
-            token: user.at,
-            refreshToken: user.rt,
-            msgId: uuidv4()
-          }
-          const rftk = await AuthService.refreshTokenCheck(obj)
+        if (user.refreshToken) {
+          const rftk = await AuthService.refreshTokenCheck()
           if (rftk) {
             return Promise.reject(err)
           } else {
             AuthService.logout()
+            store.commit('changeLoading', false)
             Swal.fire({
               title: '請重新登入',
               allowOutsideClick: false,
@@ -61,19 +57,15 @@ axios.interceptors.response.use(
               width: 400
             }).then((result) => {
               if (result.isConfirmed) {
-                router.push('/elixir-ui/login')
+                router.push(`${process.env.VUE_APP_BASE_ROUTE}/login`)
                 router.go()
               }
             })
             return Promise.reject(err)
           }
-          //   .then((res) => {
-          //     console.log(res)
-
-          //   })
-          // return Promise.all([rftk])
         }
       } else {
+        store.commit('changeLoading', false)
         Swal.fire({
           title: '請先登入',
           allowOutsideClick: false,
@@ -84,7 +76,7 @@ axios.interceptors.response.use(
         }).then((result) => {
           if (result.isConfirmed) {
             AuthService.logout()
-            router.push('/elixir-ui/login')
+            router.push(`${process.env.VUE_APP_BASE_ROUTE}/login`)
           }
         })
       }

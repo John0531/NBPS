@@ -19,7 +19,11 @@ module.exports = {
   productionSourceMap: false,
   devServer: {
     proxy: {
-      '^/nbps-api': {
+      '^/nbps-main-dev': {
+        target: process.env.VUE_APP_BASE_URL,
+        changeOrigin: true
+      },
+      '^/nbps-main': {
         target: process.env.VUE_APP_BASE_URL,
         changeOrigin: true
       }

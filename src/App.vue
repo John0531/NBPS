@@ -30,13 +30,26 @@ export default {
   th.gridjs-th{
     padding: 5px !important
   }
-  .table{
-    vertical-align: middle !important
-  }
   .gridjs-pagination .gridjs-pages button.gridjs-currentPage{
     background-color: rgba(27, 187, 187, 0.5)!important
   }
   .gridjs-pagination .gridjs-pages button:hover{
     background-color: rgba(27, 187, 187, 0.5)!important
+  }
+
+  .tbl-container{
+    border-radius: 8px;
+    box-shadow:0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 26%);
+    overflow: hidden;
+  }
+  .table{
+    margin: 0!important;
+    vertical-align: middle !important;
+    text-align: center;
+    /* table-layout:auto!important; */
+  }
+  .tbl-container thead{
+    background-color: rgba(27, 187, 187)!important;
+    color: #fff;
   }
 </style>

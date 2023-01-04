@@ -15,47 +15,80 @@ const routes = [
         children: [
           {
             path: 'A1',
-            component: () => import('../views/A/A1.vue')
+            component: () => import('../views/A/A1.vue'),
+            meta: {
+              code: 'A1'
+            }
           },
           {
             path: 'A2',
-            component: () => import('../views/A/A2.vue')
+            component: () => import('../views/A/A2.vue'),
+            meta: {
+              code: 'A2'
+            }
           },
           {
             path: 'A3',
-            component: () => import('../views/A/A3.vue')
+            component: () => import('../views/A/A3.vue'),
+            meta: {
+              code: 'A3'
+            }
           },
           {
             path: 'A4',
-            component: () => import('../views/A/A4.vue')
+            component: () => import('../views/A/A4.vue'),
+            meta: {
+              code: 'A4'
+            }
           },
           {
             path: 'B1',
-            component: () => import('../views/B/B1.vue')
+            component: () => import('../views/B/B1.vue'),
+            meta: {
+              code: 'B1'
+            }
           },
           {
             path: 'B4',
-            component: () => import('../views/B/B4.vue')
+            component: () => import('../views/B/B4.vue'),
+            meta: {
+              code: 'B4'
+            }
           },
           {
             path: 'C1',
-            component: () => import('../views/C/C1.vue')
+            component: () => import('../views/C/C1.vue'),
+            meta: {
+              code: 'C1'
+            }
           },
           {
             path: 'C2',
-            component: () => import('../views/C/C2.vue')
+            component: () => import('../views/C/C2.vue'),
+            meta: {
+              code: 'C2'
+            }
           },
           {
             path: 'C3',
-            component: () => import('../views/C/C3.vue')
+            component: () => import('../views/C/C3.vue'),
+            meta: {
+              code: 'C3'
+            }
           },
           {
             path: 'F1',
-            component: () => import('../views/F/F1.vue')
+            component: () => import('../views/F/F1.vue'),
+            meta: {
+              code: 'F1'
+            }
           },
           {
             path: 'F2',
-            component: () => import('../views/F/F2.vue')
+            component: () => import('../views/F/F2.vue'),
+            meta: {
+              code: 'F2'
+            }
           },
           {
             path: '/:pathMatch(.*)*',
@@ -80,32 +113,24 @@ const routeCfg = {
 routeCfg.routes = routes
 const router = createRouter(routeCfg)
 
-// router.beforeEach((to, from, next) => {
-//   const publicPages = ['/elixir-ui/login', '/elixir-ui/error'] // * 設定公開路徑(不需要 token)
-//   const authRequired = !publicPages.includes(to.path)
-//   const loginUser = JSON.parse(localStorage.getItem('ELIXIR_USER'))
-//   if (to.path === '/elixir-ui/login' && loginUser) {
-//     if (loginUser.roles === 'ADMIN') {
-//       router.push('/nbps/nbps/A1')
-//     } else if (loginUser.roles === 'API-USER') {
-//       router.push('/nbps/nbps/B1')
-//     }
-//     return
-//   }
-//   // * 設定 API-USER 權限不可導入特定頁面
-//   if (loginUser && loginUser.roles === 'API-USER' && to.path === '/nbps/nbps/A1') {
-//     router.push('/nbps/nbps/error')
-//     return
-//   }
-//   // * 非公開頁面且無登入資訊走這
-//   if (authRequired && !loginUser) {
-//     next('/elixir-ui/login')
-//   } else if (to.path === from.path) {
-//     // 點擊同一頁，無須動作
-//     router.go(0)
-//   } else {
-//     next()
-//   }
-// })
+router.beforeEach((to, from, next) => {
+  const publicPages = [`${process.env.VUE_APP_BASE_ROUTE}/login`, `${process.env.VUE_APP_BASE_ROUTE}/nbps-system/error`] // * 設定公開路徑(不需要 token)
+  const authRequired = !publicPages.includes(to.path) // * 導入頁面為非公開路徑
+  const loginUser = JSON.parse(localStorage.getItem('NBPS_USER'))
+  // * 設定不同權限不可導入特定頁面
+  if (loginUser && loginUser.envData.permissions.map((item) => item.pageCode).indexOf(to.meta.code) === -1 && authRequired) {
+    router.push(`${process.env.VUE_APP_BASE_ROUTE}/nbps-system/error`)
+    return
+  }
+  // * 非公開頁面且無登入資訊走這
+  if (authRequired && !loginUser) {
+    next(`${process.env.VUE_APP_BASE_ROUTE}/login`)
+  } else if (to.path === from.path) {
+    // 點擊同一頁，無須動作
+    router.go(0)
+  } else {
+    next()
+  }
+})
 
 export default router

@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 const service = {
   async getDefaultPermission () {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/f2/findDefaultPermission`
+      const url = `${process.env.VUE_APP_BASE_API}/c3/findDefaultPermission`
       const res = await axios.post(url, { msgId: uuidv4() })
       return res.data.permissions
     } catch (error) {
@@ -18,7 +18,7 @@ const service = {
   },
   async getGroupData (postData) {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/f2/findGroup`
+      const url = `${process.env.VUE_APP_BASE_API}/c3/findGroup`
       const res = await axios.post(url, postData)
       return res.data
     } catch (error) {
@@ -30,7 +30,7 @@ const service = {
   },
   async addGroup (postData) {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/f2/createGroup`
+      const url = `${process.env.VUE_APP_BASE_API}/c3/createGroup`
       const res = await axios.post(url, postData)
       console.log(res)
     // return res.data
@@ -43,7 +43,7 @@ const service = {
   },
   async editGroup (postData) {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/f2/updateGroup`
+      const url = `${process.env.VUE_APP_BASE_API}/c3/updateGroup`
       const res = await axios.post(url, postData)
       console.log(res)
     } catch (error) {
@@ -55,7 +55,7 @@ const service = {
   },
   async removeGroup (postData) {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/f2/deleteGroup`
+      const url = `${process.env.VUE_APP_BASE_API}/c3/deleteGroup`
       const res = await axios.post(url, postData)
       console.log(res)
     } catch (error) {
