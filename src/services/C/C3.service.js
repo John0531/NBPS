@@ -1,11 +1,10 @@
 import axios from 'axios'
-import { v4 as uuidv4 } from 'uuid'
 
 const service = {
   async getDefaultPermission () {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/c3/findDefaultPermission`
-      const res = await axios.post(url, { msgId: uuidv4() })
+      const res = await axios.post(url, {})
       return res.data.permissions
     } catch (error) {
       if (error.response.status === 401) {
@@ -22,9 +21,11 @@ const service = {
       const res = await axios.post(url, postData)
       return res.data
     } catch (error) {
-      const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
-      if (user) {
-        return service.getGroupData()
+      if (error.response.status === 401) {
+        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        if (user) {
+          return service.getGroupData()
+        }
       }
     }
   },
@@ -32,24 +33,32 @@ const service = {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/c3/createGroup`
       const res = await axios.post(url, postData)
-      console.log(res)
-    // return res.data
-    } catch (error) {
-      const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
-      if (user) {
-        return service.addGroup()
+      if (res.data) {
+        return true
       }
+    } catch (error) {
+      if (error.response.status === 401) {
+        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        if (user) {
+          return service.addGroup()
+        }
+      }
+      return false
     }
   },
   async editGroup (postData) {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/c3/updateGroup`
       const res = await axios.post(url, postData)
-      console.log(res)
+      if (res.data) {
+        return true
+      }
     } catch (error) {
-      const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
-      if (user) {
-        return service.editGroup()
+      if (error.response.status === 401) {
+        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        if (user) {
+          return service.editGroup()
+        }
       }
     }
   },
@@ -57,11 +66,15 @@ const service = {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/c3/deleteGroup`
       const res = await axios.post(url, postData)
-      console.log(res)
+      if (res.data) {
+        return true
+      }
     } catch (error) {
-      const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
-      if (user) {
-        return service.removeGroup()
+      if (error.response.status === 401) {
+        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        if (user) {
+          return service.removeGroup()
+        }
       }
     }
   }

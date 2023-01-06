@@ -3,8 +3,8 @@
     <div class="row justify-content-center">
       <div class="col-12">
         <div class="card">
-          <div class="card-header bg-secondary text-white">
-            <h3>批次交易檔上傳作業</h3>
+          <div class="card-header">
+            <h2 class="fw-bold mb-3">批次交易檔上傳作業</h2>
             <h6>供帳務科經辦上傳批次交易資料檔，上傳功能僅於營業日上午九點至下午五點半開放，批次交易資料檔上傳且格式檢核成功後，按下確認並送出，系統隨開始發動交易。</h6>
             <h6>*檔名為: 商店代碼(自動依特店代碼欄位之值檢查)  + "." + YYYYMMDD(自動帶出今日日期) + "." + A(第一次上傳為A，第二次為B，以此類退)。上傳檔案均需依約定之密碼規則(兩碼當月月份 + 約定之加解密密碼)，以ZIP加密，若檔名或解密錯誤或總筆數及總金額不對，此檔直接剔退。</h6>
           </div>

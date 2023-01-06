@@ -3,8 +3,8 @@
     <div class="row justify-content-center">
       <div class="col-12">
         <div class="card">
-          <div class="card-header bg-secondary text-white">
-            <h3>群組權限維護</h3>
+          <div class="card-header">
+            <h2 class="fw-bold mb-3">群組權限維護</h2>
             <h6>供經辦新增、修改、刪除及匯出群組設定EXCEL。1. 超級帳號才看得到所有權縣(A~~~Z) 2.資訊科特權除了B、F以外都看的到 3. 內部帳號只看的到B系列</h6>
           </div>
           <div class="card-body">
@@ -19,46 +19,32 @@
             <button class="btn btn-primary me-3 px-4">匯出群組Excel</button>
           </div>
         </div>
-        <div class="mt-5">
-          <div class="d-flex w-25 mb-3 align-items-center">
-              <label for="" class="text-nowrap me-3 fs-5">每頁資料數 :</label>
-              <select
-              v-model="GroupDataPost.pageSize"
-              @change="changePageElements" class="form-select" aria-label="Default select example">
-                <option selected :value="10">10</option>
-                <option :value="20">20</option>
-                <option :value="50">50</option>
-                <option :value="100">100</option>
-              </select>
-          </div>
-          <div class="tbl-container">
-            <table class="table table-striped table-bordered table-hover">
-              <thead>
-                <tr>
-                  <th scope="col">群組代號</th>
-                  <th scope="col">群組名稱</th>
-                  <th scope="col">簡述</th>
-                  <th scope="col">權限</th>
-                  <th scope="col"></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="item in gridData" :key="item.groupNo">
-                  <th scope="row">{{item.groupNo}}</th>
-                  <td>{{item.groupName}}</td>
-                  <td>{{item.description}}</td>
-                  <td>{{item.auth}}</td>
-                  <td>
-                    <button @click="viewAuth(item)" class="btn btn-primary me-2 btn-sm">檢視權限</button>
-                    <button @click="openEditModal(item)" class="btn btn-success me-2 btn-sm">編輯</button>
-                    <button @click="removeGroup(item)" class="btn btn-danger btn-sm">刪除</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <Pagination :Page="pageData" @PageNum="clickPageNum"></Pagination>
-        </div>
+        <MainData :Page="pageData" @ChangePageInfo="getPageInfo">
+          <template #default>
+            <thead>
+              <tr>
+                <th scope="col">群組代號</th>
+                <th scope="col">群組名稱</th>
+                <th scope="col">簡述</th>
+                <th scope="col">權限</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in gridData" :key="item.groupNo">
+                <th scope="row">{{item.groupNo}}</th>
+                <td>{{item.groupName}}</td>
+                <td>{{item.description}}</td>
+                <td>{{item.auth}}</td>
+                <td>
+                  <button @click="viewAuth(item)" class="btn btn-primary me-2 btn-sm">檢視權限</button>
+                  <button v-if="$store.state.user.level!==item.level" @click="openEditModal(item)" class="btn btn-success me-2 btn-sm">編輯</button>
+                  <button v-if="$store.state.user.level!==item.level" @click="removeGroup(item)" class="btn btn-danger btn-sm">刪除</button>
+                </td>
+              </tr>
+            </tbody>
+          </template>
+        </MainData>
       </div>
     </div>
 
@@ -126,12 +112,22 @@
                 <table class="table table-borderless table-hover text-center">
                   <thead>
                     <tr>
-                      <th scope="col"></th>
-                      <th scope="col">查詢(查詢、檢視等)</th>
-                      <th scope="col">新增(新增)</th>
-                      <th scope="col">修改(修改、編輯等)</th>
-                      <th scope="col">執行(上傳、送出、取消等)</th>
-                      <th scope="col">下載</th>
+                      <th scope="col" width="35%"></th>
+                      <th scope="col">
+                        <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="查詢、檢視等">查詢</span>
+                      </th>
+                      <th scope="col">
+                        <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="新增">新增</span>
+                      </th>
+                      <th scope="col">
+                        <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="修改、編輯等">修改</span>
+                      </th>
+                      <th scope="col">
+                        <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="上傳、送出、取消等">執行</span>
+                      </th>
+                      <th scope="col">
+                        <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="下載">下載</span>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -236,12 +232,22 @@
                 <table class="table table-borderless table-hover text-center">
                   <thead>
                     <tr>
-                      <th scope="col"></th>
-                      <th scope="col">查詢(查詢、檢視等)</th>
-                      <th scope="col">新增(新增)</th>
-                      <th scope="col">修改(修改、編輯等)</th>
-                      <th scope="col">執行(上傳、送出、取消等)</th>
-                      <th scope="col">下載</th>
+                      <th scope="col" width="35%"></th>
+                      <th scope="col">
+                        <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="查詢、檢視等">查詢</span>
+                      </th>
+                      <th scope="col">
+                        <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="新增">新增</span>
+                      </th>
+                      <th scope="col">
+                        <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="修改、編輯等">修改</span>
+                      </th>
+                      <th scope="col">
+                        <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="上傳、送出、取消等">執行</span>
+                      </th>
+                      <th scope="col">
+                        <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="下載">下載</span>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -301,6 +307,7 @@
                     :class="{ 'is-invalid': errors['群組代號'] }"
                     id="account"
                     v-model="editForm.groupNo"
+                    disabled
                   />
                   <ErrorMessage
                     name="群組代號"
@@ -341,12 +348,22 @@
                 <table class="table table-borderless table-hover text-center">
                   <thead>
                     <tr>
-                      <th scope="col"></th>
-                      <th scope="col">查詢(查詢、檢視等)</th>
-                      <th scope="col">新增(新增)</th>
-                      <th scope="col">修改(修改、編輯等)</th>
-                      <th scope="col">執行(上傳、送出、取消等)</th>
-                      <th scope="col">下載</th>
+                      <th scope="col" width="35%"></th>
+                      <th scope="col">
+                        <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="查詢、檢視等">查詢</span>
+                      </th>
+                      <th scope="col">
+                        <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="新增">新增</span>
+                      </th>
+                      <th scope="col">
+                        <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="修改、編輯等">修改</span>
+                      </th>
+                      <th scope="col">
+                        <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="上傳、送出、取消等">執行</span>
+                      </th>
+                      <th scope="col">
+                        <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="下載">下載</span>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -389,16 +406,15 @@
 
 <script>
 import service from '@/services/F/F2.service.js'
-import Pagination from '@/components/Pagination.vue'
+import MainData from '@/components/MainData.vue'
 
 export default {
   components: {
-    Pagination
+    MainData
   },
   data () {
     return {
       GroupDataPost: {
-        msgId: '',
         page: 1,
         pageSize: 10
       },
@@ -410,23 +426,21 @@ export default {
       editModal: '',
       editForm: {},
       viewModal: '',
-      defaultPermission: []
+      defaultPermission: [],
+      tooltipList: []
     }
   },
   methods: {
+    // ? 取得 MainData 元件分頁資訊
+    getPageInfo (PageInfo) {
+      this.GroupDataPost = PageInfo
+      this.getData()
+    },
     async getData () {
       this.$store.commit('changeLoading', true)
-      this.GroupDataPost.msgId = this.$custom.uuidv4()
       const result = await service.getGroupData(this.GroupDataPost)
+      this.pageData = result.pageInfo // ? 傳送分頁資訊
       this.gridData = result.groupList
-      // ? 分頁資訊與檢察 ?/
-      this.pageData = result.pageInfo
-      if (this.pageData.pageElements === 0) {
-        this.GroupDataPost.page -= 1
-        this.getData()
-        return
-      }
-      // ? 分頁資訊與檢察 end ?/
       this.gridData.forEach((item1) => {
         item1.auth = []
         item1.permissions.forEach((item2) => {
@@ -488,26 +502,28 @@ export default {
       this.$store.commit('changeLoading', true)
       const postData = {
         ...this.addForm,
-        msgId: this.$custom.uuidv4(),
         permissions: this.defaultPermission
       }
-      await service.addGroup(postData)
-      this.addForm = {}
+      const result = await service.addGroup(postData)
       this.$store.commit('changeLoading', false)
-      this.addModal.hide()
-      this.getData()
+      if (result) {
+        this.addForm = {}
+        this.addModal.hide()
+        this.getData()
+      }
     },
     async editGroup () {
       this.$store.commit('changeLoading', true)
       const postData = {
         ...this.editForm,
-        msgId: this.$custom.uuidv4(),
         permissions: this.defaultPermission
       }
-      await service.editGroup(postData)
+      const result = await service.editGroup(postData)
       this.$store.commit('changeLoading', false)
-      this.editModal.hide()
-      this.getData()
+      if (result) {
+        this.editModal.hide()
+        this.getData()
+      }
     },
     removeGroup (item) {
       this.$swal.fire({
@@ -522,12 +538,13 @@ export default {
         if (result.isConfirmed) {
           this.$store.commit('changeLoading', true)
           const postData = {
-            ...item,
-            msgId: this.$custom.uuidv4()
+            ...item
           }
-          await service.removeGroup(postData)
+          const result = await service.removeGroup(postData)
           this.$store.commit('changeLoading', false)
-          this.getData()
+          if (result) {
+            this.getData()
+          }
         }
       })
     },
@@ -550,20 +567,13 @@ export default {
       } else {
         item2.usable = []
       }
-    },
-    // ? 切換分頁
-    clickPageNum (num) {
-      this.GroupDataPost.page = num
-      this.getData()
-    },
-    // ? 選擇每頁資料數
-    changePageElements () {
-      this.GroupDataPost.page = 1
-      this.getData()
     }
   },
   mounted () {
-    this.getData()
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    this.tooltipList = tooltipTriggerList.map(tooltipTriggerEl => {
+      return (new this.$custom.bootstrap.Tooltip(tooltipTriggerEl))
+    })
     this.addModal = new this.$custom.bootstrap.Modal(this.$refs.addModal, { backdrop: 'static' })
     this.editModal = new this.$custom.bootstrap.Modal(this.$refs.editModal, { backdrop: 'static' })
     this.viewModal = new this.$custom.bootstrap.Modal(this.$refs.viewModal, { backdrop: 'static' })

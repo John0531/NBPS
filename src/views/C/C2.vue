@@ -3,8 +3,8 @@
     <div class="row justify-content-center">
       <div class="col-12">
         <div class="card">
-          <div class="card-header bg-secondary text-white">
-            <h3>特店資料維護</h3>
+          <div class="card-header">
+            <h2 class="fw-bold mb-3">特店帳號維護</h2>
             <h6>供經辦新增、修改、刪除特店帳號</h6>
           </div>
           <div class="card-body">
@@ -15,10 +15,36 @@
               </div>
             </div> -->
             <!-- <button class="btn btn-primary me-3 px-4">搜尋</button> -->
-            <button class="btn btn-warning me-3 px-4" @click="addModal.show()">新增帳號</button>
+            <button class="btn btn-warning me-3 px-4" @click="openAddModal">新增帳號</button>
           </div>
         </div>
-        <div ref="grid" class="mt-5"></div>
+        <MainData :Page="pageData" @ChangePageInfo="getPageInfo">
+          <template #default>
+            <thead>
+              <tr>
+                <th scope="col">帳號</th>
+                <th scope="col">類別</th>
+                <th scope="col">名稱</th>
+                <th scope="col">群組</th>
+                <th scope="col">簡述</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in gridData" :key="item.groupNo">
+                <th scope="row">{{item.userName}}</th>
+                <td>{{item.userTypeStr}}</td>
+                <td>{{item.name}}</td>
+                <td>{{item.groupName}}</td>
+                <td>{{item.description}}</td>
+                <td>
+                  <button v-if="$store.state.user.level!==item.level" @click="openEditModal(item)" class="btn btn-success me-2 btn-sm">編輯</button>
+                  <button v-if="$store.state.user.level!==item.level" @click="removeAccount(item)" class="btn btn-danger btn-sm">刪除</button>
+                </td>
+              </tr>
+            </tbody>
+          </template>
+        </MainData>
       </div>
     </div>
 
@@ -45,7 +71,7 @@
                     rules="required"
                     :class="{ 'is-invalid': errors['帳號'] }"
                     id="account"
-                    v-model="addForm.account"
+                    v-model="addForm.userName"
                   />
                   <ErrorMessage
                     name="帳號"
@@ -56,7 +82,7 @@
               <div class="row mb-3">
                 <label for="type" class="col-sm-2 col-form-label">類別</label>
                 <div class="col-sm-10">
-                  <input type="text" class="form-control" id="type" value="特店使用" disabled>
+                  <input v-model="addForm.userTypeStr" type="text" class="form-control" id="type" disabled>
                 </div>
               </div>
               <div class="row mb-3">
@@ -108,18 +134,15 @@
                     type="text"
                     class="form-control"
                     id="pwd"
-                    :rules="$custom.validate.CheckPwd"
                     :class="{ 'is-invalid': errors['密碼'] }"
                     name="密碼"
-                    v-model="addForm.pwd"
+                    v-model="addForm.pd"
+                    disabled
                   />
                   <ErrorMessage
                     name="密碼"
                     class="invalid-feedback"
                   />
-                </div>
-                <div class="col-sm-3">
-                  <button @click.prevent="addForm.pwd='UBot123456!'" class="btn btn-primary">設為預設密碼</button>
                 </div>
               </div>
               <div class="row mb-3">
@@ -140,7 +163,7 @@
                   />
                 </div>
                 <div class="col-sm-3">
-                  <button @click.prevent="sendEmail" :disabled="errors['Email']||!addForm.email||errors['密碼']||!addForm.pwd" class="btn btn-primary">寄送預設密碼</button>
+                  <button @click.prevent="sendEmail" :disabled="errors['Email']||!addForm.email||errors['密碼']||!addForm.pd" class="btn btn-primary">寄送預設密碼</button>
                 </div>
               </div>
               <div class="row mb-3">
@@ -153,11 +176,10 @@
                     rules="required"
                     :class="{ 'is-invalid': errors['群組'] }"
                     name="群組"
-                    v-model="addForm.group"
+                    v-model="addForm.groupNo"
                   >
                     <option value="" selected>請選擇</option>
-                    <option value="1">MERCH_1(特店群組1)</option>
-                    <option value="2">MERCH_2(特店群組2)</option>
+                    <option v-for="item in addForm.groupList" :key="item.groupNo" :value="item.groupNo">{{item.groupName}} - {{item.groupNo}}</option>
                   </Field>
                   <ErrorMessage
                     name="群組"
@@ -168,7 +190,7 @@
               <div class="row mb-3">
                 <label for="desc" class="col-sm-2 col-form-label">簡述<span class="text-danger">(非必填)</span></label>
                 <div class="col-sm-10">
-                  <textarea v-model="addForm.desc" class="form-control" id="desc" rows="3"></textarea>
+                  <textarea v-model="addForm.description" class="form-control" id="desc" rows="3"></textarea>
                 </div>
               </div>
               <div class="d-flex justify-content-end">
@@ -180,7 +202,7 @@
       </div>
     </div>
 
-    <!-- 檢視明細 Modal -->
+    <!-- 編輯 Modal -->
     <div class="modal fade" ref="editModal" tabindex="-1" aria-labelledby="editModal" aria-hidden="true">
       <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
@@ -203,7 +225,7 @@
                     rules="required"
                     :class="{ 'is-invalid': errors['帳號'] }"
                     id="account"
-                    v-model="editForm.account"
+                    v-model="editForm.userName"
                   />
                   <ErrorMessage
                     name="帳號"
@@ -214,7 +236,7 @@
               <div class="row mb-3">
                 <label for="type" class="col-sm-2 col-form-label">類別</label>
                 <div class="col-sm-10">
-                  <input type="text" class="form-control" id="type" value="特店使用" disabled>
+                  <input v-model="editForm.userTypeStr" type="text" class="form-control" id="type" disabled>
                 </div>
               </div>
               <div class="row mb-3">
@@ -266,10 +288,10 @@
                     type="text"
                     class="form-control"
                     id="pwd"
-                    :rules="$custom.validate.CheckPwd"
                     :class="{ 'is-invalid': errors['密碼'] }"
                     name="密碼"
-                    v-model="editForm.pwd"
+                    v-model="editForm.pd"
+                    disabled
                   />
                   <ErrorMessage
                     name="密碼"
@@ -277,7 +299,7 @@
                   />
                 </div>
                 <div class="col-sm-3">
-                  <button @click.prevent="editForm.pwd='UBot123456!'" class="btn btn-primary">設為預設密碼</button>
+                  <button @click.prevent="editForm.pd='UBot123456!'" class="btn btn-primary">設為預設密碼</button>
                 </div>
               </div>
               <div class="row mb-3">
@@ -302,20 +324,18 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <label for="shop" class="col-sm-2 col-form-label">群組</label>
+                <label for="group" class="col-sm-2 col-form-label">群組</label>
                 <div class="col-sm-10">
                   <Field
-                    id="shop"
+                    id="group"
                     class="form-select"
                     as="select"
                     rules="required"
                     :class="{ 'is-invalid': errors['群組'] }"
                     name="群組"
-                    v-model="editForm.group"
+                    v-model="editForm.groupNo"
                   >
-                    <option value="" selected>請選擇</option>
-                    <option value="1">MERCH_1(特店群組1)</option>
-                    <option value="2">MERCH_2(特店群組2)</option>
+                    <option v-for="item in editForm.groupList" :key="item.groupNo" :value="item.groupNo">{{item.groupName}} - {{item.groupNo}}</option>
                   </Field>
                   <ErrorMessage
                     name="群組"
@@ -326,7 +346,7 @@
               <div class="row mb-3">
                 <label for="desc" class="col-sm-2 col-form-label">簡述<span class="text-danger">(非必填)</span></label>
                 <div class="col-sm-10">
-                  <textarea v-model="editForm.desc" class="form-control" id="desc" rows="3"></textarea>
+                  <textarea v-model="editForm.description" class="form-control" id="desc" rows="3"></textarea>
                 </div>
               </div>
               <div class="d-flex justify-content-end">
@@ -341,119 +361,114 @@
 </template>
 
 <script>
+import service from '@/services/C/C2.service.js'
+import MainData from '@/components/MainData.vue'
 
 export default {
+  components: {
+    MainData
+  },
   data () {
     return {
+      GroupDataPost: {
+        page: 1,
+        pageSize: 10
+      },
+      pageData: {}, // ?分頁資訊
       gridData: [],
       addModal: '',
       addForm: {},
       editModal: '',
-      editForm: {}
+      editForm: {},
+      defaultUserInfo: {}
     }
   },
   methods: {
+    // ? 取得 MainData 元件分頁資訊
+    getPageInfo (PageInfo) {
+      this.GroupDataPost = PageInfo
+      this.getData()
+    },
+    async getDefault () {
+      this.$store.commit('changeLoading', true)
+      const result = await service.getDefaultUserInfo()
+      this.$store.commit('changeLoading', false)
+      this.defaultUserInfo = result
+    },
     async getData () {
       this.$store.commit('changeLoading', true)
-      const url = 'https://mocki.io/v1/f30e8467-7fad-48ba-bfd8-ca569d924a5e'
-      const res = await this.axios.get(url)
+      await this.getDefault()
+      const result = await service.getAccountData(this.GroupDataPost)
       this.$store.commit('changeLoading', false)
-      this.gridData = res.data
-      this.buildGrid()
+      this.pageData = result.pageInfo // ? 傳送分頁資訊
+      this.gridData = result.users
+      // * 取得 groupNo
+      this.defaultUserInfo.groupList.forEach((item1) => {
+        this.gridData.forEach((item2) => {
+          if (item1.groupName === item2.groupName) {
+            item2.groupNo = item1.groupNo
+          }
+        })
+      })
     },
-    buildGrid () {
-      this.$refs.grid.innerHTML = ''
-      const grid = new this.$grid.Grid({
-        columns: [
-          {
-            name: '帳號',
-            id: 'id'
-          },
-          {
-            name: '類別',
-            id: 'name'
-          },
-          {
-            name: '名稱',
-            id: 'name'
-          },
-          {
-            name: '群組',
-            id: 'name'
-          },
-          {
-            name: '簡述',
-            id: 'name'
-          },
-          {
-            name: '執行',
-            formatter: (cell, row) => {
-              const buttons = []
-              buttons.push(
-                this.$grid.h('button', {
-                  className: 'btn btn-success mr-3 btn-sm',
-                  onClick: () => {
-                    this.editModal.show()
-                  }
-                }, '檢視與編輯')
-              )
-              buttons.push(
-                this.$grid.h('button', {
-                  className: 'btn btn-danger mr-3 btn-sm',
-                  onClick: () => {
-                    // this.editModal.show()
-                  }
-                }, '刪除')
-              )
-              return buttons
-            }
+    async openAddModal () {
+      this.addForm = this.defaultUserInfo
+      this.addForm.pd = 'UBot123456!'
+      this.addModal.show()
+    },
+    async addAccount () {
+      this.$store.commit('changeLoading', true)
+      if (this.addForm.isAd) {
+        this.addForm.pd = ''
+      }
+      const result = await service.addAccount(this.addForm)
+      this.$store.commit('changeLoading', false)
+      if (result) {
+        this.addForm = {}
+        this.addModal.hide()
+        this.getData()
+      }
+    },
+    openEditModal (item) {
+      this.editForm = item
+      this.editForm.pd = '********'
+      this.editForm.groupList = this.defaultUserInfo.groupList
+      this.editModal.show()
+    },
+    async editAccount () {
+      this.$store.commit('changeLoading', true)
+      if (this.editForm.isAd) {
+        this.editForm.pd = ''
+      }
+      if (this.editForm.pd === '********') {
+        this.editForm.pd = ''
+      }
+      const result = await service.editAccount(this.editForm)
+      this.$store.commit('changeLoading', false)
+      if (result) {
+        this.editModal.hide()
+        this.getData()
+      }
+    },
+    removeAccount (item) {
+      this.$swal.fire({
+        title: '是否刪除?',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#4D4D4D',
+        confirmButtonText: '刪除',
+        cancelButtonText: '取消',
+        reverseButtons: true
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          this.$store.commit('changeLoading', true)
+          const result = await service.removeAccount(item)
+          this.$store.commit('changeLoading', false)
+          if (result) {
+            this.getData()
           }
-        ],
-        data: this.gridData,
-        sort: true,
-        search: true,
-        className: {
-          table: 'table table-hover table-bordered table-striped',
-          th: 'text-center',
-          td: 'text-center'
-        },
-        style: {
-          th: {
-            'background-color': '#1bbbbb',
-            color: '#fff'
-          }
-        },
-        language: {
-          pagination: {
-            previous: '<',
-            next: '>',
-            showing: '顯示',
-            of: '共',
-            to: '到',
-            results: '筆'
-          },
-          noRecordsFound: '查無資訊'
-        },
-        pagination: {
-          enabled: true,
-          limit: 10,
-          summary: true
         }
-      }).render(this.$refs.grid)
-      // 更新表格資料
-      setTimeout(() => {
-        grid.updateConfig({
-          data: this.gridData
-        }).forceRender()
-      }, 100)
-    },
-    addAccount () {
-      console.log(123)
-      this.addForm = {}
-      this.addModal.hide()
-    },
-    editAccount () {
-
+      })
     },
     sendEmail () {
       this.$swal.fire({

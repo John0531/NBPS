@@ -28,9 +28,13 @@ import Paginate from 'vuejs-paginate-next'
 import './axios.setting'
 import validate from './utilities/validate'
 
-import { v4 as uuidv4 } from 'uuid'
-
 defineRule('required', required)
+defineRule('radioRequired', value => {
+  if (value !== false && value !== true) {
+    return '此欄位為必填'
+  }
+  return true
+})
 defineRule('length', length)
 defineRule('email', email)
 configure({
@@ -43,8 +47,7 @@ const app = createApp(App)
 // ?自訂全域屬性
 app.config.globalProperties.$custom = {
   validate,
-  bootstrap,
-  uuidv4
+  bootstrap
 }
 
 app.config.globalProperties.$grid = {

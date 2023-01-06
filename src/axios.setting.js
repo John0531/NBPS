@@ -1,6 +1,7 @@
 import axios from 'axios'
 import router from './router'
 import store from './store'
+import { v4 as uuidv4 } from 'uuid'
 
 import AuthService from '@/services/auth.service'
 import Swal from 'sweetalert2/dist/sweetalert2.js'
@@ -10,6 +11,9 @@ axios.interceptors.request.use(
     const user = JSON.parse(localStorage.getItem('NBPS_USER')) // ? 取得 LocalStorage 中的登入會員資訊
     if (user) {
       config.headers.Authorization = `Bearer ${user.token}`
+    }
+    if (config.method === 'post') {
+      config.data.msgId = uuidv4()
     }
     return config
   }
@@ -42,7 +46,7 @@ axios.interceptors.response.use(
       const user = JSON.parse(localStorage.getItem('NBPS_USER')) // ? 取得 LocalStorage 中的登入會員資訊
       if (user) {
         if (user.refreshToken) {
-          const rftk = await AuthService.refreshTokenCheck()
+          const rftk = await AuthService.refreshTokenCheck(user)
           if (rftk) {
             return Promise.reject(err)
           } else {

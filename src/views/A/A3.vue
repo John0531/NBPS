@@ -3,8 +3,8 @@
     <div class="row justify-content-center">
       <div class="col-12">
         <div class="card">
-          <div class="card-header bg-secondary text-white">
-            <h3>批次交易取消作業</h3>
+          <div class="card-header">
+            <h2 class="fw-bold mb-3">批次交易取消作業</h2>
             <h6>供帳務科執行整批取消，或單筆取消，僅當日交易完成之批次才可執行取消，若原交易已跨日，請於隔日執行退貨。於營業日9點到五點半才可執行</h6>
           </div>
           <div class="card-body">

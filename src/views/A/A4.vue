@@ -3,8 +3,8 @@
     <div class="row justify-content-center">
       <div class="col-12">
         <div class="card">
-          <div class="card-header bg-secondary text-white">
-            <h3>分析報表下載作業</h3>
+          <div class="card-header">
+            <h2 class="fw-bold mb-3">分析報表下載作業</h2>
             <h6>供帳務科經辦依年月下載分析報表 Excel 檔</h6>
           </div>
           <div class="card-body">

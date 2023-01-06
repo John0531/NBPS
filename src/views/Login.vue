@@ -71,7 +71,8 @@ export default {
             background: '#F0F0F2',
             padding: 25
           })
-          this.$router.push(`${process.env.VUE_APP_BASE_ROUTE}/nbps-system/${result.userData.envData.permissions[0].pageCode}`)
+          this.$store.commit('getUser', result.userData.user)
+          this.$router.push(`${process.env.VUE_APP_BASE_ROUTE}/nbps-system/${result.userData.envData.permissions[0].function[0].pageCode}`)
         } else {
           this.$swal.fire({
             text: `${result.msg}`,

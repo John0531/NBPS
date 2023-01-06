@@ -3,8 +3,8 @@
     <div class="row justify-content-center">
       <div class="col-12">
         <div class="card">
-          <div class="card-header bg-secondary text-white">
-            <h3>請款對帳單</h3>
+          <div class="card-header">
+            <h2 class="fw-bold mb-3">請款對帳單</h2>
             <h6>供特店端下載每月請款總結及明細 Excel 檔，需將主機請款回覆檔回寫置資料庫後呈現</h6>
           </div>
           <div class="card-body">

@@ -17,6 +17,7 @@ const routes = [
             path: 'A1',
             component: () => import('../views/A/A1.vue'),
             meta: {
+              group: 'A',
               code: 'A1'
             }
           },
@@ -24,6 +25,7 @@ const routes = [
             path: 'A2',
             component: () => import('../views/A/A2.vue'),
             meta: {
+              group: 'A',
               code: 'A2'
             }
           },
@@ -31,6 +33,7 @@ const routes = [
             path: 'A3',
             component: () => import('../views/A/A3.vue'),
             meta: {
+              group: 'A',
               code: 'A3'
             }
           },
@@ -38,6 +41,7 @@ const routes = [
             path: 'A4',
             component: () => import('../views/A/A4.vue'),
             meta: {
+              group: 'A',
               code: 'A4'
             }
           },
@@ -45,6 +49,7 @@ const routes = [
             path: 'B1',
             component: () => import('../views/B/B1.vue'),
             meta: {
+              group: 'B',
               code: 'B1'
             }
           },
@@ -52,6 +57,7 @@ const routes = [
             path: 'B4',
             component: () => import('../views/B/B4.vue'),
             meta: {
+              group: 'B',
               code: 'B4'
             }
           },
@@ -59,6 +65,7 @@ const routes = [
             path: 'C1',
             component: () => import('../views/C/C1.vue'),
             meta: {
+              group: 'C',
               code: 'C1'
             }
           },
@@ -66,6 +73,7 @@ const routes = [
             path: 'C2',
             component: () => import('../views/C/C2.vue'),
             meta: {
+              group: 'C',
               code: 'C2'
             }
           },
@@ -73,6 +81,7 @@ const routes = [
             path: 'C3',
             component: () => import('../views/C/C3.vue'),
             meta: {
+              group: 'C',
               code: 'C3'
             }
           },
@@ -80,6 +89,7 @@ const routes = [
             path: 'F1',
             component: () => import('../views/F/F1.vue'),
             meta: {
+              group: 'F',
               code: 'F1'
             }
           },
@@ -87,6 +97,7 @@ const routes = [
             path: 'F2',
             component: () => import('../views/F/F2.vue'),
             meta: {
+              group: 'F',
               code: 'F2'
             }
           },
@@ -118,9 +129,17 @@ router.beforeEach((to, from, next) => {
   const authRequired = !publicPages.includes(to.path) // * 導入頁面為非公開路徑
   const loginUser = JSON.parse(localStorage.getItem('NBPS_USER'))
   // * 設定不同權限不可導入特定頁面
-  if (loginUser && loginUser.envData.permissions.map((item) => item.pageCode).indexOf(to.meta.code) === -1 && authRequired) {
-    router.push(`${process.env.VUE_APP_BASE_ROUTE}/nbps-system/error`)
-    return
+  if (loginUser) {
+    const permissions = []
+    loginUser.envData.permissions.forEach((item1) => {
+      item1.function.forEach((item2) => {
+        permissions.push(item2.pageCode)
+      })
+    })
+    if (permissions.indexOf(to.meta.code) === -1 && authRequired) {
+      router.push(`${process.env.VUE_APP_BASE_ROUTE}/nbps-system/error`)
+      return
+    }
   }
   // * 非公開頁面且無登入資訊走這
   if (authRequired && !loginUser) {

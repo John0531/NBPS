@@ -2,41 +2,27 @@
   <div class="space"></div>
   <div class="shadow pt-4 menu position-fixed">
     <h4 class="fw-bold text-center">聯邦銀行信用卡批次授權系統</h4>
-    <ul class="list-unstyled mt-4 ms-3 mb-4">
-      <li v-for="item in permissions" :key="item.pageCode" class="mb-3">
-        <router-link :to="`${$store.state.base_route}/nbps-system/${item.pageCode}`" class="fs-5 text-dark text-decoration-none">{{item.pageName}}{{item.pageCode}}</router-link>
-      </li>
-      <!-- <li class="mb-3">
-        <router-link :to="`${$store.state.base_route}/nbps-system/A2`" class="fs-5 text-dark text-decoration-none">批次交易查詢作業A2</router-link>
-      </li>
-      <li class="mb-3">
-        <router-link :to="`${$store.state.base_route}/nbps-system/A3`" class="fs-5 text-dark text-decoration-none">批次交易取消作業A3</router-link>
-      </li>
-      <li class="mb-3">
-        <router-link :to="`${$store.state.base_route}/nbps-system/A4`" class="fs-5 text-dark text-decoration-none">分析報表下載作業A4</router-link>
-      </li>
-      <li class="mb-3">
-        <router-link :to="`${$store.state.base_route}/nbps-system/B1`" class="fs-5 text-dark text-decoration-none">批次交易檔上傳作業B1</router-link>
-      </li>
-      <li class="mb-3">
-        <router-link :to="`${$store.state.base_route}/nbps-system/B4`" class="fs-5 text-dark text-decoration-none">請款對帳單B4</router-link>
-      </li>
-      <li class="mb-3">
-        <router-link :to="`${$store.state.base_route}/nbps-system/C1`" class="fs-5 text-dark text-decoration-none">特店資料維護C1</router-link>
-      </li>
-      <li class="mb-3">
-        <router-link :to="`${$store.state.base_route}/nbps-system/C2`" class="fs-5 text-dark text-decoration-none">特店帳號維護C2</router-link>
-      </li>
-      <li class="mb-3">
-        <router-link :to="`${$store.state.base_route}/nbps-system/C3`" class="fs-5 text-dark text-decoration-none">特店群組權限維護C3</router-link>
-      </li>
-      <li class="mb-3">
-        <router-link :to="`${$store.state.base_route}/nbps-system/F1`" class="fs-5 text-dark text-decoration-none">帳號維護F1</router-link>
-      </li>
-      <li class="mb-3">
-        <router-link :to="`${$store.state.base_route}/nbps-system/F2`" class="fs-5 text-dark text-decoration-none">群組權限維護F2</router-link>
-      </li> -->
-    </ul>
+    <div class="accordion accordion-flush my-4" id="accordion">
+      <div v-for="(item1) in permissions" :key="item1.code" class="accordion-item">
+        <h2 class="accordion-header">
+          <button :class="{'collapsed':item1.code!==$route.meta.group}" class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="`#${item1.code}`" aria-expanded="false" aria-controls="flush-collapseOne">
+            {{item1.name}}{{item1.code}}
+          </button>
+        </h2>
+        <div :id="item1.code" :class="{'show':item1.code===$route.meta.group}" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordion">
+          <div class="accordion-body">
+            <ul class="list-unstyled ms-4 mb-0">
+              <li v-for="item2 in item1.function" :key="item2.pageCode" class="my-1">
+                <router-link :to="`${$store.state.base_route}/nbps-system/${item2.pageCode}`" class="fs-6 text-dark text-decoration-none">{{item2.pageName}}{{item2.pageCode}}</router-link>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="mb-3">
+      <router-link :to="`${$store.state.base_route}/nbps-system/B1`" class="fs-5 text-dark text-decoration-none">批次交易檔上傳作業B1</router-link>
+    </div> -->
     <div class="border-top border-1 border-secondary pt-3">
       <button class="btn btn-light" @click="logout">登出</button>
     </div>
@@ -79,6 +65,9 @@ export default {
         }
       })
     }
+  },
+  mounted () {
+    console.log(this.$route.meta.group)
   }
 }
 </script>
@@ -98,20 +87,38 @@ export default {
   max-width: 270px;
   height: 100vh;
 }
+li a{
+  padding: 5px;
+  display: block;
+  width: fit-content;
+}
 li a:hover {
   color: rgb(27, 187, 187) !important;
   background-color: rgba(255,255,255,0.7);
-  border-radius: 20px;
-  padding: 10px;
-  display: block;
-  width: fit-content;
+  border-radius: 10px;
 }
 .router-link-active{
   color: rgb(27, 187, 187) !important;
   background-color: rgba(255,255,255,0.7);
-  border-radius: 20px;
+  border-radius: 10px;
+}
+.accordion-item{
+  background-color: transparent;
+  border: none;
+}
+.accordion-button{
+  background-color: transparent;
+  box-shadow: none;
   padding: 10px;
-  display: block;
-  width: fit-content;
+  font-size: 18px;
+}
+.accordion-button:not(.collapsed){
+  color: #000;
+}
+.accordion-button:not(.collapsed)::after{
+  background-image: var(--bs-accordion-btn-icon);
+}
+.accordion-body{
+  padding: 0;
 }
 </style>

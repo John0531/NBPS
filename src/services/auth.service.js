@@ -1,28 +1,13 @@
 import axios from 'axios'
-import forge from 'node-forge'
-import { v4 as uuidv4 } from 'uuid'
+import forge from '@/utilities/forge'
 
 const AuthService = {
-  async getPublicKey () {
-    const url = `${process.env.VUE_APP_BASE_API}/z1/env`
-    const res = await axios.post(url, { msgId: uuidv4() })
-    if (res == null || res.data == null) {
-      return null
-    }
-    return res.data.pk
-  },
   async login (user) {
     try {
-      const publicKey = await AuthService.getPublicKey()
-      const ubPublicKey = '-----BEGIN PUBLIC KEY-----\n' + publicKey + '-----END PUBLIC KEY-----'
-      const ubEDEPublicKey = forge.pki.publicKeyFromPem(ubPublicKey)
-      const encryptedPd = forge.util.encode64(ubEDEPublicKey.encrypt(user.pd, 'RSAES-PKCS1-V1_5'))
-
       const url = `${process.env.VUE_APP_BASE_API}/d1/login`
       const postData = {
         userName: user.userName,
-        pd: encryptedPd,
-        msgId: uuidv4()
+        pd: await forge.encrypt(user.pd)
       }
       const res = await axios.post(url, postData)
       if (res.data && res.data.token && res.data.refreshToken) {
@@ -47,14 +32,14 @@ const AuthService = {
   logout () {
     localStorage.removeItem('NBPS_USER')
   },
-  async refreshTokenCheck () {
+  async refreshTokenCheck (user) {
     try {
       const postData = {
-        msgId: uuidv4(),
-        userName: localStorage.getItem('NBPS_USER').user.userName,
-        token: localStorage.getItem('NBPS_USER').token,
-        refreshToken: localStorage.getItem('NBPS_USER').refreshToken
+        userName: user.user.userName,
+        token: user.token,
+        refreshToken: user.refreshToken
       }
+      console.log(postData)
       const res = await axios.post(`${process.env.VUE_APP_BASE_API}/d1/refresh`, postData)
       if (res == null || res.data == null) {
         return null

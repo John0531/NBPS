@@ -3,8 +3,8 @@
     <div class="row justify-content-center">
       <div class="col-12">
         <div class="card">
-          <div class="card-header bg-secondary text-white">
-            <h3>特店資料維護</h3>
+          <div class="card-header">
+            <h2 class="fw-bold mb-3">特店資料維護</h2>
             <h6>供經辦新增、修改、查詢、刪除特店資料</h6>
           </div>
           <div class="card-body">
