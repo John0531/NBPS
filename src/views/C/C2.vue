@@ -31,7 +31,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in gridData" :key="item.groupNo">
+              <tr v-for="item in gridData" :key="item.userName">
                 <th scope="row">{{item.userName}}</th>
                 <td>{{item.userTypeStr}}</td>
                 <td>{{item.name}}</td>
@@ -72,6 +72,7 @@
                     :class="{ 'is-invalid': errors['帳號'] }"
                     id="account"
                     v-model="addForm.userName"
+                    ref="addForm"
                   />
                   <ErrorMessage
                     name="帳號"
@@ -113,13 +114,10 @@
                     rules="required"
                     :class="{ 'is-invalid': errors['所屬特店'] }"
                     name="所屬特店"
-                    v-model="addForm.shop"
+                    v-model="addForm.storeId"
                   >
                     <option value="" selected>請選擇</option>
-                    <option value="A">特店A</option>
-                    <option value="B">特店B</option>
-                    <option value="C">特店C</option>
-                    <option value="D">特店D</option>
+                    <option v-for="item in addForm.storeDataList" :key="item.id" :value="item.storeId">{{item.storeName}}</option>
                   </Field>
                   <ErrorMessage
                     name="所屬特店"
@@ -163,7 +161,7 @@
                   />
                 </div>
                 <div class="col-sm-3">
-                  <button @click.prevent="sendEmail" :disabled="errors['Email']||!addForm.email||errors['密碼']||!addForm.pd" class="btn btn-primary">寄送預設密碼</button>
+                  <button @click.prevent="sendEmail(addForm)" :disabled="errors['Email']||!addForm.email||errors['密碼']||!addForm.pd" class="btn btn-primary">寄送預設密碼</button>
                 </div>
               </div>
               <div class="row mb-3">
@@ -267,13 +265,9 @@
                     rules="required"
                     :class="{ 'is-invalid': errors['所屬特店'] }"
                     name="所屬特店"
-                    v-model="editForm.shop"
+                    v-model="editForm.storeId"
                   >
-                    <option value="" selected>請選擇</option>
-                    <option value="A">特店A</option>
-                    <option value="B">特店B</option>
-                    <option value="C">特店C</option>
-                    <option value="D">特店D</option>
+                    <option v-for="item in editForm.storeDataList" :key="item.id" :value="item.storeId">{{item.storeName}}</option>
                   </Field>
                   <ErrorMessage
                     name="所屬特店"
@@ -320,7 +314,7 @@
                   />
                 </div>
                 <div class="col-sm-3">
-                  <button @click.prevent="sendEmail" :disabled="errors['Email']||!editForm.email||errors['密碼']||!editForm.pwd" class="btn btn-primary">寄送預設密碼</button>
+                  <button @click.prevent="sendEmail(editForm)" :disabled="errors['Email']||!editForm.email||editForm.pd==='********'" class="btn btn-primary">寄送預設密碼</button>
                 </div>
               </div>
               <div class="row mb-3">
@@ -350,7 +344,7 @@
                 </div>
               </div>
               <div class="d-flex justify-content-end">
-                <button class="btn btn-success px-4">新增</button>
+                <button class="btn btn-success px-4">儲存</button>
               </div>
             </Form>
           </div>
@@ -390,9 +384,7 @@ export default {
       this.getData()
     },
     async getDefault () {
-      this.$store.commit('changeLoading', true)
       const result = await service.getDefaultUserInfo()
-      this.$store.commit('changeLoading', false)
       this.defaultUserInfo = result
     },
     async getData () {
@@ -402,14 +394,6 @@ export default {
       this.$store.commit('changeLoading', false)
       this.pageData = result.pageInfo // ? 傳送分頁資訊
       this.gridData = result.users
-      // * 取得 groupNo
-      this.defaultUserInfo.groupList.forEach((item1) => {
-        this.gridData.forEach((item2) => {
-          if (item1.groupName === item2.groupName) {
-            item2.groupNo = item1.groupNo
-          }
-        })
-      })
     },
     async openAddModal () {
       this.addForm = this.defaultUserInfo
@@ -421,16 +405,28 @@ export default {
       if (this.addForm.isAd) {
         this.addForm.pd = ''
       }
-      const result = await service.addAccount(this.addForm)
+      this.defaultUserInfo.storeDataList.forEach((item) => {
+        if (item.storeId === this.addForm.storeId) {
+          this.addForm.storeName = item.storeName
+        }
+      })
+      const postData = JSON.parse(JSON.stringify(this.addForm))
+      const result = await service.addAccount(postData)
       this.$store.commit('changeLoading', false)
       if (result) {
-        this.addForm = {}
+        // this.GroupDataPost = {
+        //   page: this.pageData.totalPages,
+        //   pageSize: this.GroupDataPost.pageSize
+        // }
         this.addModal.hide()
+        this.addForm = {}
+        this.$refs.addForm.resetForm()
         this.getData()
       }
     },
     openEditModal (item) {
-      this.editForm = item
+      this.editForm = JSON.parse(JSON.stringify(item))
+      this.editForm.storeDataList = this.defaultUserInfo.storeDataList
       this.editForm.pd = '********'
       this.editForm.groupList = this.defaultUserInfo.groupList
       this.editModal.show()
@@ -470,15 +466,23 @@ export default {
         }
       })
     },
-    sendEmail () {
-      this.$swal.fire({
-        title: 'Email 已成功寄出!',
-        icon: 'success'
-      })
+    async sendEmail (form) {
+      const postData = {
+        presetPd: form.pd,
+        email: form.email
+      }
+      this.$store.commit('changeLoading', true)
+      const result = await service.sendEmail(postData)
+      this.$store.commit('changeLoading', false)
+      if (result) {
+        this.$swal.fire({
+          title: 'Email 已成功寄出!',
+          icon: 'success'
+        })
+      }
     }
   },
   mounted () {
-    this.getData()
     this.addModal = new this.$custom.bootstrap.Modal(this.$refs.addModal, { backdrop: 'static' })
     this.editModal = new this.$custom.bootstrap.Modal(this.$refs.editModal, { backdrop: 'static' })
   }

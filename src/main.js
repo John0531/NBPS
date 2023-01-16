@@ -28,6 +28,10 @@ import Paginate from 'vuejs-paginate-next'
 import './axios.setting'
 import validate from './utilities/validate'
 
+import moment from 'moment'
+
+import { v4 as uuidv4 } from 'uuid'
+
 defineRule('required', required)
 defineRule('radioRequired', value => {
   if (value !== false && value !== true) {
@@ -43,11 +47,28 @@ configure({
 })
 setLocale('zh_TW')
 
+// ? 千分號
+function currency (num) {
+  if (num === null) {
+    return null
+  }
+  const n = parseInt(num, 10)
+  return `$${n
+    .toFixed(0)
+    .replace(/./g, (c, i, a) =>
+      i && c !== '.' && (a.length - i) % 3 === 0
+        ? `, ${c}`.replace(/\s/g, '')
+        : c
+    )}`
+}
 const app = createApp(App)
 // ?自訂全域屬性
 app.config.globalProperties.$custom = {
   validate,
-  bootstrap
+  bootstrap,
+  moment,
+  currency,
+  uuidv4
 }
 
 app.config.globalProperties.$grid = {

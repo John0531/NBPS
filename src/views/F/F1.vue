@@ -33,7 +33,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in gridData" :key="item.groupNo">
+              <tr v-for="item in gridData" :key="item.userName">
                 <th scope="row">{{item.userName}}</th>
                 <td>{{item.userTypeStr}}</td>
                 <td>{{item.name}}</td>
@@ -335,7 +335,7 @@
                 </div>
               </div>
               <div class="d-flex justify-content-end">
-                <button class="btn btn-success px-4">新增</button>
+                <button class="btn btn-success px-4">儲存</button>
               </div>
             </Form>
           </div>
@@ -375,9 +375,7 @@ export default {
       this.getData()
     },
     async getDefault () {
-      this.$store.commit('changeLoading', true)
       const result = await service.getDefaultUserInfo()
-      this.$store.commit('changeLoading', false)
       this.defaultUserInfo = result
     },
     async getData () {
@@ -387,14 +385,6 @@ export default {
       this.$store.commit('changeLoading', false)
       this.pageData = result.pageInfo // ? 傳送分頁資訊
       this.gridData = result.users
-      // * 取得 groupNo
-      this.defaultUserInfo.groupList.forEach((item1) => {
-        this.gridData.forEach((item2) => {
-          if (item1.groupName === item2.groupName) {
-            item2.groupNo = item1.groupNo
-          }
-        })
-      })
     },
     async openAddModal () {
       this.addForm = this.defaultUserInfo
@@ -415,7 +405,7 @@ export default {
       }
     },
     openEditModal (item) {
-      this.editForm = item
+      this.editForm = JSON.parse(JSON.stringify(item))
       this.editForm.pd = '********'
       this.editForm.groupList = this.defaultUserInfo.groupList
       this.editModal.show()

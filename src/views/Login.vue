@@ -50,39 +50,40 @@ export default {
     }
   },
   methods: {
-    login () {
+    async login () {
       if (this.user.validateCode !== this.CaptchaCode) {
         this.$swal.fire('驗證碼有誤')
         return
       }
       this.$store.commit('changeLoading', true)
-      AuthService.login(this.user).then((result) => {
-        this.$store.commit('changeLoading', false)
-        if (result.isSuccess) {
-          console.log(result)
-          this.$swal.fire({
-            toast: true,
-            position: 'center',
-            icon: 'success',
-            title: '登入成功！',
-            showConfirmButton: false,
-            timer: 1500,
-            width: 500,
-            background: '#F0F0F2',
-            padding: 25
-          })
-          this.$store.commit('getUser', result.userData.user)
-          this.$router.push(`${process.env.VUE_APP_BASE_ROUTE}/nbps-system/${result.userData.envData.permissions[0].function[0].pageCode}`)
-        } else {
-          this.$swal.fire({
-            text: `${result.msg}`,
-            allowOutsideClick: false,
-            confirmButtonColor: '#0d6efd',
-            confirmButtonText: '確認',
-            width: 400
-          })
-        }
-      })
+      const result = await AuthService.login(this.user)
+      this.$store.commit('changeLoading', false)
+      if (result.isSuccess) {
+        this.$swal.fire({
+          toast: true,
+          position: 'center',
+          icon: 'success',
+          title: '登入成功！',
+          showConfirmButton: false,
+          timer: 1500,
+          width: 500,
+          background: '#F0F0F2',
+          padding: 25,
+          customClass: {
+            container: 'z-10000'
+          }
+        })
+        this.$store.commit('getUser', result.userData.user)
+        this.$router.push(`${process.env.VUE_APP_BASE_ROUTE}/nbps-system/${result.userData.envData.permissions[0].function[0].pageCode}`)
+      } else {
+        this.$swal.fire({
+          text: `${result.msg}`,
+          allowOutsideClick: false,
+          confirmButtonColor: '#0d6efd',
+          confirmButtonText: '確認',
+          width: 400
+        })
+      }
     }
   },
   mounted () {
@@ -94,5 +95,8 @@ export default {
 <style>
 .loginbanner{
   height: 600px;
+}
+.z-10000{
+  z-index: 10000;
 }
 </style>

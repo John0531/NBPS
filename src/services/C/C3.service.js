@@ -24,7 +24,7 @@ const service = {
       if (error.response.status === 401) {
         const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
         if (user) {
-          return service.getGroupData()
+          return service.getGroupData(postData)
         }
       }
     }
@@ -40,7 +40,7 @@ const service = {
       if (error.response.status === 401) {
         const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
         if (user) {
-          return service.addGroup()
+          return service.addGroup(postData)
         }
       }
       return false
@@ -57,7 +57,7 @@ const service = {
       if (error.response.status === 401) {
         const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
         if (user) {
-          return service.editGroup()
+          return service.editGroup(postData)
         }
       }
     }
@@ -73,7 +73,7 @@ const service = {
       if (error.response.status === 401) {
         const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
         if (user) {
-          return service.removeGroup()
+          return service.removeGroup(postData)
         }
       }
     }

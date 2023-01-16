@@ -1,37 +1,28 @@
 import axios from 'axios'
+import forge from '@/utilities/forge'
 
 const service = {
-  async getDefaultPermission () {
+  async getStoreData (postData) {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/f2/findDefaultPermission`
-      const res = await axios.post(url, {})
-      return res.data.permissions
-    } catch (error) {
-      if (error.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
-        if (user) {
-          return service.getDefaultPermission()
-        }
-      }
-    }
-  },
-  async getGroupData (postData) {
-    try {
-      const url = `${process.env.VUE_APP_BASE_API}/f2/findGroup`
+      const url = `${process.env.VUE_APP_BASE_API}/c1/searchStore`
       const res = await axios.post(url, postData)
+      console.log(res)
       return res.data
     } catch (error) {
       if (error.response.status === 401) {
         const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
         if (user) {
-          return service.getGroupData(postData)
+          return service.getStoreData(postData)
         }
       }
     }
   },
-  async addGroup (postData) {
+  async addStore (formData) {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/f2/createGroup`
+      const postData = JSON.parse(JSON.stringify(formData))
+      postData.uploadPd = await forge.encrypt(postData.uploadPd)
+      console.log(postData)
+      const url = `${process.env.VUE_APP_BASE_API}/c1/createStore`
       const res = await axios.post(url, postData)
       if (res.data) {
         return true
@@ -40,15 +31,21 @@ const service = {
       if (error.response.status === 401) {
         const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
         if (user) {
-          return service.addGroup(postData)
+          return service.addStore(formData)
         }
       }
       return false
     }
   },
-  async editGroup (postData) {
+  async editStore (formData) {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/f2/updateGroup`
+      const postData = JSON.parse(JSON.stringify(formData))
+      if (postData.uploadPd === '********') {
+        postData.uploadPd = ''
+      } else {
+        postData.uploadPd = await forge.encrypt(postData.uploadPd)
+      }
+      const url = `${process.env.VUE_APP_BASE_API}/c1/updateStore`
       const res = await axios.post(url, postData)
       if (res.data) {
         return true
@@ -57,15 +54,14 @@ const service = {
       if (error.response.status === 401) {
         const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
         if (user) {
-          return service.editGroup(postData)
+          return service.editStore(formData)
         }
       }
-      return false
     }
   },
-  async removeGroup (postData) {
+  async removeStore (postData) {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/f2/deleteGroup`
+      const url = `${process.env.VUE_APP_BASE_API}/c1/deleteStore`
       const res = await axios.post(url, postData)
       if (res.data) {
         return true
@@ -74,10 +70,9 @@ const service = {
       if (error.response.status === 401) {
         const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
         if (user) {
-          return service.removeGroup(postData)
+          return service.removeStore(postData)
         }
       }
-      return false
     }
   }
 }

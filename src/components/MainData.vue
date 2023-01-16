@@ -1,6 +1,6 @@
 <template>
   <div class="mt-5 main-data">
-    <div class="d-flex w-25 mb-3 align-items-center">
+    <div class="d-flex mb-3 align-items-center" style="width:300px;" v-if="pageData">
         <label for="" class="text-nowrap me-3 fs-5">每頁資料數 :</label>
         <select
         v-model="PageInfo.pageSize"
@@ -12,11 +12,12 @@
         </select>
     </div>
     <div class="tbl-container">
-      <table class="table table-striped table-bordered table-hover">
+      <table class="table table-striped table-bordered table-hover" v-if="pageData">
         <slot></slot>
       </table>
+      <h3 class="text-center mb-0 py-5 fw-bold bg-light" v-else>查無資訊</h3>
     </div>
-    <div class="d-flex justify-content-end pt-3">
+    <div class="d-flex justify-content-end pt-3" v-if="pageData">
       <Paginate
       v-model="pageData.currentPage"
       :click-handler="clickCallback"
@@ -44,6 +45,7 @@
 export default {
   data () {
     return {
+      // ? request
       PageInfo: {
         page: 1,
         pageSize: 10
@@ -52,13 +54,14 @@ export default {
   },
   props: ['Page'], // ? 分頁資料
   computed: {
+    // ? response
     pageData () {
       return this.Page
     }
   },
   watch: {
     pageData (n, o) {
-      if (n.pageElements === 0 && this.PageInfo.page > 1) {
+      if (n && n.pageElements === 0 && this.PageInfo.page > 1) {
         this.PageInfo.page -= 1
         this.$emit('ChangePageInfo', this.PageInfo)
       }
@@ -77,6 +80,11 @@ export default {
   },
   mounted () {
     this.$emit('ChangePageInfo', this.PageInfo)
+    if (this.$route.meta.code === 'A1') {
+      setInterval(() => {
+        this.$emit('ChangePageInfo', this.PageInfo)
+      }, 10000)
+    }
   }
 }
 </script>
