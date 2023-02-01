@@ -23,8 +23,9 @@
     <!-- <div class="mb-3">
       <router-link :to="`${$store.state.base_route}/nbps-system/B1`" class="fs-5 text-dark text-decoration-none">批次交易檔上傳作業B1</router-link>
     </div> -->
-    <div class="border-top border-1 border-secondary pt-3">
+    <div class="border-top border-1 border-secondary py-3 d-flex justify-content-between">
       <button class="btn btn-light" @click="logout">登出</button>
+      <router-link :to="`${$store.state.base_route}/changePwd`" class="btn btn-secondary">修改密碼</router-link>
     </div>
   </div>
 </template>
@@ -81,7 +82,23 @@ export default {
   padding: 0 20px;
   background-image: linear-gradient(105deg,rgba(27,187,187,0.5),rgba(238,238,238,0.7));
   backdrop-filter: blur(10px);
+  overflow-y: auto;
 }
+
+.menu::-webkit-scrollbar {
+    width: 4px;
+}
+
+.menu::-webkit-scrollbar-track {
+    background-color: #e4e4e4;
+    border-radius: 100px;
+}
+
+.menu::-webkit-scrollbar-thumb {
+    background-color: #b9b9b9;
+    border-radius: 100px;
+}
+
 .space{
   width: 20%;
   max-width: 270px;

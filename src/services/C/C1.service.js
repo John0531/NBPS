@@ -10,7 +10,7 @@ const service = {
       return res.data
     } catch (error) {
       if (error.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
           return service.getStoreData(postData)
         }
@@ -29,7 +29,7 @@ const service = {
       }
     } catch (error) {
       if (error.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
           return service.addStore(formData)
         }
@@ -52,7 +52,7 @@ const service = {
       }
     } catch (error) {
       if (error.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
           return service.editStore(formData)
         }
@@ -68,7 +68,7 @@ const service = {
       }
     } catch (error) {
       if (error.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
           return service.removeStore(postData)
         }

@@ -19,7 +19,7 @@
             <button class="btn btn-primary me-3 px-4">匯出群組Excel</button>
           </div>
         </div>
-        <MainData :Page="pageData" @ChangePageInfo="getPageInfo">
+        <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
           <template #default>
             <thead>
               <tr>
@@ -460,13 +460,26 @@ export default {
       this.$store.commit('changeLoading', false)
       this.addModal.show()
     },
-    viewAuth (item) {
+    async viewAuth (item) {
       this.viewForm = {
         groupNo: item.groupNo,
         groupName: item.groupName,
         description: item.description
       }
-      this.defaultPermission = JSON.parse(JSON.stringify(item.permissions))
+      // ? 比對權限資料
+      this.defaultPermission = await service.getDefaultPermission()
+      item.permissions.forEach((obj1) => {
+        obj1.function.forEach((obj2) => {
+          this.defaultPermission.forEach((obj3) => {
+            obj3.function.forEach((obj4) => {
+              if (obj4.pageCode === obj2.pageCode) {
+                obj4.usable = obj2.usable
+              }
+            })
+          })
+        })
+      })
+      // ? 比對權限資料 end
       this.defaultPermission.forEach((item1) => {
         item1.checked = true // ? 預設所有都勾選
         item1.function.forEach((item2) => {
@@ -485,7 +498,20 @@ export default {
         groupName: JSON.parse(JSON.stringify(item.groupName)),
         description: JSON.parse(JSON.stringify(item.description))
       }
-      this.defaultPermission = JSON.parse(JSON.stringify(item.permissions))
+      // ? 比對權限資料
+      this.defaultPermission = await service.getDefaultPermission()
+      item.permissions.forEach((obj1) => {
+        obj1.function.forEach((obj2) => {
+          this.defaultPermission.forEach((obj3) => {
+            obj3.function.forEach((obj4) => {
+              if (obj4.pageCode === obj2.pageCode) {
+                obj4.usable = obj2.usable
+              }
+            })
+          })
+        })
+      })
+      // ? 比對權限資料 end
       this.defaultPermission.forEach((item1) => {
         item1.checked = true // ? 預設所有都勾選
         item1.function.forEach((item2) => {
@@ -500,9 +526,16 @@ export default {
     },
     async addGroup () {
       this.$store.commit('changeLoading', true)
+      // ? 只帶入有勾選的權限
+      let permissions = JSON.parse(JSON.stringify(this.defaultPermission))
+      permissions.forEach((item1) => {
+        item1.function = item1.function.filter(item2 => item2.usable.length !== 0)
+      })
+      permissions = permissions.filter(item => item.function.length !== 0)
+      // ? 只帶入有勾選的權限 end
       const postData = {
         ...this.addForm,
-        permissions: this.defaultPermission
+        permissions: permissions
       }
       const result = await service.addGroup(postData)
       this.$store.commit('changeLoading', false)
@@ -514,9 +547,16 @@ export default {
     },
     async editGroup () {
       this.$store.commit('changeLoading', true)
+      // ? 只帶入有勾選的權限
+      let permissions = JSON.parse(JSON.stringify(this.defaultPermission))
+      permissions.forEach((item1) => {
+        item1.function = item1.function.filter(item2 => item2.usable.length !== 0)
+      })
+      permissions = permissions.filter(item => item.function.length !== 0)
+      // ? 只帶入有勾選的權限 end
       const postData = {
         ...this.editForm,
-        permissions: this.defaultPermission
+        permissions: permissions
       }
       const result = await service.editGroup(postData)
       this.$store.commit('changeLoading', false)

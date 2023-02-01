@@ -1,6 +1,6 @@
 <template>
   <div class="mt-5 main-data">
-    <div class="d-flex mb-3 align-items-center" style="width:300px;" v-if="pageData">
+    <div class="d-flex mb-3 align-items-center" style="width:300px;" v-if="pageData&&pageData.totalElements">
         <label for="" class="text-nowrap me-3 fs-5">每頁資料數 :</label>
         <select
         v-model="PageInfo.pageSize"
@@ -12,12 +12,12 @@
         </select>
     </div>
     <div class="tbl-container">
-      <table class="table table-striped table-bordered table-hover" v-if="pageData">
+      <table class="table table-striped table-bordered table-hover" v-if="pageData&&pageData.totalElements">
         <slot></slot>
       </table>
       <h3 class="text-center mb-0 py-5 fw-bold bg-light" v-else>查無資訊</h3>
     </div>
-    <div class="d-flex justify-content-end pt-3" v-if="pageData">
+    <div class="d-flex justify-content-end pt-3" v-if="pageData&&pageData.totalElements">
       <Paginate
       v-model="pageData.currentPage"
       :click-handler="clickCallback"
@@ -79,10 +79,11 @@ export default {
     }
   },
   mounted () {
-    this.$emit('ChangePageInfo', this.PageInfo)
-    if (this.$route.meta.code === 'A1') {
+    this.$emit('updatePageInfo', this.PageInfo)
+    const keepUpdate = ['A1', 'B1']
+    if (keepUpdate.includes(this.$route.meta.code)) {
       setInterval(() => {
-        this.$emit('ChangePageInfo', this.PageInfo)
+        this.$emit('updatePageInfo', this.PageInfo)
       }, 10000)
     }
   }

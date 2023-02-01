@@ -9,7 +9,7 @@ const service = {
       return res.data
     } catch (error) {
       if (error.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
           return service.getDefaultUserInfo()
         }
@@ -24,7 +24,7 @@ const service = {
       return res.data
     } catch (error) {
       if (error.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
           return service.getAccountData(postData)
         }
@@ -44,7 +44,7 @@ const service = {
       }
     } catch (error) {
       if (error.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
           return service.addAccount(postData)
         }
@@ -64,7 +64,7 @@ const service = {
       }
     } catch (error) {
       if (error.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
           return service.editAccount(postData)
         }
@@ -80,7 +80,7 @@ const service = {
       }
     } catch (error) {
       if (error.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
           return service.removeAccount(postData)
         }
@@ -99,7 +99,7 @@ const service = {
     } catch (error) {
       console.log(error)
       if (error.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
           return service.sendEmail(postData)
         }

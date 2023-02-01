@@ -58,12 +58,12 @@
                   <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">總筆數:</h5>
                   <Field
                     name="總筆數"
-                    type="text"
+                    type="number"
                     class="form-control"
                     rules="required"
                     :class="{ 'is-invalid': errors['總筆數'] }"
                     id="totalCount"
-                    v-model="uploadPost.totalCount"
+                    v-model.number="uploadPost.totalCount"
                   />
                   <ErrorMessage
                     name="總筆數"
@@ -74,12 +74,12 @@
                   <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">總金額(授權金額-退貨金額):</h5>
                   <Field
                     name="總金額"
-                    type="text"
+                    type="number"
                     class="form-control"
                     rules="required"
                     :class="{ 'is-invalid': errors['總金額'] }"
                     id="totalAmt"
-                    v-model="uploadPost.totalAmt"
+                    v-model.number="uploadPost.totalAmt"
                   />
                   <ErrorMessage
                     name="總金額"
@@ -93,7 +93,7 @@
             </Form>
           </div>
         </div>
-        <MainData :Page="pageData" @ChangePageInfo="getPageInfo">
+        <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
           <template #default>
             <thead>
               <tr>
@@ -222,14 +222,13 @@ export default {
     // ? 取得 MainData 元件分頁資訊
     getPageInfo (PageInfo) {
       this.GroupDataPost = PageInfo
-      this.GroupDataPost.storeId = ''
       this.getData()
     },
     // ? 取得 MainData 元件錯誤分頁資訊
     getErrorPageInfo (PageInfo) {
       this.errorDataPost.page = PageInfo.page
       this.errorDataPost.pageSize = PageInfo.pageSize
-      this.getData()
+      this.getError()
     },
     async getDefaultData () {
       this.$store.commit('changeLoading', true)
@@ -245,10 +244,10 @@ export default {
       this.gridData = result.batchList
     },
     async getError (item) {
-      this.errorDataPost = {
-        batchId: item.batchId,
-        page: 1,
-        pageSize: 10
+      if (item) {
+        this.errorDataPost.batchId = item.batchId
+        this.errorDataPost.page = 1
+        this.errorDataPost.pageSize = 10
       }
       this.$store.commit('changeLoading', true)
       const result = await service.getBatchError(this.errorDataPost)
@@ -298,9 +297,9 @@ export default {
       this.$swal.fire({
         title: '確認送出?',
         showCancelButton: true,
-        confirmButtonColor: '#dc3545',
+        confirmButtonColor: '#0d6efd',
         cancelButtonColor: '#4D4D4D',
-        confirmButtonText: '刪除',
+        confirmButtonText: '確認',
         cancelButtonText: '取消',
         reverseButtons: true
       }).then(async (result) => {

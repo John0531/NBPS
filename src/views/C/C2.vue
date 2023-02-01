@@ -18,7 +18,7 @@
             <button class="btn btn-warning me-3 px-4" @click="openAddModal">新增帳號</button>
           </div>
         </div>
-        <MainData :Page="pageData" @ChangePageInfo="getPageInfo">
+        <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
           <template #default>
             <thead>
               <tr>
@@ -117,7 +117,7 @@
                     v-model="addForm.storeId"
                   >
                     <option value="" selected>請選擇</option>
-                    <option v-for="item in addForm.storeDataList" :key="item.id" :value="item.storeId">{{item.storeName}}</option>
+                    <option v-for="item in addForm.storeDataList" :key="item.id" :value="item.storeId">{{item.storeId}}({{item.storeName}})</option>
                   </Field>
                   <ErrorMessage
                     name="所屬特店"
@@ -266,8 +266,9 @@
                     :class="{ 'is-invalid': errors['所屬特店'] }"
                     name="所屬特店"
                     v-model="editForm.storeId"
+                    @input="getStoreName()"
                   >
-                    <option v-for="item in editForm.storeDataList" :key="item.id" :value="item.storeId">{{item.storeName}}</option>
+                    <option v-for="item in editForm.storeDataList" :key="item.id" :value="item.storeId">{{item.storeId}}({{item.storeName}})</option>
                   </Field>
                   <ErrorMessage
                     name="所屬特店"
@@ -431,6 +432,13 @@ export default {
       this.editForm.groupList = this.defaultUserInfo.groupList
       this.editModal.show()
     },
+    getStoreName () {
+      this.editForm.storeDataList.forEach((item) => {
+        if (this.editForm.storeId === item.storeId) {
+          this.editForm.storeName = item.storeName
+        }
+      })
+    },
     async editAccount () {
       this.$store.commit('changeLoading', true)
       if (this.editForm.isAd) {
@@ -439,7 +447,8 @@ export default {
       if (this.editForm.pd === '********') {
         this.editForm.pd = ''
       }
-      const result = await service.editAccount(this.editForm)
+      const postData = JSON.parse(JSON.stringify(this.editForm))
+      const result = await service.editAccount(postData)
       this.$store.commit('changeLoading', false)
       if (result) {
         this.editModal.hide()

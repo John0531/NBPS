@@ -19,7 +19,7 @@
             <button class="btn btn-primary me-3 px-4">匯出帳號excel</button>
           </div>
         </div>
-        <MainData :Page="pageData" @ChangePageInfo="getPageInfo">
+        <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
           <template #default>
             <thead>
               <tr>
@@ -220,6 +220,7 @@
                     :class="{ 'is-invalid': errors['帳號'] }"
                     id="account"
                     v-model="editForm.userName"
+                    disabled
                   />
                   <ErrorMessage
                     name="帳號"
@@ -396,7 +397,8 @@ export default {
       if (this.addForm.isAd) {
         this.addForm.pd = ''
       }
-      const result = await service.addAccount(this.addForm)
+      const postData = JSON.parse(JSON.stringify(this.addForm))
+      const result = await service.addAccount(postData)
       this.$store.commit('changeLoading', false)
       if (result) {
         this.addForm = {}
@@ -418,7 +420,8 @@ export default {
       if (this.editForm.pd === '********') {
         this.editForm.pd = ''
       }
-      const result = await service.editAccount(this.editForm)
+      const postData = JSON.parse(JSON.stringify(this.editForm))
+      const result = await service.editAccount(postData)
       this.$store.commit('changeLoading', false)
       if (result) {
         this.editModal.hide()

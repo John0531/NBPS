@@ -6,48 +6,121 @@
           <div class="card-header">
             <h2 class="fw-bold mb-3">批次交易檔上傳作業</h2>
             <h6>供特店端上傳批次交易資料檔，上傳功能僅於營業日之作業時間開放(特店維護作業內可設定)，批次交易資料檔上傳且格式檢核成功後，按下確認並送出，系統隨開始發動交易。</h6>
-            <h6>*檔名為: 商店代碼(自動帶出登入帳號所屬特店代碼)  + "." + YYYYMMDD(自動帶出今日日期) + "." + A(第一次上傳為A，第二次為B，以此類退)。上傳檔案均需依約定之密碼規則(兩碼當月月份 + 約定之加解密密碼)，以ZIP加密，若檔名或解密錯誤或總筆數及總金額不對，此檔直接剔退。</h6>
+            <h6>*檔名為: 商店代碼後九碼(自動帶出登入帳號所屬特店代碼)  + "." + YYYYMMDD(自動帶出今日日期) + "." + A(第一次上傳為A，第二次為B，以此類退)。上傳檔案均需依約定之密碼規則(兩碼當月月份 + 約定之加解密密碼)，以ZIP加密，若檔名或解密錯誤或總筆數及總金額不對，此檔直接剔退。</h6>
           </div>
           <div class="card-body">
-            <div class="row py-3">
-              <div class="col-xxl-6 d-flex mb-4">
-                <input type="file" class="form-control" placeholder="" @change="getFile($event)">
+            <Form
+              v-slot="{ errors }"
+              @submit="uploadFile"
+            >
+              <div class="row py-3">
+                <div class="col-xxl-6 d-flex mb-4 align-items-center">
+                  <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">批次交易檔:</h5>
+                  <Field
+                    style="width:400px;"
+                    ref="upload"
+                    type="file"
+                    class="form-control"
+                    placeholder=""
+                    rules="required"
+                    name="批次交易檔"
+                    :class="{ 'is-invalid': errors['批次交易檔'] }"
+                    @change="getFile($event)"
+                  />
+                  <ErrorMessage
+                    name="批次交易檔"
+                    class="invalid-feedback ms-2"
+                  />
+                </div>
+                <div class="col-xxl-6"></div>
+                <div class="col-xxl-3 d-flex mb-4 align-items-center">
+                  <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">總筆數:</h5>
+                  <Field
+                    name="總筆數"
+                    type="number"
+                    class="form-control"
+                    rules="required"
+                    :class="{ 'is-invalid': errors['總筆數'] }"
+                    id="totalCount"
+                    v-model.number="uploadPost.totalCount"
+                  />
+                  <ErrorMessage
+                    name="總筆數"
+                    class="invalid-feedback ms-2"
+                  />
+                </div>
+                <div class="col-xxl-5 d-flex mb-4 align-items-center">
+                  <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">總金額(授權金額-退貨金額):</h5>
+                  <Field
+                    name="總金額"
+                    type="number"
+                    class="form-control"
+                    rules="required"
+                    :class="{ 'is-invalid': errors['總金額'] }"
+                    id="totalAmt"
+                    v-model.number="uploadPost.totalAmt"
+                  />
+                  <ErrorMessage
+                    name="總金額"
+                    class="invalid-feedback ms-2"
+                  />
+                </div>
               </div>
-              <div class="col-xxl-6"></div>
-              <div class="col-xxl-3 d-flex mb-4">
-                <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">總筆數:</h5>
-                <input type="text" class="form-control" placeholder="">
-              </div>
-              <div class="col-xxl-5 d-flex mb-4">
-                <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">總金額(授權金額-退貨金額):</h5>
-                <input type="text" class="form-control" placeholder="">
-              </div>
-            </div>
-            <button class="btn btn-primary me-3 px-4">上傳</button>
-            <button class="btn btn-warning me-3">下載範例EXCEL</button>
-            <button class="btn btn-success">下載批次交易檔規格</button>
+              <button type="submit" class="btn btn-primary me-3 px-4">上傳</button>
+              <button class="btn btn-warning me-3" @click.prevent="downloadExcel">下載範例EXCEL</button>
+              <button class="btn btn-success" @click.prevent="downloadFormat">下載批次交易檔規格</button>
+            </Form>
           </div>
         </div>
-        <div ref="grid" class="mt-5"></div>
-      </div>
-    </div>
-
-    <!-- 檢視明細 Modal -->
-    <div class="modal fade" ref="detailModal" tabindex="-1" aria-labelledby="detailModal" aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header bg-success">
-            <h5 class="modal-title text-white">檢視明細</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <h5>檔名: {{detailData.fileName}}</h5>
-            <div ref="detailGrid" class="mt-3"></div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          </div>
-        </div>
+        <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
+          <template #default>
+            <thead>
+              <tr>
+                <th scope="col">上傳批次交易檔名</th>
+                <th scope="col">上傳時間</th>
+                <th scope="col">批次處理狀態</th>
+                <th scope="col">總筆數</th>
+                <th scope="col">總金額 A-B</th>
+                <th scope="col">總授權筆數</th>
+                <th scope="col">總授權金額 A</th>
+                <th scope="col">總退貨筆數</th>
+                <th scope="col">總退貨金額 B</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in gridData" :key="item.batchId">
+                <th scope="row">{{item.batchFileName}}</th>
+                <td>{{$custom.moment(item.batchDate).format('YYYY/MM/DD')}}</td>
+                <td>
+                  <span class="fw-bold" v-if="item.batchStatus==='UPLOAD_SUCCESS'">上傳成功</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='UPLAOD_FAIL'">上傳失敗</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='VALIDATING'">格式檢核中</span>
+                  <span class="fw-bold text-success" v-if="item.batchStatus==='VALIDATE_SUCCESS'">格式檢核成功</span>
+                  <span class="fw-bold text-danger" v-if="item.batchStatus==='VALIDATE_FAIL'">格式檢核失敗</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='SUBMISSION'">確認送出</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='TRX_WAIT'">等待交易中</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='TRX_PROCESS'">交易處理中</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='TRX_FINISH'">交易處理完成</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='REPLY_PROCESS'">回覆檔產製中</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='REPLY_SUCCESS'">已下傳回覆檔</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='REPLY_FAIL'">下傳回覆檔失敗</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='DOWLOAD_REPLY'">特店已下載回覆檔</span>
+                </td>
+                <td>{{item.totalCnt}}</td>
+                <td>{{$custom.currency(item.totalAmt)}}</td>
+                <td>{{item.authCnt}}</td>
+                <td>{{$custom.currency(item.authAmt)}}</td>
+                <td>{{item.refundCnt}}</td>
+                <td>{{$custom.currency(item.refundAmt)}}</td>
+                <td>
+                  <button v-if="item.batchStatus==='VALIDATE_FAIL'" @click="getError(item)" class="btn btn-danger me-2 btn-sm">檢視錯誤</button>
+                  <button v-if="item.batchStatus==='VALIDATE_SUCCESS'" @click="confirmBatch(item)" class="btn btn-primary btn-sm">確認送出授權</button>
+                </td>
+              </tr>
+            </tbody>
+          </template>
+        </MainData>
       </div>
     </div>
 
@@ -60,8 +133,23 @@
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <h5>檔名: {{errorData.fileName}}</h5>
-            <div ref="errorGrid" class="mt-3"></div>
+            <h5>檔名: {{errorData.batchFileName}}</h5>
+            <MainData :Page="errorPageData" @ChangePageInfo="getErrorPageInfo">
+              <template #default>
+                <thead>
+                  <tr>
+                    <th scope="col">筆數</th>
+                    <th scope="col">錯誤原因</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in errorData.gridData" :key="item.storeId">
+                    <th scope="row">{{item.row}}</th>
+                    <td>{{item.errMsg}}</td>
+                  </tr>
+                </tbody>
+              </template>
+            </MainData>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -73,292 +161,145 @@
 </template>
 
 <script>
+import service from '@/services/B/B1.service.js'
+import MainData from '@/components/MainData.vue'
 
 export default {
+  components: {
+    MainData
+  },
   data () {
     return {
-      file: '',
+      GroupDataPost: {
+        page: 1,
+        pageSize: 10
+      },
+      pageData: {}, // ?分頁資訊
+      defaultData: [],
       gridData: [],
-      detailModal: '',
-      detailData: {
-        fileName: '',
+      uploadPost: {},
+      errorModal: '',
+      errorDataPost: {
+        batchId: '',
+        page: 1,
+        pageSize: 10
+      },
+      errorData: {
+        batchFileName: '',
         gridData: []
       },
-      errorModal: '',
-      errorData: {
-        fileName: '',
-        gridData: []
-      }
+      errorPageData: {}// ?錯誤分頁資訊
     }
   },
   methods: {
+    // ? 取得 MainData 元件分頁資訊
+    getPageInfo (PageInfo) {
+      this.GroupDataPost = PageInfo
+      this.getData()
+    },
+    // ? 取得 MainData 元件錯誤分頁資訊
+    getErrorPageInfo (PageInfo) {
+      this.errorDataPost.page = PageInfo.page
+      this.errorDataPost.pageSize = PageInfo.pageSize
+      this.getError()
+    },
     async getData () {
       this.$store.commit('changeLoading', true)
-      const url = 'https://mocki.io/v1/f30e8467-7fad-48ba-bfd8-ca569d924a5e'
-      const res = await this.axios.get(url)
+      const result = await service.getBatchData(this.GroupDataPost)
       this.$store.commit('changeLoading', false)
-      this.gridData = res.data
-      this.buildGrid()
+      this.pageData = result.pageInfo // ? 傳送分頁資訊
+      this.gridData = result.batchList
     },
-    buildGrid () {
-      this.$refs.grid.innerHTML = ''
-      const grid = new this.$grid.Grid({
-        columns: [
-          {
-            name: '上傳批次交易檔名',
-            id: 'fileName'
-          },
-          {
-            name: '上傳時間',
-            id: 'createTime'
-          },
-          {
-            name: '批次處理狀態', // ? 檢核中:0,成功:1,失敗:2
-            id: 'status',
-            formatter: (cell) => {
-              if (cell === '0') {
-                return this.$grid.html('<span class="text-warning fw-bold">格式檢核中</span>')
-              } else if (cell === '1') {
-                return this.$grid.html('<span class="text-success fw-bold">格式檢核成功</span>')
-              } else if (cell === '2') {
-                return this.$grid.html('<span class="text-danger fw-bold">格式檢核錯誤</span>')
-              }
-            }
-          },
-          {
-            name: '總比數',
-            id: 'totalNum'
-          },
-          {
-            name: '總授權筆數',
-            id: 'AuthNum'
-          },
-          {
-            name: '總退貨筆數',
-            id: 'returnNum'
-          },
-          {
-            name: '總授權金額 A',
-            id: 'AuthAmount'
-          },
-          {
-            name: '總退貨金額 B',
-            id: 'returnAmount'
-          },
-          {
-            name: '總金額 A-B',
-            id: 'totalAmount'
-          },
-          {
-            name: '執行',
-            formatter: (cell, row) => {
-              const buttons = []
-              if (row.cells[2].data === '1') {
-                buttons.push(
-                  this.$grid.h('button', {
-                    className: 'btn btn-success mr-3 btn-sm',
-                    onClick: () => {
-                      this.getDetail(row.cells)
-                    }
-                  }, '檢視明細')
-                )
-                buttons.push(
-                  this.$grid.h('button', {
-                    className: 'btn btn-primary mr-3 btn-sm',
-                    onClick: () => {
-                      // this.getDetail()
-                    }
-                  }, '確認送出授權')
-                )
-              } else if (row.cells[2].data === '2') {
-                buttons.push(
-                  this.$grid.h('button', {
-                    className: 'btn btn-danger mr-3 btn-sm',
-                    onClick: () => {
-                      this.getError(row.cells)
-                    }
-                  }, '檢視錯誤')
-                )
-              }
-              return buttons
-            }
-          }
-        ],
-        data: this.gridData,
-        sort: true,
-        search: true,
-        className: {
-          table: 'table table-hover table-bordered table-striped',
-          th: 'text-center',
-          td: 'text-center'
-        },
-        style: {
-          th: {
-            'background-color': '#1bbbbb',
-            color: '#fff'
-          }
-        },
-        language: {
-          pagination: {
-            previous: '<',
-            next: '>',
-            showing: '顯示',
-            of: '共',
-            to: '到',
-            results: '筆'
-          },
-          noRecordsFound: '查無資訊'
-        },
-        pagination: {
-          enabled: true,
-          limit: 10,
-          summary: true
-        }
-      }).render(this.$refs.grid)
-      // 更新表格資料
-      setTimeout(() => {
-        grid.updateConfig({
-          data: this.gridData
-        }).forceRender()
-      }, 100)
-    },
-    async getDetail (itemData) {
+    async getError (item) {
+      if (item) {
+        this.errorDataPost.batchId = item.batchId
+        this.errorDataPost.page = 1
+        this.errorDataPost.pageSize = 10
+      }
       this.$store.commit('changeLoading', true)
-      const url = 'https://mocki.io/v1/d00c4cf2-caa4-48d0-98c8-4a201d2e21f2'
-      const res = await this.axios.get(url)
+      const result = await service.getBatchError(this.errorDataPost)
       this.$store.commit('changeLoading', false)
-      this.detailData.fileName = itemData[0].data
-      this.detailData.gridData = res.data
-      this.buildDetailGrid()
-      this.detailModal.show()
-    },
-    buildDetailGrid () {
-      this.$refs.detailGrid.innerHTML = ''
-      const grid = new this.$grid.Grid({
-        columns: [
-          {
-            name: '卡號',
-            id: 'cardId'
-          },
-          {
-            name: '交易類別',
-            id: 'tradeType'
-          },
-          {
-            name: '金額',
-            id: 'amount'
-          },
-          {
-            name: '帳單描述',
-            id: 'desc'
-          }
-        ],
-        data: this.detailData.gridData,
-        sort: true,
-        search: true,
-        className: {
-          table: 'table table-hover table-bordered table-striped',
-          th: 'text-center',
-          td: 'text-center'
-        },
-        style: {
-          th: {
-            'background-color': '#1bbbbb',
-            color: '#fff'
-          }
-        },
-        language: {
-          pagination: {
-            previous: '<',
-            next: '>',
-            showing: '顯示',
-            of: '共',
-            to: '到',
-            results: '筆'
-          },
-          noRecordsFound: '查無資訊'
-        },
-        pagination: {
-          enabled: true,
-          limit: 15,
-          summary: true
-        }
-      }).render(this.$refs.detailGrid)
-      // 更新表格資料
-      setTimeout(() => {
-        grid.updateConfig({
-          data: this.detailData.gridData
-        }).forceRender()
-      }, 100)
-    },
-    async getError (itemData) {
-      this.$store.commit('changeLoading', true)
-      const url = 'https://mocki.io/v1/dcf652da-5138-45e4-8d13-6db5875ad86a'
-      const res = await this.axios.get(url)
-      this.$store.commit('changeLoading', false)
-      this.errorData.fileName = itemData[0].data
-      this.errorData.gridData = res.data
-      this.buildErrorGrid()
+      if (result) {
+        this.errorPageData = result.pageInfo // ? 傳送分頁資訊
+        this.errorData.batchFileName = item.batchFileName
+        this.errorData.gridData = result.batchErrorList
+      }
       this.errorModal.show()
     },
-    buildErrorGrid () {
-      this.$refs.errorGrid.innerHTML = ''
-      const grid = new this.$grid.Grid({
-        columns: [
-          {
-            name: '筆數',
-            id: 'number'
-          },
-          {
-            name: '錯誤原因',
-            id: 'desc'
-          }
-        ],
-        data: this.errorData.gridData,
-        sort: true,
-        search: true,
-        className: {
-          table: 'table table-hover table-bordered table-striped',
-          th: 'text-center',
-          td: 'text-center'
-        },
-        style: {
-          th: {
-            'background-color': '#1bbbbb',
-            color: '#fff'
-          }
-        },
-        language: {
-          pagination: {
-            previous: '<',
-            next: '>',
-            showing: '顯示',
-            of: '共',
-            to: '到',
-            results: '筆'
-          },
-          noRecordsFound: '查無資訊'
-        },
-        pagination: {
-          enabled: true,
-          limit: 10,
-          summary: true
-        }
-      }).render(this.$refs.errorGrid)
-      // 更新表格資料
-      setTimeout(() => {
-        grid.updateConfig({
-          data: this.errorData.gridData
-        }).forceRender()
-      }, 100)
+    getFile (event) {
+      this.uploadPost.file = event.target.files[0]
     },
-    getFile (file) {
-      console.log(file)
+    async uploadFile () {
+      const formData = new FormData()
+      formData.append('file', this.uploadPost.file)
+      formData.append('totalCount', this.uploadPost.totalCount)
+      formData.append('totalAmt', this.uploadPost.totalAmt)
+      formData.append('msgId', this.$custom.uuidv4())
+      this.$store.commit('changeLoading', true)
+      const result = await service.uploadBatch(formData)
+      this.$store.commit('changeLoading', false)
+      if (result) {
+        this.$swal.fire({
+          toast: true,
+          position: 'center',
+          icon: 'success',
+          title: '上傳成功！',
+          showConfirmButton: false,
+          timer: 1500,
+          width: 500,
+          background: '#F0F0F2',
+          padding: 25,
+          customClass: {
+            container: 'z-10000'
+          }
+        })
+        this.uploadPost = {}
+        this.$refs.upload.value = ''
+        this.getData()
+      }
+    },
+    confirmBatch (item) {
+      this.$swal.fire({
+        title: '確認送出?',
+        showCancelButton: true,
+        confirmButtonColor: '#0d6efd',
+        cancelButtonColor: '#4D4D4D',
+        confirmButtonText: '確認',
+        cancelButtonText: '取消',
+        reverseButtons: true
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          this.$store.commit('changeLoading', true)
+          const result = await service.confirmBatch({
+            batchId: item.batchId
+          })
+          this.$store.commit('changeLoading', false)
+          if (result) {
+            this.getData()
+          }
+        }
+      })
+    },
+    async downloadExcel () {
+      const result = await service.downloadExcel()
+      const a = document.createElement('a')
+      a.href = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
+      a.style.display = 'none'
+      a.download = '範例excel.xls'
+      document.body.appendChild(a)
+      a.click()
+    },
+    async downloadFormat () {
+      const result = await service.downloadFormat()
+      const a = document.createElement('a')
+      a.href = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
+      a.style.display = 'none'
+      a.download = '批次交易檔範例.docx'
+      document.body.appendChild(a)
+      a.click()
     }
   },
   mounted () {
-    this.getData()
-    this.detailModal = new this.$custom.bootstrap.Modal(this.$refs.detailModal, { backdrop: 'static' })
     this.errorModal = new this.$custom.bootstrap.Modal(this.$refs.errorModal, { backdrop: 'static' })
   }
 }
@@ -367,5 +308,8 @@ export default {
 <style>
   .pointer {
     cursor: pointer !important;
+  }
+  .z-10000{
+    z-index: 10000;
   }
 </style>

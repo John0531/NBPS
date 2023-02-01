@@ -31,14 +31,13 @@ axios.interceptors.response.use(
       store.commit('changeLoading', false)
       console.log(err)
       Swal.fire({
-        title: err.response.data,
+        title: `${err.response.data} (${err.response.status})`,
         allowOutsideClick: true,
         confirmButtonColor: '#dc3545',
         confirmButtonText: '確認',
         backdrop: true,
         width: 400
       })
-      console.log(err)
       return Promise.reject(err)
     }
     if (err.response && err.response.status === 401) {

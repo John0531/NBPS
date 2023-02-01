@@ -8,7 +8,7 @@ const service = {
       return res.data.permissions
     } catch (error) {
       if (error.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
           return service.getDefaultPermission()
         }
@@ -22,7 +22,7 @@ const service = {
       return res.data
     } catch (error) {
       if (error.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
           return service.getGroupData(postData)
         }
@@ -38,7 +38,7 @@ const service = {
       }
     } catch (error) {
       if (error.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
           return service.addGroup(postData)
         }
@@ -55,7 +55,7 @@ const service = {
       }
     } catch (error) {
       if (error.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
           return service.editGroup(postData)
         }
@@ -72,7 +72,7 @@ const service = {
       }
     } catch (error) {
       if (error.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('ELIXIR_USER'))
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
           return service.removeGroup(postData)
         }

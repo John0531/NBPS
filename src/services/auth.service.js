@@ -41,18 +41,34 @@ const AuthService = {
       }
       console.log(postData)
       const res = await axios.post(`${process.env.VUE_APP_BASE_API}/d1/refresh`, postData)
-      if (res == null || res.data == null) {
-        return null
-      }
       if (res.data.token) {
         localStorage.setItem('NBPS_USER', JSON.stringify(res.data))
-        return res.data
+        return true
       } else {
         return null
       }
     } catch (error) {
       console.log(error)
       return null
+    }
+  },
+  async changePwd (user) {
+    try {
+      const url = `${process.env.VUE_APP_BASE_API}/d3/updatePd`
+      const postData = {
+        pd: await forge.encrypt(user.pd)
+      }
+      const res = await axios.post(url, postData)
+      if (res.data) {
+        return true
+      }
+    } catch (error) {
+      if (error.response.status === 401) {
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
+        if (user) {
+          return AuthService.changePwd(user)
+        }
+      }
     }
   }
 }

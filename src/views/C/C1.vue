@@ -18,7 +18,7 @@
             <button class="btn btn-warning me-3 px-4" @click="addModal.show()">新增</button>
           </div>
         </div>
-        <MainData :Page="pageData" @ChangePageInfo="getPageInfo">
+        <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
           <template #default>
             <thead>
               <tr>
@@ -272,16 +272,16 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <label for="tidAmount" class="col-sm-2 col-form-label">TID數目:</label>
+                <label for="tidCnt" class="col-sm-2 col-form-label">TID數目:</label>
                 <div class="col-sm-10">
                   <Field
                     name="TID數目"
-                    type="text"
+                    type="number"
                     class="form-control"
                     rules="required"
                     :class="{ 'is-invalid': errors['TID數目'] }"
-                    id="tidAmount"
-                    v-model="addForm.tidAmount"
+                    id="tidCnt"
+                    v-model="addForm.tidCnt"
                   />
                   <ErrorMessage
                     name="TID數目"
@@ -546,16 +546,16 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <label for="tidAmount2" class="col-sm-2 col-form-label">TID數目:</label>
+                <label for="tidCnt2" class="col-sm-2 col-form-label">TID數目:</label>
                 <div class="col-sm-10">
                   <Field
                     name="TID數目"
-                    type="text"
+                    type="number"
                     class="form-control"
                     rules="required"
                     :class="{ 'is-invalid': errors['TID數目'] }"
-                    id="tidAmount2"
-                    v-model="editForm.tidAmount"
+                    id="tidCnt2"
+                    v-model="editForm.tidCnt"
                   />
                   <ErrorMessage
                     name="TID數目"

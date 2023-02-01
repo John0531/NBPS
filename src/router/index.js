@@ -10,6 +10,10 @@ const routes = [
         component: () => import('../views/Login.vue')
       },
       {
+        path: `${process.env.VUE_APP_BASE_ROUTE}/changePwd`,
+        component: () => import('../views/ChangePwd.vue')
+      },
+      {
         path: `${process.env.VUE_APP_BASE_ROUTE}/nbps-system`,
         component: () => import('../Template/System.vue'),
         children: [
@@ -102,6 +106,14 @@ const routes = [
             }
           },
           {
+            path: 'F3',
+            component: () => import('../views/F/F3.vue'),
+            meta: {
+              group: 'F',
+              code: 'F3'
+            }
+          },
+          {
             path: '/:pathMatch(.*)*',
             name: 'error',
             component: () => import('../views/PageNotFound.vue')
@@ -125,7 +137,7 @@ routeCfg.routes = routes
 const router = createRouter(routeCfg)
 
 router.beforeEach((to, from, next) => {
-  const publicPages = [`${process.env.VUE_APP_BASE_ROUTE}/login`, `${process.env.VUE_APP_BASE_ROUTE}/nbps-system/error`] // * 設定公開路徑(不需要 token)
+  const publicPages = [`${process.env.VUE_APP_BASE_ROUTE}/login`, `${process.env.VUE_APP_BASE_ROUTE}/nbps-system/error`, `${process.env.VUE_APP_BASE_ROUTE}/changePwd`] // * 設定公開路徑(不需要 token)
   const authRequired = !publicPages.includes(to.path) // * 導入頁面為非公開路徑
   const loginUser = JSON.parse(localStorage.getItem('NBPS_USER'))
   // * 設定不同權限不可導入特定頁面
