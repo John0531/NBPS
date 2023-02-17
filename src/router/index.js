@@ -58,6 +58,14 @@ const routes = [
             }
           },
           {
+            path: 'B2',
+            component: () => import('../views/B/B2.vue'),
+            meta: {
+              group: 'B',
+              code: 'B2'
+            }
+          },
+          {
             path: 'B4',
             component: () => import('../views/B/B4.vue'),
             meta: {

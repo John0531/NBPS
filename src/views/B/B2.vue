@@ -32,10 +32,6 @@
                 </select>
               </div>
               <div class="col-xxl-7"></div>
-              <div class="col-xxl-5 d-flex mb-4">
-                <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店代碼:</h5>
-                <input type="text" v-model="searchForm.storeId" class="form-control" placeholder="">
-              </div>
             </div>
             <button @click="getData" class="btn btn-primary me-3 px-4">搜尋</button>
           </div>
@@ -88,7 +84,6 @@
                   <button @click="getDetail(item)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
                   <button @click="downloadReply(item)" class="btn btn-success me-2 btn-sm">下載回覆檔</button>
                   <button @click="downloadExcel(item)" class="btn btn-warning me-2 btn-sm">下載總計EXCEL</button>
-                  <button @click="downloadResendTrans(item)" v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'" class="btn btn-danger btn-sm">異常切檔</button>
                 </td>
               </tr>
             </tbody>
@@ -256,7 +251,7 @@
 </template>
 
 <script>
-import service from '@/services/A/A2.service.js'
+import service from '@/services/B/B2.service.js'
 import MainData from '@/components/MainData.vue'
 
 export default {
@@ -353,23 +348,6 @@ export default {
       a.href = url
       a.style.display = 'none'
       a.download = '總計excel.xlsx'
-      a.click()
-      // 清除暫存
-      a.href = ''
-      window.URL.revokeObjectURL(url)
-    },
-    async downloadResendTrans (item) {
-      this.$store.commit('changeLoading', true)
-      const result = await service.downloadResendTrans({
-        batchId: item.batchId,
-        storeId: item.batchStoreId
-      })
-      this.$store.commit('changeLoading', false)
-      const a = document.createElement('a')
-      const url = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
-      a.href = url
-      a.style.display = 'none'
-      a.download = '異常切檔.zip'
       a.click()
       // 清除暫存
       a.href = ''

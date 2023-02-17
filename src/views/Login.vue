@@ -73,14 +73,18 @@ export default {
             container: 'z-10000'
           }
         })
-        this.$store.commit('getUser', result.userData.user)
+        if (result.userData.user.isDefault) {
+          this.$router.push(`${process.env.VUE_APP_BASE_ROUTE}/changePwd`)
+          return
+        }
         this.$router.push(`${process.env.VUE_APP_BASE_ROUTE}/nbps-system/${result.userData.envData.permissions[0].function[0].pageCode}`)
       } else {
         this.$swal.fire({
-          text: `${result.msg}`,
+          title: `${result.msg}`,
           allowOutsideClick: false,
-          confirmButtonColor: '#0d6efd',
+          confirmButtonColor: '#dc3545',
           confirmButtonText: '確認',
+          backdrop: true,
           width: 400
         })
       }

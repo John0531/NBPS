@@ -281,22 +281,32 @@ export default {
       })
     },
     async downloadExcel () {
+      this.$store.commit('changeLoading', true)
       const result = await service.downloadExcel()
+      this.$store.commit('changeLoading', false)
       const a = document.createElement('a')
-      a.href = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
+      const url = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
+      a.href = url
       a.style.display = 'none'
       a.download = '範例excel.xls'
-      document.body.appendChild(a)
       a.click()
+      // 清除暫存
+      a.href = ''
+      window.URL.revokeObjectURL(url)
     },
     async downloadFormat () {
+      this.$store.commit('changeLoading', true)
       const result = await service.downloadFormat()
+      this.$store.commit('changeLoading', false)
       const a = document.createElement('a')
-      a.href = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
+      const url = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
+      a.href = url
       a.style.display = 'none'
       a.download = '批次交易檔範例.docx'
-      document.body.appendChild(a)
       a.click()
+      // 清除暫存
+      a.href = ''
+      window.URL.revokeObjectURL(url)
     }
   },
   mounted () {

@@ -53,7 +53,7 @@ function currency (num) {
     return null
   }
   const n = parseInt(num, 10)
-  return `$${n
+  return `${n
     .toFixed(0)
     .replace(/./g, (c, i, a) =>
       i && c !== '.' && (a.length - i) % 3 === 0

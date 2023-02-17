@@ -622,8 +622,8 @@ export default {
   methods: {
     // ? 取得 MainData 元件分頁資訊
     getPageInfo (PageInfo) {
-      this.GroupDataPost = PageInfo
-      this.GroupDataPost.storeId = ''
+      this.GroupDataPost.page = PageInfo.page
+      this.GroupDataPost.pageSize = PageInfo.pageSize
       this.getData()
     },
     async getData () {

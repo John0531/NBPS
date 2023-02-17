@@ -1,5 +1,6 @@
 import axios from 'axios'
 import forge from '@/utilities/forge'
+import store from '../store'
 
 const AuthService = {
   async login (user) {
@@ -10,8 +11,9 @@ const AuthService = {
         pd: await forge.encrypt(user.pd)
       }
       const res = await axios.post(url, postData)
-      if (res.data && res.data.token && res.data.refreshToken) {
+      if (res.data && res.data.token) {
         localStorage.setItem('NBPS_USER', JSON.stringify(res.data)) // ? 將物件傳為 json 字串存入
+        store.commit('getUser', res.data.user)
         return {
           isSuccess: true,
           userData: res.data
