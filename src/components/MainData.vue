@@ -80,7 +80,7 @@ export default {
   },
   mounted () {
     this.$emit('updatePageInfo', this.PageInfo)
-    const keepUpdate = ['A1', 'B1', 'A2']
+    const keepUpdate = ['A1', 'B1', 'A2', 'B2']
     if (keepUpdate.includes(this.$route.meta.code)) {
       setInterval(() => {
         this.$emit('updatePageInfo', this.PageInfo)

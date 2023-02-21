@@ -15,8 +15,8 @@
               </div>
             </div> -->
             <!-- <button class="btn btn-primary me-3 px-4">搜尋</button> -->
-            <button class="btn btn-warning me-3 px-4" @click="openAddModal">新增帳號</button>
-            <button class="btn btn-primary me-3 px-4">匯出帳號excel</button>
+            <button class="btn btn-warning me-3 px-4" @click="openAddModal" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增帳號</button>
+            <button class="btn btn-primary me-3 px-4" :disabled="!$store.state.pageBtnPermission.includes('download')">匯出帳號excel</button>
           </div>
         </div>
         <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
@@ -42,7 +42,7 @@
                 <td>{{item.description}}</td>
                 <td>
                   <button v-if="$store.state.user.level!==item.level" @click="openEditModal(item)" class="btn btn-success me-2 btn-sm">編輯</button>
-                  <button v-if="$store.state.user.level!==item.level" @click="removeAccount(item)" class="btn btn-danger btn-sm">刪除</button>
+                  <button v-if="$store.state.user.level!==item.level" @click="removeAccount(item)" class="btn btn-danger btn-sm" :disabled="!$store.state.pageBtnPermission.includes('modify')">刪除</button>
                 </td>
               </tr>
             </tbody>
@@ -336,7 +336,7 @@
                 </div>
               </div>
               <div class="d-flex justify-content-end">
-                <button class="btn btn-success px-4">儲存</button>
+                <button class="btn btn-success px-4" :disabled="!$store.state.pageBtnPermission.includes('modify')">儲存</button>
               </div>
             </Form>
           </div>

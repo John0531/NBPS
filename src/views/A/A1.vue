@@ -87,9 +87,9 @@
                   />
                 </div>
               </div>
-              <button type="submit" class="btn btn-primary me-3 px-4">上傳</button>
-              <button class="btn btn-warning me-3" @click.prevent="downloadExcel">下載範例EXCEL</button>
-              <button class="btn btn-success" @click.prevent="downloadFormat">下載批次交易檔規格</button>
+              <button type="submit" class="btn btn-primary me-3 px-4" :disabled="!$store.state.pageBtnPermission.includes('insert')">上傳</button>
+              <button class="btn btn-warning me-3" @click.prevent="downloadExcel" :disabled="!$store.state.pageBtnPermission.includes('download')">下載範例EXCEL</button>
+              <button class="btn btn-success" @click.prevent="downloadFormat" :disabled="!$store.state.pageBtnPermission.includes('download')">下載批次交易檔規格</button>
             </Form>
           </div>
         </div>
@@ -140,7 +140,7 @@
                 <td>{{$custom.currency(item.refundAmt)}}</td>
                 <td>
                   <button v-if="item.batchStatus==='VALIDATE_FAIL'" @click="getError(item)" class="btn btn-danger me-2 btn-sm">檢視錯誤</button>
-                  <button v-if="item.batchStatus==='VALIDATE_SUCCESS'" @click="confirmBatch(item)" class="btn btn-primary btn-sm">確認送出授權</button>
+                  <button v-if="item.batchStatus==='VALIDATE_SUCCESS'" @click="confirmBatch(item)" class="btn btn-primary btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">確認送出授權</button>
                 </td>
               </tr>
             </tbody>

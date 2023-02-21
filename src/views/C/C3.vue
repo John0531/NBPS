@@ -15,8 +15,8 @@
               </div>
             </div> -->
             <!-- <button class="btn btn-primary me-3 px-4">搜尋</button> -->
-            <button class="btn btn-warning me-3 px-4" @click="openAddModal">新增群組</button>
-            <button class="btn btn-primary me-3 px-4">匯出群組Excel</button>
+            <button class="btn btn-warning me-3 px-4" @click="openAddModal" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增群組</button>
+            <button class="btn btn-primary me-3 px-4" :disabled="!$store.state.pageBtnPermission.includes('download')">匯出群組Excel</button>
           </div>
         </div>
         <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
@@ -38,8 +38,8 @@
                 <td>{{item.auth}}</td>
                 <td>
                   <button @click="viewAuth(item)" class="btn btn-primary me-2 btn-sm">檢視權限</button>
-                  <button v-if="$store.state.user.level!==item.level" @click="openEditModal(item)" class="btn btn-success me-2 btn-sm">編輯</button>
-                  <button v-if="$store.state.user.level!==item.level" @click="removeGroup(item)" class="btn btn-danger btn-sm">刪除</button>
+                  <button v-if="$store.state.user.level!==item.level" @click="openEditModal(item)" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('modify')">編輯</button>
+                  <button v-if="$store.state.user.level!==item.level" @click="removeGroup(item)" class="btn btn-danger btn-sm" :disabled="!$store.state.pageBtnPermission.includes('modify')">刪除</button>
                 </td>
               </tr>
             </tbody>

@@ -37,7 +37,7 @@
                 <input type="text" v-model="searchForm.storeId" class="form-control" placeholder="">
               </div>
             </div>
-            <button @click="getData" class="btn btn-primary me-3 px-4">搜尋</button>
+            <button @click="getData" class="btn btn-primary me-3 px-4" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button>
           </div>
         </div>
         <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
@@ -86,9 +86,9 @@
                 <td>{{$custom.currency(item.totalAmt)}}</td>
                 <td>
                   <button @click="getDetail(item)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
-                  <button @click="downloadReply(item)" class="btn btn-success me-2 btn-sm">下載回覆檔</button>
-                  <button @click="downloadExcel(item)" class="btn btn-warning me-2 btn-sm">下載總計EXCEL</button>
-                  <button @click="downloadResendTrans(item)" v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'" class="btn btn-danger btn-sm">異常切檔</button>
+                  <button @click="downloadReply(item)" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('download')">下載回覆檔</button>
+                  <button @click="downloadExcel(item)" class="btn btn-warning me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('download')">下載總計EXCEL</button>
+                  <button @click="downloadResendTrans(item)" v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'" class="btn btn-danger btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">異常切檔</button>
                 </td>
               </tr>
             </tbody>

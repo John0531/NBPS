@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import store from '../store'
 
 const routes = [
   {
@@ -122,6 +123,22 @@ const routes = [
             }
           },
           {
+            path: 'F4',
+            component: () => import('../views/F/F4.vue'),
+            meta: {
+              group: 'F',
+              code: 'F4'
+            }
+          },
+          {
+            path: 'F5',
+            component: () => import('../views/F/F5.vue'),
+            meta: {
+              group: 'F',
+              code: 'F5'
+            }
+          },
+          {
             path: '/:pathMatch(.*)*',
             name: 'error',
             component: () => import('../views/PageNotFound.vue')
@@ -150,10 +167,15 @@ router.beforeEach((to, from, next) => {
   const loginUser = JSON.parse(localStorage.getItem('NBPS_USER'))
   // * 設定不同權限不可導入特定頁面
   if (loginUser) {
-    const permissions = []
+    console.log(to.meta.code)
+    const permissions = [] // * 頁面可訪問權限
     loginUser.envData.permissions.forEach((item1) => {
       item1.function.forEach((item2) => {
         permissions.push(item2.pageCode)
+        //* 取得頁面操作權限
+        if (item2.pageCode === to.meta.code) {
+          store.commit('getPageBtnPermission', item2.usable)
+        }
       })
     })
     if (permissions.indexOf(to.meta.code) === -1 && authRequired) {

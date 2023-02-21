@@ -14,8 +14,8 @@
                 <input v-model="GroupDataPost.storeId" type="text" class="form-control" placeholder="可不指定">
               </div>
             </div>
-            <button class="btn btn-primary me-3 px-4" @click="getData">搜尋</button>
-            <button class="btn btn-warning me-3 px-4" @click="addModal.show()">新增</button>
+            <button class="btn btn-primary me-3 px-4" @click="getData" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button>
+            <button class="btn btn-warning me-3 px-4" @click="addModal.show()" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增</button>
           </div>
         </div>
         <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
@@ -37,7 +37,7 @@
                 <td>{{item.transTypeUI}}</td>
                 <td>
                   <button v-if="$store.state.user.level!==item.level" @click="openEditModal(item)" class="btn btn-success me-2 btn-sm">檢視明細與編輯</button>
-                  <button v-if="$store.state.user.level!==item.level" @click="removeStore(item)" class="btn btn-danger btn-sm">刪除</button>
+                  <button v-if="$store.state.user.level!==item.level" @click="removeStore(item)" class="btn btn-danger btn-sm" :disabled="!$store.state.pageBtnPermission.includes('modify')">刪除</button>
                 </td>
               </tr>
             </tbody>
@@ -586,7 +586,7 @@
                 </div>
               </div>
               <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-success px-4">儲存</button>
+                <button type="submit" class="btn btn-success px-4" :disabled="!$store.state.pageBtnPermission.includes('modify')">儲存</button>
               </div>
             </Form>
           </div>

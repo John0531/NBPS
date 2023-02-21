@@ -30,7 +30,7 @@
                 <td>{{item.groupName}}</td>
                 <td>{{item.description}}</td>
                 <td>
-                  <button v-if="$store.state.user.level!==item.level" @click="openEditModal(item)" class="btn btn-success me-2 btn-sm">解鎖</button>
+                  <button v-if="$store.state.user.level!==item.level" @click="openEditModal(item)" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('modify')">解鎖</button>
                 </td>
               </tr>
             </tbody>

@@ -15,7 +15,7 @@
               </div>
             </div> -->
             <!-- <button class="btn btn-primary me-3 px-4">搜尋</button> -->
-            <button class="btn btn-warning me-3 px-4" @click="openAddModal">新增帳號</button>
+            <button class="btn btn-warning me-3 px-4" @click="openAddModal" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增帳號</button>
           </div>
         </div>
         <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
@@ -161,7 +161,7 @@
                   />
                 </div>
                 <div class="col-sm-3">
-                  <button @click.prevent="sendEmail(addForm)" :disabled="errors['Email']||!addForm.email||errors['密碼']||!addForm.pd" class="btn btn-primary">寄送預設密碼</button>
+                  <button @click.prevent="sendEmail(addForm)" :disabled="errors['Email']||!addForm.email||errors['密碼']||!addForm.pd||!$store.state.pageBtnPermission.includes('execute')" class="btn btn-primary">寄送預設密碼</button>
                 </div>
               </div>
               <div class="row mb-3">
@@ -315,7 +315,7 @@
                   />
                 </div>
                 <div class="col-sm-3">
-                  <button @click.prevent="sendEmail(editForm)" :disabled="errors['Email']||!editForm.email||editForm.pd==='********'" class="btn btn-primary">寄送預設密碼</button>
+                  <button @click.prevent="sendEmail(editForm)" :disabled="errors['Email']||!editForm.email||editForm.pd==='********'||!$store.state.pageBtnPermission.includes('execute')" class="btn btn-primary">寄送預設密碼</button>
                 </div>
               </div>
               <div class="row mb-3">
@@ -345,7 +345,7 @@
                 </div>
               </div>
               <div class="d-flex justify-content-end">
-                <button class="btn btn-success px-4">儲存</button>
+                <button class="btn btn-success px-4" :disabled="!$store.state.pageBtnPermission.includes('modify')">儲存</button>
               </div>
             </Form>
           </div>

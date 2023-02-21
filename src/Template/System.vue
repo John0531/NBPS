@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex position-relative">
-    <Sidebar></Sidebar>
+    <SideMenu></SideMenu>
     <div class="mx-auto my-5" style="width:78%;">
       <router-view/>
     </div>
@@ -8,10 +8,15 @@
 </template>
 
 <script>
-import Sidebar from '@/components/Sidebar.vue'
+import SideMenu from '@/components/SideMenu.vue'
 export default {
   components: {
-    Sidebar
+    SideMenu
+  },
+  watch: {
+    '$route' () {
+      console.log(this.$store.state.pageBtnPermission)
+    }
   }
 }
 </script>

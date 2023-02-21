@@ -11,13 +11,56 @@
             <div class="row py-3">
               <div class="col-xxl-5 d-flex mb-4">
                 <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店代碼:</h5>
-                <input type="text" class="form-control" placeholder="">
+                <input v-model="GroupDataPost.storeId" type="text" class="form-control" placeholder="可不指定">
               </div>
             </div>
-            <button class="btn btn-primary me-3 px-4">搜尋</button>
+            <button @click.prevent="getData" class="btn btn-primary me-3 px-4" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button>
           </div>
         </div>
-        <div ref="grid" class="mt-5"></div>
+        <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
+          <template #default>
+            <thead>
+              <tr>
+                <th scope="col">特店代碼</th>
+                <th scope="col">特店名稱</th>
+                <th scope="col">上傳批次交易檔名</th>
+                <th scope="col">上傳時間</th>
+                <th scope="col">交易處理狀態</th>
+                <th scope="col">總筆數</th>
+                <th scope="col">總金額 A-B</th>
+                <th scope="col">總授權筆數</th>
+                <th scope="col">總授權金額 A</th>
+                <th scope="col">總退貨筆數</th>
+                <th scope="col">總退貨金額 B</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in gridData" :key="item.batchId">
+                <th scope="row">{{item.batchStoreId}}</th>
+                <td>{{item.batchStoreName}}</td>
+                <td>{{item.batchFileName}}</td>
+                <td>{{item.submitTime}}</td>
+                <td>
+                  <span v-if="item.trxStatus==='TRX_WAITING'">等待交易中</span>
+                  <span v-if="item.trxStatus==='TRX_PROCESS'">交易處理中</span>
+                  <span v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'">交易處理完成但有異常</span>
+                  <span v-if="item.trxStatus==='TRX_FINISH'">交易處理完成</span>
+                </td>
+                <td>{{item.totalCnt}}</td>
+                <td>{{$custom.currency(item.totalAmt)}}</td>
+                <td>{{item.authCnt}}</td>
+                <td>{{$custom.currency(item.authAmt)}}</td>
+                <td>{{item.refundCnt}}</td>
+                <td>{{$custom.currency(item.refundAmt)}}</td>
+                <td>
+                  <button @click="getDetail(item)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
+                  <button @click="multipleCancel(item)" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">整批取消</button>
+                </td>
+              </tr>
+            </tbody>
+          </template>
+        </MainData>
       </div>
     </div>
 
@@ -25,14 +68,43 @@
     <div class="modal fade" ref="detailModal" tabindex="-1" aria-labelledby="detailModal" aria-hidden="true">
       <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
-          <div class="modal-header bg-success">
+          <div class="modal-header bg-primary">
             <h5 class="modal-title text-white">檢視明細</h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <h5>檔名: {{detailData.fileName}}</h5>
-            <h5>特店名稱: {{detailData.shopName}}</h5>
-            <div ref="detailGrid" class="mt-3"></div>
+            <h5>檔名: {{detailData.batchFileName}}</h5>
+            <h5>特店名稱: {{detailData.batchStoreName}}</h5>
+            <MainData :Page="detailPageData" @ChangePageInfo="getDetailPageInfo">
+              <template #default>
+                <thead>
+                  <tr>
+                    <th scope="col">卡號</th>
+                    <th scope="col">交易類別</th>
+                    <th scope="col">金額</th>
+                    <th scope="col">帳單描述</th>
+                    <th scope="col">授權碼</th>
+                    <th scope="col">交易結果</th>
+                    <th scope="col">取消結果</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in detailData.gridData" :key="item.txnAuthId">
+                    <th scope="row">{{item.pan}}</th>
+                    <td>{{item.type}}</td>
+                    <td>{{item.amt}}</td>
+                    <td>{{item.desc}}</td>
+                    <td>{{item.authCode}}</td>
+                    <td>{{item.codeH}}</td>
+                    <td>{{item.voidCodeH}}</td>
+                    <td>
+                      <button @click="singleCancel(item)" class="btn btn-danger me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">單筆取消</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </template>
+            </MainData>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -44,226 +116,94 @@
 </template>
 
 <script>
+import service from '@/services/A/A3.service.js'
+import MainData from '@/components/MainData.vue'
 
 export default {
+  components: {
+    MainData
+  },
   data () {
     return {
+      pageData: {}, // ?分頁資訊
+      GroupDataPost: {
+        page: 1,
+        pageSize: 10
+      },
       gridData: [],
       detailModal: '',
+      detailDataPost: {
+        batchId: '',
+        page: 1,
+        pageSize: 10
+      },
       detailData: {
-        fileName: '',
-        shopName: '',
+        batchFileName: '',
+        batchStoreName: '',
         gridData: []
-      }
+      },
+      detailPageData: {}// ?詳細分頁資訊
     }
   },
   methods: {
+    // ? 取得 MainData 元件分頁資訊
+    getPageInfo (PageInfo) {
+      this.GroupDataPost.page = PageInfo.page
+      this.GroupDataPost.pageSize = PageInfo.pageSize
+      this.getData()
+    },
+    // ? 取得 MainData 元件詳細分頁資訊
+    getDetailPageInfo (PageInfo) {
+      this.GroupDataPost.page = PageInfo.page
+      this.GroupDataPost.pageSize = PageInfo.pageSize
+      this.getDetail()
+    },
     async getData () {
+      if (this.GroupDataPost.storeId === '') {
+        this.GroupDataPost.storeId = null
+      }
       this.$store.commit('changeLoading', true)
-      const url = 'https://mocki.io/v1/f30e8467-7fad-48ba-bfd8-ca569d924a5e'
-      const res = await this.axios.get(url)
+      const result = await service.getBatchData(this.GroupDataPost)
       this.$store.commit('changeLoading', false)
-      this.gridData = res.data
-      this.buildGrid()
+      this.pageData = result.pageInfo // ? 傳送分頁資訊
+      this.gridData = result.batchList
     },
-    buildGrid () {
-      this.$refs.grid.innerHTML = ''
-      const grid = new this.$grid.Grid({
-        columns: [
-          {
-            name: '特店代碼',
-            id: 'id'
-          },
-          {
-            name: '特店名稱',
-            id: 'name'
-          },
-          {
-            name: '上傳批次交易檔名',
-            id: 'fileName'
-          },
-          {
-            name: '上傳時間',
-            id: 'createTime'
-          },
-          {
-            name: '交易處理狀態',
-            id: 'tradeStatus'
-          },
-          {
-            name: '總比數',
-            id: 'totalNum'
-          },
-          {
-            name: '總授權筆數',
-            id: 'AuthNum'
-          },
-          {
-            name: '總退貨筆數',
-            id: 'returnNum'
-          },
-          {
-            name: '授權成功金額',
-            id: 'AuthAmount'
-          },
-          {
-            name: '退貨成功金額',
-            id: 'refundAmount'
-          },
-          {
-            name: '執行',
-            formatter: (cell, row) => {
-              const buttons = []
-              buttons.push(
-                this.$grid.h('button', {
-                  className: 'btn btn-success mr-3 btn-sm',
-                  onClick: () => {
-                    this.getDetail(row.cells)
-                  }
-                }, '檢視明細')
-              )
-              buttons.push(
-                this.$grid.h('button', {
-                  className: 'btn btn-primary mr-3 btn-sm',
-                  onClick: () => {
-                    this.delete(row.cells)
-                  }
-                }, '整批取消')
-              )
-              return buttons
-            }
-          }
-        ],
-        data: this.gridData,
-        sort: true,
-        search: true,
-        className: {
-          table: 'table table-hover table-bordered table-striped',
-          th: 'text-center',
-          td: 'text-center'
-        },
-        style: {
-          th: {
-            'background-color': '#1bbbbb',
-            color: '#fff'
-          }
-        },
-        language: {
-          pagination: {
-            previous: '<',
-            next: '>',
-            showing: '顯示',
-            of: '共',
-            to: '到',
-            results: '筆'
-          },
-          noRecordsFound: '查無資訊'
-        },
-        pagination: {
-          enabled: true,
-          limit: 10,
-          summary: true
-        }
-      }).render(this.$refs.grid)
-      // 更新表格資料
-      setTimeout(() => {
-        grid.updateConfig({
-          data: this.gridData
-        }).forceRender()
-      }, 100)
-    },
-    async getDetail (itemData) {
+    async getDetail (item) {
+      if (item) {
+        this.detailDataPost.batchId = item.batchId
+        this.detailDataPost.page = 1
+        this.detailDataPost.pageSize = 10
+      }
       this.$store.commit('changeLoading', true)
-      const url = 'https://mocki.io/v1/d00c4cf2-caa4-48d0-98c8-4a201d2e21f2'
-      const res = await this.axios.get(url)
+      const result = await service.getBatchDetail(this.detailDataPost)
       this.$store.commit('changeLoading', false)
-      this.detailData.fileName = itemData[2].data
-      this.detailData.shopName = itemData[1].data
-      this.detailData.gridData = res.data
-      this.buildDetailGrid()
+      if (result) {
+        this.detailPageData = result.pageInfo // ? 傳送分頁資訊
+        this.detailData.batchFileName = item.batchFileName
+        this.detailData.batchStoreName = item.batchStoreName
+        this.detailData.gridData = result.batchErrorList
+      }
       this.detailModal.show()
     },
-    buildDetailGrid () {
-      this.$refs.detailGrid.innerHTML = ''
-      const grid = new this.$grid.Grid({
-        columns: [
-          {
-            name: '卡號',
-            id: 'cardId'
-          },
-          {
-            name: '交易類別',
-            id: 'tradeType'
-          },
-          {
-            name: '金額',
-            id: 'amount'
-          },
-          {
-            name: '帳單描述',
-            id: 'desc'
-          },
-          {
-            name: '授權碼',
-            id: 'authCode'
-          },
-          {
-            name: '交易結果',
-            id: 'tradeResult'
-          },
-          {
-            name: '取消結果',
-            formatter: (cell, row) => {
-              const buttons = []
-              buttons.push(
-                this.$grid.h('button', {
-                  className: 'btn btn-success mr-3 btn-sm',
-                  onClick: () => {
-                    this.delete(row.cells)
-                  }
-                }, '單筆取消')
-              )
-              return buttons
-            }
-          }
-        ],
-        data: this.detailData.gridData,
-        sort: true,
-        search: true,
-        className: {
-          table: 'table table-hover table-bordered table-striped',
-          th: 'text-center',
-          td: 'text-center'
-        },
-        style: {
-          th: {
-            'background-color': '#1bbbbb',
-            color: '#fff'
-          }
-        },
-        language: {
-          pagination: {
-            previous: '<',
-            next: '>',
-            showing: '顯示',
-            of: '共',
-            to: '到',
-            results: '筆'
-          },
-          noRecordsFound: '查無資訊'
-        },
-        pagination: {
-          enabled: true,
-          limit: 15,
-          summary: true
-        }
-      }).render(this.$refs.detailGrid)
-      // 更新表格資料
-      setTimeout(() => {
-        grid.updateConfig({
-          data: this.detailData.gridData
-        }).forceRender()
-      }, 100)
+    async multipleCancel (item) {
+      const res = await this.$swal.fire({
+        title: '確認是否刪除?',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#4D4D4D',
+        confirmButtonText: '刪除',
+        cancelButtonText: '取消',
+        reverseButtons: true
+      })
+      if (res.isConfirmed) {
+        this.$store.commit('changeLoading', true)
+        const result = await service.multipleCancel(item.batchId)
+        this.$store.commit('changeLoading', false)
+        console.log(result)
+      }
+    },
+    async singleCancel (item) {
+
     },
     delete (data) {
       this.$swal.fire({
@@ -314,7 +254,6 @@ export default {
     }
   },
   mounted () {
-    this.getData()
     this.detailModal = new this.$custom.bootstrap.Modal(this.$refs.detailModal, { backdrop: 'static' })
   }
 }

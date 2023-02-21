@@ -1,6 +1,21 @@
 import axios from 'axios'
 
 const service = {
+  async getBusinessDay () {
+    try {
+      const url = `${process.env.VUE_APP_BASE_API}/b1/findDefaultElement`
+      const res = await axios.post(url, {})
+      console.log(res)
+      return res.data
+    } catch (error) {
+      if (error.response.status === 401) {
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
+        if (user) {
+          return service.getBusinessDay()
+        }
+      }
+    }
+  },
   async getBatchData (postData) {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/b1/findBatch`

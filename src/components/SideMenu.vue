@@ -6,14 +6,14 @@
       <div v-for="(item1) in permissions" :key="item1.code" class="accordion-item">
         <h2 class="accordion-header">
           <button :class="{'collapsed':item1.code!==$route.meta.group}" class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="`#${item1.code}`" aria-expanded="false" aria-controls="flush-collapseOne">
-            {{item1.name}}{{item1.code}}
+            {{item1.name}}
           </button>
         </h2>
         <div :id="item1.code" :class="{'show':item1.code===$route.meta.group}" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordion">
           <div class="accordion-body">
             <ul class="list-unstyled ms-4 mb-0">
               <li v-for="item2 in item1.function" :key="item2.pageCode" class="my-1">
-                <router-link :to="`${$store.state.base_route}/nbps-system/${item2.pageCode}`" class="fs-6 text-dark text-decoration-none">{{item2.pageName}}{{item2.pageCode}}</router-link>
+                <router-link :to="`${$store.state.base_route}/nbps-system/${item2.pageCode}`" class="fs-6 text-dark text-decoration-none">{{item2.pageName}}</router-link>
               </li>
             </ul>
           </div>
