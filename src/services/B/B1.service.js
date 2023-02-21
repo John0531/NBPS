@@ -39,7 +39,6 @@ const service = {
           'Content-Type': 'multipart/form-data'
         }
       })
-      console.log(res)
       if (res.data) {
         return true
       }

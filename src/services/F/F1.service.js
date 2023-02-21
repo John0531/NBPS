@@ -86,6 +86,26 @@ const service = {
         }
       }
     }
+  },
+  async downloadExcel () {
+    try {
+      const url = `${process.env.VUE_APP_BASE_API}/f1/downloadExcel`
+      const res = await axios({
+        url: url,
+        method: 'POST',
+        data: {},
+        responseType: 'blob'
+      })
+      console.log(res)
+      return res
+    } catch (error) {
+      if (error.response.status === 401) {
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
+        if (user) {
+          return service.downloadExcel()
+        }
+      }
+    }
   }
 }
 

@@ -40,7 +40,7 @@ const service = {
       if (error.response.status === 401) {
         const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
-          return service.multipleCancel({ batchId: batchId })
+          return service.multipleCancel(batchId)
         }
       }
     }
@@ -55,7 +55,7 @@ const service = {
       if (error.response.status === 401) {
         const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
-          return service.singleCancel({ txnAuthId: txnAuthId })
+          return service.singleCancel(txnAuthId)
         }
       }
     }

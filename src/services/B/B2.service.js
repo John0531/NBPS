@@ -10,7 +10,7 @@ const service = {
       if (error.response.status === 401) {
         const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
-          return service.getBatchData()
+          return service.getBatchData(postData)
         }
       }
     }
@@ -39,7 +39,6 @@ const service = {
         data: { batchId: batchId },
         responseType: 'blob'
       })
-      console.log(res)
       return res
     } catch (error) {
       if (error.response.status === 401) {

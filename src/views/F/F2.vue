@@ -16,7 +16,7 @@
             </div> -->
             <!-- <button class="btn btn-primary me-3 px-4">搜尋</button> -->
             <button class="btn btn-warning me-3 px-4" @click="openAddModal" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增群組</button>
-            <button class="btn btn-primary me-3 px-4" :disabled="!$store.state.pageBtnPermission.includes('download')">匯出群組Excel</button>
+            <button class="btn btn-primary me-3 px-4" @click="downloadExcel" :disabled="!$store.state.pageBtnPermission.includes('download')">匯出群組Excel</button>
           </div>
         </div>
         <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
@@ -587,6 +587,20 @@ export default {
           }
         }
       })
+    },
+    async downloadExcel () {
+      this.$store.commit('changeLoading', true)
+      const result = await service.downloadExcel()
+      this.$store.commit('changeLoading', false)
+      const a = document.createElement('a')
+      const url = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
+      a.href = url
+      a.style.display = 'none'
+      a.download = '所有群組.xlsx'
+      a.click()
+      // 清除暫存
+      a.href = ''
+      window.URL.revokeObjectURL(url)
     },
     checkPermission (item) {
       if (item.checked) {
