@@ -5,7 +5,6 @@ const service = {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/b1/findDefaultElement`
       const res = await axios.post(url, {})
-      console.log(res)
       return res.data
     } catch (error) {
       if (error.response.status === 401) {
@@ -20,7 +19,6 @@ const service = {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/b1/findBatch`
       const res = await axios.post(url, postData)
-      console.log(res)
       return res.data
     } catch (error) {
       if (error.response.status === 401) {
@@ -55,7 +53,6 @@ const service = {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/b1/updateBatchStatus`
       const res = await axios.post(url, postData)
-      console.log(res)
       if (res.data) {
         return true
       }
@@ -72,7 +69,6 @@ const service = {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/b1/findBatchError`
       const res = await axios.post(url, postData)
-      console.log(res)
       return res.data
     } catch (error) {
       if (error.response.status === 401) {
@@ -92,7 +88,6 @@ const service = {
         data: {},
         responseType: 'blob'
       })
-      console.log(res)
       return res
     } catch (error) {
       if (error.response.status === 401) {
@@ -112,7 +107,6 @@ const service = {
         data: {},
         responseType: 'blob'
       })
-      console.log(res)
       return res
     } catch (error) {
       if (error.response.status === 401) {

@@ -41,7 +41,6 @@ const AuthService = {
         token: user.token,
         refreshToken: user.refreshToken
       }
-      console.log(postData)
       const res = await axios.post(`${process.env.VUE_APP_BASE_API}/d1/refresh`, postData)
       if (res.data.token) {
         localStorage.setItem('NBPS_USER', JSON.stringify(res.data))
@@ -50,7 +49,6 @@ const AuthService = {
         return null
       }
     } catch (error) {
-      console.log(error)
       return null
     }
   },

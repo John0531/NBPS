@@ -6,7 +6,6 @@ const service = {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/c1/searchStore`
       const res = await axios.post(url, postData)
-      console.log(res)
       return res.data
     } catch (error) {
       if (error.response.status === 401) {
@@ -21,7 +20,6 @@ const service = {
     try {
       const postData = JSON.parse(JSON.stringify(formData))
       postData.uploadPd = await forge.encrypt(postData.uploadPd)
-      console.log(postData)
       const url = `${process.env.VUE_APP_BASE_API}/c1/createStore`
       const res = await axios.post(url, postData)
       if (res.data) {

@@ -89,7 +89,6 @@ const service = {
         data: {},
         responseType: 'blob'
       })
-      console.log(res)
       return res
     } catch (error) {
       if (error.response.status === 401) {

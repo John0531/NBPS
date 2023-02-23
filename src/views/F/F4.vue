@@ -116,7 +116,6 @@ export default {
     async getData () {
       this.$store.commit('changeLoading', true)
       const result = await service.getUserLog(this.searchForm)
-      console.log(result)
       this.$store.commit('changeLoading', false)
       this.pageData = result.pageInfo // ? 傳送分頁資訊
       this.gridData = result.userLogList

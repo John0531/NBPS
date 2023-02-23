@@ -108,7 +108,7 @@
           <div class="modal-body">
             <h5>檔名: {{detailData.batchFileName}}</h5>
             <h5>特店名稱: {{detailData.batchStoreName}}</h5>
-            <MainData :Page="detailPageData" @ChangePageInfo="getDetailPageInfo">
+            <MainData ref="detailMainData" :Page="detailPageData" @ChangePageInfo="getDetailPageInfo">
               <template #default>
                 <thead>
                   <tr>
@@ -271,12 +271,12 @@ export default {
         endDate: `${this.$custom.moment().format('YYYY-MM-DD')} 23:59:59`
       },
       gridData: [],
-      detailPageData: {}, // ?詳細分頁資訊
       detailModal: '',
       detailData: {
         originData: [],
         gridData: []
-      }
+      },
+      detailPageData: {} // ?詳細分頁資訊
     }
   },
   methods: {
@@ -313,7 +313,6 @@ export default {
     async getDetail (item) {
       this.$store.commit('changeLoading', true)
       const result = await service.getBatchDetail(item.batchId)
-      console.log(result)
       this.$store.commit('changeLoading', false)
       if (result) {
         // * 傳送分頁資訊(僅第一次打api取得所有資料)
@@ -322,11 +321,14 @@ export default {
           currentPage: 1,
           totalPages: Math.ceil(result.batchList.length / 10)
         }
-        this.detailData.batchFileName = item.batchFileName
-        this.detailData.batchStoreName = item.batchStoreName
         this.detailData.originData = result.batchList
         this.detailData.gridData = this.detailData.originData.slice(0, 10)
+        // * 傳送分頁資訊(僅第一次打api取得所有資料) end
+        this.detailData.batchFileName = item.batchFileName
+        this.detailData.batchStoreName = item.batchStoreName
         this.detailData.dtSummary = result.dtSummary
+        // * 將每頁資料數初始化
+        this.$refs.detailMainData.PageInfo.pageSize = 10
       }
       this.detailModal.show()
     },

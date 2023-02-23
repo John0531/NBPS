@@ -12,11 +12,6 @@ import SideMenu from '@/components/SideMenu.vue'
 export default {
   components: {
     SideMenu
-  },
-  watch: {
-    '$route' () {
-      console.log(this.$store.state.pageBtnPermission)
-    }
   }
 }
 </script>

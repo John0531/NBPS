@@ -19,7 +19,6 @@ const service = {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/b2/findTxnDetail`
       const res = await axios.post(url, { batchId: batchId })
-      console.log(res)
       return res.data
     } catch (error) {
       if (error.response.status === 401) {
@@ -58,7 +57,6 @@ const service = {
         data: { batchId: batchId },
         responseType: 'blob'
       })
-      console.log(res)
       return res
     } catch (error) {
       if (error.response.status === 401) {
@@ -78,7 +76,6 @@ const service = {
         data: postData,
         responseType: 'blob'
       })
-      console.log(res)
       return res
     } catch (error) {
       if (error.response.status === 401) {

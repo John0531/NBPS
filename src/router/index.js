@@ -167,7 +167,6 @@ router.beforeEach((to, from, next) => {
   const loginUser = JSON.parse(localStorage.getItem('NBPS_USER'))
   // * 設定不同權限不可導入特定頁面
   if (loginUser) {
-    console.log(to.meta.code)
     const permissions = [] // * 頁面可訪問權限
     loginUser.envData.permissions.forEach((item1) => {
       item1.function.forEach((item2) => {

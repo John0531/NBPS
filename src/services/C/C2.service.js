@@ -20,7 +20,6 @@ const service = {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/c2/findUsers`
       const res = await axios.post(url, postData)
-      console.log(res)
       return res.data
     } catch (error) {
       if (error.response.status === 401) {
@@ -36,7 +35,6 @@ const service = {
       if (postData.pd) {
         postData.pd = await forge.encrypt(postData.pd)
       }
-      console.log(postData)
       const url = `${process.env.VUE_APP_BASE_API}/c2/createUser`
       const res = await axios.post(url, postData)
       if (res.data) {
@@ -89,7 +87,6 @@ const service = {
   },
   async sendEmail (postData) {
     try {
-      console.log(postData)
       postData.presetPd = await forge.encrypt(postData.presetPd)
       const url = `${process.env.VUE_APP_BASE_API}/c2/sendMail`
       const res = await axios.post(url, postData)
@@ -97,7 +94,6 @@ const service = {
         return true
       }
     } catch (error) {
-      console.log(error)
       if (error.response.status === 401) {
         const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {

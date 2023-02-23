@@ -207,7 +207,6 @@ export default {
     async getBusinessDay () {
       this.$store.commit('changeLoading', true)
       const result = await service.getBusinessDay()
-      console.log(result)
       this.isBusinessDay = result.isBusinessDay
       this.$store.commit('changeLoading', false)
     },

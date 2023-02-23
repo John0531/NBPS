@@ -14,20 +14,52 @@
                 <Datepicker class="w-xxl-50 w-100" v-model="date" month-picker auto-apply format="yyyy年MM月"></Datepicker>
               </div>
             </div>
-            <button class="btn btn-primary me-3 px-4">搜尋</button>
+            <button @click="downloadReport" :disabled="!$store.state.pageBtnPermission.includes('download')" class="btn btn-primary me-3 px-4">下載</button>
           </div>
         </div>
-        <div ref="grid" class="mt-5"></div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import service from '@/services/A/A4.service.js'
+
 export default {
   data () {
     return {
-      date: ''
+      date: null
+    }
+  },
+  methods: {
+    async downloadReport () {
+      if (!this.date) {
+        this.$swal.fire({
+          title: '請選擇日期',
+          allowOutsideClick: true,
+          confirmButtonColor: '#dc3545',
+          confirmButtonText: '確認',
+          backdrop: true,
+          width: 400
+        })
+        return
+      }
+      const postData = {
+        year: this.date.year,
+        month: `${this.date.month + 1}`.padStart(2, '0')
+      }
+      this.$store.commit('changeLoading', true)
+      const result = await service.downloadReport(postData)
+      this.$store.commit('changeLoading', false)
+      const a = document.createElement('a')
+      const url = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
+      a.href = url
+      a.style.display = 'none'
+      a.download = '分析報表.xlsx'
+      a.click()
+      // 清除暫存
+      a.href = ''
+      window.URL.revokeObjectURL(url)
     }
   }
 }

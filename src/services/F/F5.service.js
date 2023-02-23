@@ -19,7 +19,6 @@ const service = {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/f5/findEntityRecordLog`
       const res = await axios.post(url, postData)
-      console.log(res)
       return res.data
     } catch (error) {
       if (error.response.status === 401) {

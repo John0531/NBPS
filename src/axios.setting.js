@@ -29,7 +29,6 @@ axios.interceptors.response.use(
     // ?非 200 或非 401 的狀態顯示(ex. 500 時顯示)
     if (err.response && (err.response.status !== 200 && err.response.status !== 401)) {
       store.commit('changeLoading', false)
-      console.log(err)
       Swal.fire({
         title: `${err.response.data} (${err.response.status})`,
         allowOutsideClick: true,

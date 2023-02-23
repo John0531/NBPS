@@ -66,7 +66,7 @@
 
     <!-- 檢視明細 Modal -->
     <div class="modal fade" ref="detailModal" tabindex="-1" aria-labelledby="detailModal" aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header bg-primary">
             <h5 class="modal-title text-white">檢視明細</h5>
@@ -75,7 +75,7 @@
           <div class="modal-body">
             <h5>檔名: {{detailData.batchFileName}}</h5>
             <h5>特店名稱: {{detailData.batchStoreName}}</h5>
-            <MainData :Page="detailPageData" @ChangePageInfo="getDetailPageInfo">
+            <MainData ref="detailMainData" :Page="detailPageData" @ChangePageInfo="getDetailPageInfo">
               <template #default>
                 <thead>
                   <tr>
@@ -92,14 +92,25 @@
                 <tbody>
                   <tr v-for="item in detailData.gridData" :key="item.txnAuthId">
                     <th scope="row">{{item.pan}}</th>
-                    <td>{{item.type}}</td>
-                    <td>{{item.amt}}</td>
+                    <td>
+                      <span v-if="item.type==='SALE'">授權與請款</span>
+                      <span v-if="item.type==='AUTH'">授權</span>
+                      <span v-if="item.type==='OFF_LINE_SALE'">請款</span>
+                      <span v-if="item.type==='REFUND'">退貨</span>
+                    </td>
+                    <td>{{$custom.currency(item.amt)}}</td>
                     <td>{{item.desc}}</td>
                     <td>{{item.authCode}}</td>
-                    <td>{{item.codeH}}</td>
-                    <td>{{item.voidCodeH}}</td>
                     <td>
-                      <button @click="singleCancel(item)" class="btn btn-danger me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">單筆取消</button>
+                      <span v-if="item.codeH==='00'">成功</span>
+                      <span v-else>失敗</span>
+                    </td>
+                    <td>
+                      <span v-if="item.voidCodeH==='00'">取消成功</span>
+                      <span v-if="item.voidCodeH&&item.voidCodeH!=='00'">取消失敗</span>
+                    </td>
+                    <td>
+                      <button v-if="item.codeH==='00'&&(item.voidCodeH!=='00'||!item.voidCodeH)" @click="singleCancel(item)" class="btn btn-danger me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">單筆取消</button>
                     </td>
                   </tr>
                 </tbody>
@@ -132,17 +143,12 @@ export default {
       },
       gridData: [],
       detailModal: '',
-      detailDataPost: {
-        batchId: '',
-        page: 1,
-        pageSize: 10
-      },
       detailData: {
-        batchFileName: '',
-        batchStoreName: '',
+        batchId: '',
+        originData: [],
         gridData: []
       },
-      detailPageData: {}// ?詳細分頁資訊
+      detailPageData: {} // ?詳細分頁資訊
     }
   },
   methods: {
@@ -154,9 +160,14 @@ export default {
     },
     // ? 取得 MainData 元件詳細分頁資訊
     getDetailPageInfo (PageInfo) {
-      this.GroupDataPost.page = PageInfo.page
-      this.GroupDataPost.pageSize = PageInfo.pageSize
-      this.getDetail()
+      // * 傳送分頁資訊
+      this.detailPageData = {
+        totalElements: this.detailData.originData.length,
+        currentPage: PageInfo.page,
+        totalPages: Math.ceil(this.detailData.originData.length / PageInfo.pageSize)
+      }
+      // * 前端取得分頁資料(不打api)
+      this.detailData.gridData = this.detailData.originData.slice((PageInfo.page - 1) * PageInfo.pageSize, PageInfo.page * PageInfo.pageSize)
     },
     async getData () {
       if (this.GroupDataPost.storeId === '') {
@@ -169,25 +180,30 @@ export default {
       this.gridData = result.batchList
     },
     async getDetail (item) {
-      if (item) {
-        this.detailDataPost.batchId = item.batchId
-        this.detailDataPost.page = 1
-        this.detailDataPost.pageSize = 10
-      }
+      this.detailData.batchId = item.batchId
       this.$store.commit('changeLoading', true)
-      const result = await service.getBatchDetail(this.detailDataPost)
+      const result = await service.getBatchDetail(item.batchId)
       this.$store.commit('changeLoading', false)
       if (result) {
-        this.detailPageData = result.pageInfo // ? 傳送分頁資訊
+        // * 傳送分頁資訊(僅第一次打api取得所有資料)
+        this.detailPageData = {
+          totalElements: result.batchList.length,
+          currentPage: 1,
+          totalPages: Math.ceil(result.batchList.length / 10)
+        }
+        this.detailData.originData = result.batchList
+        this.detailData.gridData = this.detailData.originData.slice(0, 10)
+        // * 傳送分頁資訊(僅第一次打api取得所有資料) end
         this.detailData.batchFileName = item.batchFileName
         this.detailData.batchStoreName = item.batchStoreName
-        this.detailData.gridData = result.batchErrorList
+        // * 將每頁資料數初始化
+        this.$refs.detailMainData.PageInfo.pageSize = 10
       }
       this.detailModal.show()
     },
     async multipleCancel (item) {
       const res = await this.$swal.fire({
-        title: '確認是否刪除?',
+        title: '確認是否整批刪除?',
         showCancelButton: true,
         confirmButtonColor: '#dc3545',
         cancelButtonColor: '#4D4D4D',
@@ -199,58 +215,42 @@ export default {
         this.$store.commit('changeLoading', true)
         const result = await service.multipleCancel(item.batchId)
         this.$store.commit('changeLoading', false)
-        console.log(result)
+        if (result) {
+          this.getData()
+        }
       }
     },
     async singleCancel (item) {
-
-    },
-    delete (data) {
-      this.$swal.fire({
-        title: '確認是否刪除?',
+      const res = await this.$swal.fire({
+        title: '確認是否單筆刪除?',
         showCancelButton: true,
         confirmButtonColor: '#dc3545',
         cancelButtonColor: '#4D4D4D',
         confirmButtonText: '刪除',
         cancelButtonText: '取消',
         reverseButtons: true
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.$store.commit('changeLoading', true)
-          // A1Service.delete(data)
-            .then((result) => {
-              this.$store.commit('changeLoading', false)
-              if (result.isSuccess) {
-                this.$swal.fire({
-                  toast: true,
-                  position: 'center',
-                  icon: 'success',
-                  title: '刪除成功！',
-                  showConfirmButton: false,
-                  timer: 1500,
-                  width: 500,
-                  background: '#F0F0F2',
-                  padding: 25
-                })
-                setTimeout(() => {
-                  this.getData()
-                }, 500)
-              } else {
-                this.$swal.fire({
-                  toast: true,
-                  position: 'center',
-                  icon: 'error',
-                  title: '刪除失敗！',
-                  showConfirmButton: false,
-                  timer: 1500,
-                  width: 500,
-                  background: '#F0F0F2',
-                  padding: 25
-                })
-              }
-            })
-        }
       })
+      if (res.isConfirmed) {
+        this.$store.commit('changeLoading', true)
+        const result = await service.singleCancel(item.txnAuthId)
+        this.$store.commit('changeLoading', false)
+        if (result) {
+          // ? 重新取得詳細資料後，比對更新渲染資訊
+          this.$store.commit('changeLoading', true)
+          const result2 = await service.getBatchDetail(this.detailData.batchId)
+          this.$store.commit('changeLoading', false)
+          if (result2) {
+            this.detailData.originData = result2.batchList
+            this.detailData.originData.forEach((item) => {
+              this.detailData.gridData.forEach((item2) => {
+                if (item.pan === item2.pan) {
+                  item2.voidCodeH = item.voidCodeH
+                }
+              })
+            })
+          }
+        }
+      }
     }
   },
   mounted () {

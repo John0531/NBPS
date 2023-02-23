@@ -20,7 +20,6 @@ const service = {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/f1/findUsers`
       const res = await axios.post(url, postData)
-      console.log(res)
       return res.data
     } catch (error) {
       if (error.response.status === 401) {
@@ -36,7 +35,6 @@ const service = {
       if (postData.pd) {
         postData.pd = await forge.encrypt(postData.pd)
       }
-      console.log(postData)
       const url = `${process.env.VUE_APP_BASE_API}/f1/createUser`
       const res = await axios.post(url, postData)
       if (res.data) {
@@ -96,7 +94,6 @@ const service = {
         data: {},
         responseType: 'blob'
       })
-      console.log(res)
       return res
     } catch (error) {
       if (error.response.status === 401) {
