@@ -203,11 +203,11 @@ export default {
     },
     async multipleCancel (item) {
       const res = await this.$swal.fire({
-        title: '確認是否整批刪除?',
+        title: '確認是否整批取消?',
         showCancelButton: true,
         confirmButtonColor: '#dc3545',
         cancelButtonColor: '#4D4D4D',
-        confirmButtonText: '刪除',
+        confirmButtonText: '取消',
         cancelButtonText: '取消',
         reverseButtons: true
       })
@@ -222,11 +222,11 @@ export default {
     },
     async singleCancel (item) {
       const res = await this.$swal.fire({
-        title: '確認是否單筆刪除?',
+        title: '確認是否單筆取消?',
         showCancelButton: true,
         confirmButtonColor: '#dc3545',
         cancelButtonColor: '#4D4D4D',
-        confirmButtonText: '刪除',
+        confirmButtonText: '取消',
         cancelButtonText: '取消',
         reverseButtons: true
       })

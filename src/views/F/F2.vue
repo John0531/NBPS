@@ -135,7 +135,7 @@
                       <tr>
                         <th class="text-start">
                           <div class="d-flex align-items-center">
-                            <input @change="checkPermission(item)" v-model="item.checked" class="form-check-input" type="checkbox" :id="item.code">
+                            <input @change="$custom.permission.checkPermission(item)" v-model="item.checked" class="form-check-input" type="checkbox" :id="item.code">
                             <label :for="item.code" class="fs-5 ps-2">{{item.code}}-{{item.name}}</label>
                           </div>
                         </th>
@@ -143,15 +143,15 @@
                       <tr v-for="item2 in item.function" :key="item2.pageCode">
                         <th class="text-start">
                           <div class="d-flex align-items-center ms-3">
-                            <input @change="checkPage(item2)" v-model="item2.checked" class="form-check-input" type="checkbox" :id="item2.pageCode">
+                            <input @change="$custom.permission.checkPage(item2)" v-model="item2.checked" class="form-check-input" type="checkbox" :id="item2.pageCode">
                             <label :for="item2.pageCode" class="ps-2">{{item2.pageCode}}-{{item2.pageName}}</label>
                           </div>
                         </th>
-                        <td><input v-model="item2.usable" value="view" class="form-check-input" type="checkbox" v-if="item2.default.includes('view')"></td>
-                        <td><input v-model="item2.usable" value="insert" class="form-check-input" type="checkbox" v-if="item2.default.includes('insert')"></td>
-                        <td><input v-model="item2.usable" value="modify" class="form-check-input" type="checkbox" v-if="item2.default.includes('modify')"></td>
-                        <td><input v-model="item2.usable" value="execute" class="form-check-input" type="checkbox" v-if="item2.default.includes('execute')"></td>
-                        <td><input v-model="item2.usable" value="download" class="form-check-input" type="checkbox" v-if="item2.default.includes('download')"></td>
+                        <td><input @change="$custom.permission.checkUsable(item)" v-model="item2.usable" value="view" class="form-check-input" type="checkbox" v-if="item2.default.includes('view')"></td>
+                        <td><input @change="$custom.permission.checkUsable(item)" v-model="item2.usable" value="insert" class="form-check-input" type="checkbox" v-if="item2.default.includes('insert')"></td>
+                        <td><input @change="$custom.permission.checkUsable(item)" v-model="item2.usable" value="modify" class="form-check-input" type="checkbox" v-if="item2.default.includes('modify')"></td>
+                        <td><input @change="$custom.permission.checkUsable(item)" v-model="item2.usable" value="execute" class="form-check-input" type="checkbox" v-if="item2.default.includes('execute')"></td>
+                        <td><input @change="$custom.permission.checkUsable(item)" v-model="item2.usable" value="download" class="form-check-input" type="checkbox" v-if="item2.default.includes('download')"></td>
                       </tr>
                     </template>
                   </tbody>
@@ -371,7 +371,7 @@
                       <tr>
                         <th class="text-start">
                           <div class="d-flex align-items-center">
-                            <input @change="checkPermission(item)" v-model="item.checked" class="form-check-input" type="checkbox" :id="item.code">
+                            <input @change="$custom.permission.checkPermission(item)" v-model="item.checked" class="form-check-input" type="checkbox" :id="item.code">
                             <label :for="item.code" class="fs-5 ps-2">{{item.code}}-{{item.name}}</label>
                           </div>
                         </th>
@@ -379,15 +379,15 @@
                       <tr v-for="item2 in item.function" :key="item2.pageCode">
                         <th class="text-start">
                           <div class="form-check d-flex align-items-center ms-3">
-                            <input @change="checkPage(item2)" v-model="item2.checked" class="form-check-input" type="checkbox" :id="item2.pageCode">
+                            <input @change="$custom.permission.checkPage(item2)" v-model="item2.checked" class="form-check-input" type="checkbox" :id="item2.pageCode">
                             <label :for="item2.pageCode" class="form-check-label ps-2">{{item2.pageCode}}-{{item2.pageName}}</label>
                           </div>
                         </th>
-                        <td><input v-model="item2.usable" value="view" class="form-check-input" type="checkbox" v-if="item2.default.includes('view')"></td>
-                        <td><input v-model="item2.usable" value="insert" class="form-check-input" type="checkbox" v-if="item2.default.includes('insert')"></td>
-                        <td><input v-model="item2.usable" value="modify" class="form-check-input" type="checkbox" v-if="item2.default.includes('modify')"></td>
-                        <td><input v-model="item2.usable" value="execute" class="form-check-input" type="checkbox" v-if="item2.default.includes('execute')"></td>
-                        <td><input v-model="item2.usable" value="download" class="form-check-input" type="checkbox" v-if="item2.default.includes('download')"></td>
+                        <td><input @change="$custom.permission.checkUsable(item)" v-model="item2.usable" value="view" class="form-check-input" type="checkbox" v-if="item2.default.includes('view')"></td>
+                        <td><input @change="$custom.permission.checkUsable(item)" v-model="item2.usable" value="insert" class="form-check-input" type="checkbox" v-if="item2.default.includes('insert')"></td>
+                        <td><input @change="$custom.permission.checkUsable(item)" v-model="item2.usable" value="modify" class="form-check-input" type="checkbox" v-if="item2.default.includes('modify')"></td>
+                        <td><input @change="$custom.permission.checkUsable(item)" v-model="item2.usable" value="execute" class="form-check-input" type="checkbox" v-if="item2.default.includes('execute')"></td>
+                        <td><input @change="$custom.permission.checkUsable(item)" v-model="item2.usable" value="download" class="form-check-input" type="checkbox" v-if="item2.default.includes('download')"></td>
                       </tr>
                     </template>
                   </tbody>
@@ -466,30 +466,7 @@ export default {
         groupName: item.groupName,
         description: item.description
       }
-      // ? 比對權限資料
-      this.defaultPermission = await service.getDefaultPermission()
-      item.permissions.forEach((obj1) => {
-        obj1.function.forEach((obj2) => {
-          this.defaultPermission.forEach((obj3) => {
-            obj3.function.forEach((obj4) => {
-              if (obj4.pageCode === obj2.pageCode) {
-                obj4.usable = obj2.usable
-              }
-            })
-          })
-        })
-      })
-      // ? 比對權限資料 end
-      this.defaultPermission.forEach((item1) => {
-        item1.checked = true // ? 預設所有都勾選
-        item1.function.forEach((item2) => {
-          if (item2.default.length === item2.usable.length) {
-            item2.checked = true
-          } else {
-            item1.checked = false // ? 只要一個不符合，則取消勾選
-          }
-        })
-      })
+      this.defaultPermission = await this.$custom.permission.defaultPermissionUIprocess(item, 'F2')
       this.viewModal.show()
     },
     async openEditModal (item) {
@@ -498,30 +475,7 @@ export default {
         groupName: JSON.parse(JSON.stringify(item.groupName)),
         description: JSON.parse(JSON.stringify(item.description))
       }
-      // ? 比對權限資料
-      this.defaultPermission = await service.getDefaultPermission()
-      item.permissions.forEach((obj1) => {
-        obj1.function.forEach((obj2) => {
-          this.defaultPermission.forEach((obj3) => {
-            obj3.function.forEach((obj4) => {
-              if (obj4.pageCode === obj2.pageCode) {
-                obj4.usable = obj2.usable
-              }
-            })
-          })
-        })
-      })
-      // ? 比對權限資料 end
-      this.defaultPermission.forEach((item1) => {
-        item1.checked = true // ? 預設所有都勾選
-        item1.function.forEach((item2) => {
-          if (item2.default.length === item2.usable.length) {
-            item2.checked = true
-          } else {
-            item1.checked = false // ? 只要一個不符合，則取消勾選
-          }
-        })
-      })
+      this.defaultPermission = await this.$custom.permission.defaultPermissionUIprocess(item, 'F2')
       this.editModal.show()
     },
     async addGroup () {
@@ -601,26 +555,6 @@ export default {
       // 清除暫存
       a.href = ''
       window.URL.revokeObjectURL(url)
-    },
-    checkPermission (item) {
-      if (item.checked) {
-        item.function.forEach(element => {
-          element.checked = true
-          element.usable = element.default
-        })
-      } else {
-        item.function.forEach(element => {
-          element.checked = false
-          element.usable = []
-        })
-      }
-    },
-    checkPage (item2) {
-      if (item2.checked) {
-        item2.usable = item2.default
-      } else {
-        item2.usable = []
-      }
     }
   },
   mounted () {

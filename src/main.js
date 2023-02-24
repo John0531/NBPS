@@ -27,6 +27,7 @@ import Paginate from 'vuejs-paginate-next'
 
 import './axios.setting'
 import validate from './utilities/validate'
+import permission from './utilities/permission.js'
 
 import moment from 'moment'
 
@@ -68,7 +69,8 @@ app.config.globalProperties.$custom = {
   bootstrap,
   moment,
   currency,
-  uuidv4
+  uuidv4,
+  permission
 }
 
 app.config.globalProperties.$grid = {
