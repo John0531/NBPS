@@ -98,7 +98,7 @@
                   <span class="fw-bold" v-if="item.batchStatus==='VALIDATING'">格式檢核中</span>
                   <span class="fw-bold text-success" v-if="item.batchStatus==='VALIDATE_SUCCESS'">格式檢核成功</span>
                   <span class="fw-bold text-danger" v-if="item.batchStatus==='VALIDATE_FAIL'">格式檢核失敗</span>
-                  <span class="fw-bold" v-if="item.batchStatus==='SUBMISSION'">確認送出</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='SUBMISSION_AND_TRX_WAIT'">確認送出，等待交易中</span>
                   <span class="fw-bold" v-if="item.batchStatus==='TRX_WAIT'">等待交易中</span>
                   <span class="fw-bold" v-if="item.batchStatus==='TRX_PROCESS'">交易處理中</span>
                   <span class="fw-bold" v-if="item.batchStatus==='TRX_FINISH'">交易處理完成</span>
@@ -295,7 +295,7 @@ export default {
       const url = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
       a.href = url
       a.style.display = 'none'
-      a.download = '範例excel.xls'
+      a.download = '範例excel.xlsx'
       a.click()
       // 清除暫存
       a.href = ''

@@ -29,8 +29,21 @@ axios.interceptors.response.use(
     // ?非 200 或非 401 的狀態顯示(ex. 500 時顯示)
     if (err.response && (err.response.status !== 200 && err.response.status !== 401)) {
       store.commit('changeLoading', false)
+      // ? responseType 為 blob時，需解析 blob 資料
+      if (err.response.request.responseType === 'blob') {
+        const errMsg = await err.response.data.text()
+        Swal.fire({
+          title: `${errMsg}(${err.response.status})`,
+          allowOutsideClick: true,
+          confirmButtonColor: '#dc3545',
+          confirmButtonText: '確認',
+          backdrop: true,
+          width: 400
+        })
+        return Promise.reject(err)
+      }
       Swal.fire({
-        title: `${err.response.data} (${err.response.status})`,
+        title: err.response.status === 403 ? `權限不足(${err.response.status})` : `${err.response.data} (${err.response.status})`,
         allowOutsideClick: true,
         confirmButtonColor: '#dc3545',
         confirmButtonText: '確認',

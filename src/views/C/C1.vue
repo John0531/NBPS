@@ -694,7 +694,7 @@ export default {
         this.addModal.hide()
         this.GroupDataPost = {
           storeId: '',
-          page: this.pageData.totalPages,
+          page: this.pageData.currentPage,
           pageSize: this.GroupDataPost.pageSize
         }
         this.addForm = {}

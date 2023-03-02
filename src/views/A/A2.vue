@@ -67,7 +67,7 @@
                   <span class="fw-bold" v-if="item.batchStatus==='VALIDATING'">格式檢核中</span>
                   <span class="fw-bold text-success" v-if="item.batchStatus==='VALIDATE_SUCCESS'">格式檢核成功</span>
                   <span class="fw-bold text-danger" v-if="item.batchStatus==='VALIDATE_FAIL'">格式檢核失敗</span>
-                  <span class="fw-bold" v-if="item.batchStatus==='SUBMISSION'">確認送出</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='SUBMISSION_AND_TRX_WAIT'">確認送出，等待交易中</span>
                   <span class="fw-bold" v-if="item.batchStatus==='TRX_WAIT'">等待交易中</span>
                   <span class="fw-bold" v-if="item.batchStatus==='TRX_PROCESS'">交易處理中</span>
                   <span class="fw-bold" v-if="item.batchStatus==='TRX_FINISH'">交易處理完成</span>
@@ -81,6 +81,10 @@
                   <span v-if="item.trxStatus==='TRX_PROCESS'">交易處理中</span>
                   <span v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'">交易處理完成但有異常</span>
                   <span v-if="item.trxStatus==='TRX_FINISH'">交易處理完成</span>
+                  <span v-if="item.trxStatus==='TRX_ALL_REVERSAL'">交易已整批取消</span>
+                  <span v-if="item.trxStatus==='REPLY_PROCESS'">回覆黨產製中</span>
+                  <span v-if="item.trxStatus==='REPLY_SUCCESS'">已下載回覆檔</span>
+                  <span v-if="item.trxStatus==='REPLY_FAIL'">下傳回覆檔失敗</span>
                 </td>
                 <td>{{item.totalCnt}}</td>
                 <td>{{$custom.currency(item.totalAmt)}}</td>

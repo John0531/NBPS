@@ -46,6 +46,10 @@
                   <span v-if="item.trxStatus==='TRX_PROCESS'">交易處理中</span>
                   <span v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'">交易處理完成但有異常</span>
                   <span v-if="item.trxStatus==='TRX_FINISH'">交易處理完成</span>
+                  <span v-if="item.trxStatus==='TRX_ALL_REVERSAL'">交易已整批取消</span>
+                  <span v-if="item.trxStatus==='REPLY_PROCESS'">回覆黨產製中</span>
+                  <span v-if="item.trxStatus==='REPLY_SUCCESS'">已下載回覆檔</span>
+                  <span v-if="item.trxStatus==='REPLY_FAIL'">下傳回覆檔失敗</span>
                 </td>
                 <td>{{item.totalCnt}}</td>
                 <td>{{$custom.currency(item.totalAmt)}}</td>
