@@ -211,8 +211,8 @@ export default {
         showCancelButton: true,
         confirmButtonColor: '#dc3545',
         cancelButtonColor: '#4D4D4D',
-        confirmButtonText: '取消',
-        cancelButtonText: '取消',
+        confirmButtonText: '是',
+        cancelButtonText: '否',
         reverseButtons: true
       })
       if (res.isConfirmed) {
@@ -230,8 +230,8 @@ export default {
         showCancelButton: true,
         confirmButtonColor: '#dc3545',
         cancelButtonColor: '#4D4D4D',
-        confirmButtonText: '取消',
-        cancelButtonText: '取消',
+        confirmButtonText: '是',
+        cancelButtonText: '否',
         reverseButtons: true
       })
       if (res.isConfirmed) {
