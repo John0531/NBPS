@@ -59,7 +59,7 @@
                 <td>{{$custom.currency(item.refundAmt)}}</td>
                 <td>
                   <button @click="getDetail(item)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
-                  <button @click="multipleCancel(item)" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">整批取消</button>
+                  <button @click="multipleCancel(item)" v-if="item.trxStatus!=='TRX_ALL_REVERSAL'" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">整批取消</button>
                 </td>
               </tr>
             </tbody>
@@ -90,7 +90,7 @@
                     <th scope="col">授權碼</th>
                     <th scope="col">交易結果</th>
                     <th scope="col">取消結果</th>
-                    <th scope="col"></th>
+                    <th scope="col" v-if="!(detailData.gridData.filter(item => item.voidCodeH).length === detailData.gridData.length)"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -113,7 +113,7 @@
                       <span v-if="item.voidCodeH==='00'">取消成功</span>
                       <span v-if="item.voidCodeH&&item.voidCodeH!=='00'">取消失敗</span>
                     </td>
-                    <td>
+                    <td v-if="!(detailData.gridData.filter(item => item.voidCodeH).length === detailData.gridData.length)">
                       <button v-if="item.codeH==='00'&&(item.voidCodeH!=='00'||!item.voidCodeH)" @click="singleCancel(item)" class="btn btn-danger me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">單筆取消</button>
                     </td>
                   </tr>

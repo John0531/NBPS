@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve-pro": "vue-cli-service serve --mode production",
     "serve": "vue-cli-service serve --port 8080",
+    "serve-uat": "vue-cli-service serve --mode uat",
+    "serve-pro": "vue-cli-service serve --mode production",
     "build-dev": "vue-cli-service build --mode dev",
     "build-uat": "vue-cli-service build --mode uat",
-    "build-production": "vue-cli-service build --mode production",
+    "build-prod": "vue-cli-service build --mode production",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
