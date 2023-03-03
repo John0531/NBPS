@@ -39,7 +39,7 @@
                 <td>{{item.description}}</td>
                 <td>
                   <button v-if="$store.state.user.level!==item.level" @click="openEditModal(item)" class="btn btn-success me-2 btn-sm">編輯</button>
-                  <button v-if="$store.state.user.level!==item.level" @click="removeAccount(item)" class="btn btn-danger btn-sm">刪除</button>
+                  <button v-if="$store.state.user.level!==item.level" @click="removeAccount(item)" class="btn btn-danger btn-sm" :disabled="!$store.state.pageBtnPermission.includes('modify')">刪除</button>
                 </td>
               </tr>
             </tbody>
