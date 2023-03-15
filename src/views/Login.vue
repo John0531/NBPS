@@ -12,8 +12,7 @@
                 <ErrorMessage name="帳號" class="invalid-feedback"></ErrorMessage>
               </div>
               <div class="mb-4">
-                <!-- <Field name="密碼" :class="{ 'is-invalid': errors['密碼'] }" class="form-control form-control-lg" type="password" placeholder="密碼" :rules="$custom.validate.CheckPwd" v-model="user.pd"></Field> -->
-                <Field name="密碼" :class="{ 'is-invalid': errors['密碼'] }" class="form-control form-control-lg" type="password" placeholder="密碼" rules="required" v-model="user.pd"></Field>
+                <Field name="密碼" :class="{ 'is-invalid': errors['密碼'] }" class="form-control form-control-lg" type="password" placeholder="密碼" :rules="$custom.validate.CheckPwd" v-model="user.pd"></Field>
                 <ErrorMessage name="密碼" class="invalid-feedback"></ErrorMessage>
               </div>
               <div class="mb-4 input-group">
