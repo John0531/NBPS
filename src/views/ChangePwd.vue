@@ -21,7 +21,7 @@
                   首次登入，請先修改預設密碼
                 </div>
                 <div class="row pb-3">
-                  <div class="col-12 mb-4">
+                  <div v-if="!isDefault" class="col-12 mb-4">
                     <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">舊密碼 :</h5>
                     <div class="position-relative">
                       <Field id="oldPwdInput" v-model="changePwdForm.oldpd" rules="CheckPwd" name="舊密碼" :class="{ 'is-invalid': errors['舊密碼'] }" type="password" class="form-control" style="background-image:none;"></Field>
@@ -95,6 +95,9 @@ export default {
       }
     },
     async changePwd () {
+      if (this.isDefault) {
+        this.changePwdForm.oldpd = 'UBot123456!'
+      }
       this.$store.commit('changeLoading', true)
       const result = await AuthService.changePwd(this.changePwdForm)
       if (result) {
