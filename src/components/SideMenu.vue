@@ -2,6 +2,7 @@
   <div class="space"></div>
   <div class="shadow pt-4 menu position-fixed">
     <h4 class="fw-bold text-center">聯邦銀行信用卡批次授權系統</h4>
+    <h5 class="fw-bold text-danger ms-2">登入帳號: {{$store.state.user.userName}}</h5>
     <div class="accordion accordion-flush my-4" id="accordion">
       <div v-for="(item1) in permissions" :key="item1.code" class="accordion-item">
         <h2 class="accordion-header">

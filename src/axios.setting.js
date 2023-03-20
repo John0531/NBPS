@@ -12,7 +12,7 @@ axios.interceptors.request.use(
     if (user) {
       config.headers.Authorization = `Bearer ${user.token}`
     }
-    if (config.method === 'post') {
+    if (config.method === 'post' && !config.data.msgId) {
       config.data.msgId = uuidv4()
     }
     return config

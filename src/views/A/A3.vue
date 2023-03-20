@@ -11,7 +11,7 @@
             <div class="row py-3">
               <div class="col-xxl-5 d-flex mb-4">
                 <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店代碼:</h5>
-                <input v-model="GroupDataPost.storeId" type="text" class="form-control" placeholder="可不指定">
+                <input v-model="GroupDataPost.storeId" type="text" class="form-control" placeholder="可不指定[特店代碼須為15碼]">
               </div>
             </div>
             <button @click.prevent="getData" class="btn btn-primary me-3 px-4" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button>

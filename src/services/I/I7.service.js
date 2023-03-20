@@ -3,7 +3,7 @@ import axios from 'axios'
 const service = {
   async getDefault () {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/f5/findDefault`
+      const url = `${process.env.VUE_APP_BASE_API}/i7/findDefault`
       const res = await axios.post(url, {})
       return res.data
     } catch (error) {
@@ -17,7 +17,7 @@ const service = {
   },
   async getData (postData) {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/f5/findEntityRecordLog`
+      const url = `${process.env.VUE_APP_BASE_API}/i7/findEntityRecordLog`
       const res = await axios.post(url, postData)
       return res.data
     } catch (error) {

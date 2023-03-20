@@ -123,19 +123,59 @@ const routes = [
             }
           },
           {
-            path: 'F4',
-            component: () => import('../views/F/F4.vue'),
+            path: 'G1',
+            component: () => import('../views/G/G1.vue'),
             meta: {
-              group: 'F',
-              code: 'F4'
+              group: 'G',
+              code: 'G1'
             }
           },
           {
-            path: 'F5',
-            component: () => import('../views/F/F5.vue'),
+            path: 'G2',
+            component: () => import('../views/G/G2.vue'),
             meta: {
-              group: 'F',
-              code: 'F5'
+              group: 'G',
+              code: 'G2'
+            }
+          },
+          {
+            path: 'G3',
+            component: () => import('../views/G/G3.vue'),
+            meta: {
+              group: 'G',
+              code: 'G3'
+            }
+          },
+          {
+            path: 'I1',
+            component: () => import('../views/I/I1.vue'),
+            meta: {
+              group: 'I',
+              code: 'I1'
+            }
+          },
+          {
+            path: 'I3',
+            component: () => import('../views/I/I3.vue'),
+            meta: {
+              group: 'I',
+              code: 'I3'
+            }
+          },
+          {
+            path: 'I6',
+            component: () => import('../views/I/I6.vue'),
+            meta: {
+              group: 'I',
+              code: 'I6'
+            }
+          },
+          {
+            path: 'I7',
+            component: () => import('../views/I/I7.vue'),
+            meta: {
+              group: 'I',
+              code: 'I7'
             }
           },
           {

@@ -3,7 +3,7 @@ import axios from 'axios'
 const service = {
   async getUserLog (postData) {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/f4/findUserLog`
+      const url = `${process.env.VUE_APP_BASE_API}/i6/findUserLog`
       const res = await axios.post(url, postData)
       return res.data
     } catch (error) {
@@ -17,7 +17,7 @@ const service = {
   },
   async downloadExcel (postData) {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/f4/downloadExcel`
+      const url = `${process.env.VUE_APP_BASE_API}/i6/downloadExcel`
       const res = await axios({
         url: url,
         method: 'POST',

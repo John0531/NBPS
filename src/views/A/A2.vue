@@ -29,12 +29,13 @@
                   <option value="TRX_PROCESS">交易處理中</option>
                   <option value="TRX_FINISH_WITH_ERROR">交易處理完成但有異常</option>
                   <option value="TRX_FINISH">交易處理完成</option>
+                  <option value="TRX_ALL_REVERSAL">交易已整批取消</option>
                 </select>
               </div>
               <div class="col-xxl-7"></div>
               <div class="col-xxl-5 d-flex mb-4">
                 <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店代碼:</h5>
-                <input type="text" v-model="searchForm.storeId" class="form-control" placeholder="">
+                <input type="text" v-model="searchForm.storeId" class="form-control" placeholder="[特店代碼須為15碼]">
               </div>
             </div>
             <button @click="getData" class="btn btn-primary me-3 px-4" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button>

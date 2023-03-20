@@ -11,7 +11,7 @@
             <div class="row py-3">
               <div class="col-xxl-5 d-flex mb-4">
                 <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店代碼:</h5>
-                <input v-model="GroupDataPost.storeId" type="text" class="form-control" placeholder="可不指定">
+                <input v-model="GroupDataPost.storeId" type="text" class="form-control" placeholder="可不指定[特店代碼須為15碼]">
               </div>
             </div>
             <button class="btn btn-primary me-3 px-4" @click="getData" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button>
@@ -64,10 +64,11 @@
                 <label for="storeId" class="col-sm-2 col-form-label">特店代碼</label>
                 <div class="col-sm-10">
                   <Field
+                    maxlength="15"
                     name="特店代碼"
                     type="text"
                     class="form-control"
-                    rules="required"
+                    rules="required|CheckStoreId"
                     :class="{ 'is-invalid': errors['特店代碼'] }"
                     id="storeId"
                     v-model="addForm.storeId"

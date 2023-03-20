@@ -140,12 +140,57 @@
                 <td>{{$custom.currency(item.refundAmt)}}</td>
                 <td>
                   <button v-if="item.batchStatus==='VALIDATE_FAIL'" @click="getError(item)" class="btn btn-danger me-2 btn-sm">檢視錯誤</button>
+                  <button v-if="item.batchStatus==='VALIDATE_SUCCESS'" @click="getDetail(item)" class="btn btn-success me-2 btn-sm">檢視明細</button>
                   <button v-if="item.batchStatus==='VALIDATE_SUCCESS'" @click="confirmBatch(item)" class="btn btn-primary btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">確認送出授權</button>
                 </td>
               </tr>
             </tbody>
           </template>
         </MainData>
+      </div>
+    </div>
+
+    <!-- 檢視明細 Modal -->
+    <div class="modal fade" ref="detailModal" tabindex="-1" aria-labelledby="detailModal" aria-hidden="true">
+      <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-success">
+            <h5 class="modal-title text-white">檢視明細</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <h5>檔名: {{detailData.batchFileName}}</h5>
+            <h5>特店名稱: {{detailData.batchStoreName}}</h5>
+            <MainData ref="detailMainData" :Page="detailPageData" @ChangePageInfo="getDetailPageInfo">
+              <template #default>
+                <thead>
+                  <tr>
+                    <th scope="col">卡號</th>
+                    <th scope="col">交易類別</th>
+                    <th scope="col">金額</th>
+                    <th scope="col">帳單描述</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in detailData.gridData" :key="item.pan">
+                    <th scope="row">{{item.pan}}</th>
+                    <td>
+                      <span v-if="item.transType==='SALE'">授權與請款</span>
+                      <span v-if="item.transType==='AUTH'">授權</span>
+                      <span v-if="item.transType==='OFF_LINE_SALE'">請款</span>
+                      <span v-if="item.transType==='REFUND'">退貨</span>
+                    </td>
+                    <td>{{$custom.currency(item.amt)}}</td>
+                    <td>{{item.desc}}</td>
+                  </tr>
+                </tbody>
+              </template>
+            </MainData>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -204,6 +249,18 @@ export default {
       defaultData: [],
       gridData: [],
       uploadPost: {},
+      detailModal: '',
+      detailDataPost: {
+        batchId: '',
+        page: 1,
+        pageSize: 10
+      },
+      detailData: {
+        batchFileName: '',
+        batchStoreName: '',
+        gridData: []
+      },
+      detailPageData: {}, // ?詳細分頁資訊
       errorModal: '',
       errorDataPost: {
         batchId: '',
@@ -224,6 +281,12 @@ export default {
       this.GroupDataPost = PageInfo
       this.getData()
     },
+    // ? 取得 MainData 元件詳細分頁資訊
+    getDetailPageInfo (PageInfo) {
+      this.detailDataPost.page = PageInfo.page
+      this.detailDataPost.pageSize = PageInfo.pageSize
+      this.getDetail()
+    },
     // ? 取得 MainData 元件錯誤分頁資訊
     getErrorPageInfo (PageInfo) {
       this.errorDataPost.page = PageInfo.page
@@ -243,6 +306,25 @@ export default {
       this.pageData = result.pageInfo // ? 傳送分頁資訊
       this.gridData = result.batchList
     },
+    async getDetail (item) {
+      if (item) {
+        this.detailDataPost.batchId = item.batchId
+        this.detailDataPost.page = 1
+        this.detailDataPost.pageSize = 10
+      }
+      this.$store.commit('changeLoading', true)
+      const result = await service.getBatchDetail(this.detailDataPost)
+      this.$store.commit('changeLoading', false)
+      if (result) {
+        this.detailPageData = result.pageInfo // ? 傳送分頁資訊
+        if (item) {
+          this.detailData.batchFileName = item.batchFileName
+          this.detailData.batchStoreName = item.batchStoreName
+        }
+        this.detailData.gridData = result.batchList
+      }
+      this.detailModal.show()
+    },
     async getError (item) {
       if (item) {
         this.errorDataPost.batchId = item.batchId
@@ -254,8 +336,10 @@ export default {
       this.$store.commit('changeLoading', false)
       if (result) {
         this.errorPageData = result.pageInfo // ? 傳送分頁資訊
-        this.errorData.batchFileName = item.batchFileName
-        this.errorData.batchStoreName = item.batchStoreName
+        if (item) {
+          this.errorData.batchFileName = item.batchFileName
+          this.errorData.batchStoreName = item.batchStoreName
+        }
         this.errorData.gridData = result.batchErrorList
       }
       this.errorModal.show()
@@ -346,6 +430,7 @@ export default {
   },
   mounted () {
     this.getDefaultData()
+    this.detailModal = new this.$custom.bootstrap.Modal(this.$refs.detailModal, { backdrop: 'static' })
     this.errorModal = new this.$custom.bootstrap.Modal(this.$refs.errorModal, { backdrop: 'static' })
   }
 }

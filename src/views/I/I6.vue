@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import service from '@/services/F/F4.service.js'
+import service from '@/services/I/I6.service.js'
 import MainData from '@/components/MainData.vue'
 
 export default {

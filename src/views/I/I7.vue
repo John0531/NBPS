@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import service from '@/services/F/F5.service.js'
+import service from '@/services/I/I7.service.js'
 import MainData from '@/components/MainData.vue'
 
 export default {

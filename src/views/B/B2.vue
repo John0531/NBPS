@@ -29,6 +29,7 @@
                   <option value="TRX_PROCESS">交易處理中</option>
                   <option value="TRX_FINISH_WITH_ERROR">交易處理完成但有異常</option>
                   <option value="TRX_FINISH">交易處理完成</option>
+                  <option value="TRX_ALL_REVERSAL">交易已整批取消</option>
                 </select>
               </div>
               <div class="col-xxl-7"></div>

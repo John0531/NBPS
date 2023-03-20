@@ -42,6 +42,10 @@ defineRule('radioRequired', value => {
 })
 defineRule('length', length)
 defineRule('email', email)
+// ?加入validate驗證規則
+Object.keys(validate).forEach((rule) => {
+  defineRule(rule, validate[rule])
+})
 configure({
   generateMessage: localize({ zh_TW: zhTW }),
   validateOnInput: true
