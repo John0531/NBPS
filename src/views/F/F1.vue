@@ -38,9 +38,8 @@
                 <td>{{item.userTypeStr}}</td>
                 <td>{{item.name}}</td>
                 <td>
-                  <span v-if="item.adType==='NONE'">不是AD</span>
-                  <span v-if="item.adType==='CARD_AD'">卡務處AD</span>
-                  <span v-if="item.adType==='UITC_AD'">網通AD</span>
+                  <span v-if="item.adType==='NONE'">否</span>
+                  <span v-if="item.adType==='CARD_AD'">是</span>
                 </td>
                 <td>{{item.groupName}}</td>
                 <td>{{item.description}}</td>
@@ -124,7 +123,7 @@
                       name="是否為AD使用者"
                       id="adType1"
                     />
-                    <label class="form-check-label" for="adType1">不是AD</label>
+                    <label class="form-check-label" for="adType1">否</label>
                   </div>
                   <div class="form-check form-check-inline">
                     <Field
@@ -137,20 +136,7 @@
                       name="是否為AD使用者"
                       id="adType2"
                     />
-                    <label class="form-check-label" for="adType2">卡務處AD</label>
-                  </div>
-                  <div class="form-check form-check-inline">
-                    <Field
-                      rules="required"
-                      :class="{ 'is-invalid': errors['是否為AD使用者'] }"
-                      v-model="addForm.adType"
-                      value="UITC_AD"
-                      class="form-check-input"
-                      type="radio"
-                      name="是否為AD使用者"
-                      id="adType3"
-                    />
-                    <label class="form-check-label" for="adType3">網通AD</label>
+                    <label class="form-check-label" for="adType2">是</label>
                   </div>
                   <ErrorMessage
                     name="是否為AD使用者"
@@ -283,7 +269,7 @@
                       name="是否為AD使用者"
                       id="adTypeEdit1"
                     />
-                    <label class="form-check-label" for="adTypeEdit1">不是AD</label>
+                    <label class="form-check-label" for="adTypeEdit1">否</label>
                   </div>
                   <div class="form-check form-check-inline">
                     <Field
@@ -296,20 +282,7 @@
                       name="是否為AD使用者"
                       id="adTypeEdit2"
                     />
-                    <label class="form-check-label" for="adTypeEdit2">卡務處AD</label>
-                  </div>
-                  <div class="form-check form-check-inline">
-                    <Field
-                      rules="required"
-                      :class="{ 'is-invalid': errors['是否為AD使用者'] }"
-                      v-model="editForm.adType"
-                      value="UITC_AD"
-                      class="form-check-input"
-                      type="radio"
-                      name="是否為AD使用者"
-                      id="adTypeEdit3"
-                    />
-                    <label class="form-check-label" for="adTypeEdit3">網通AD</label>
+                    <label class="form-check-label" for="adTypeEdit2">是</label>
                   </div>
                   <ErrorMessage
                     name="是否為AD使用者"

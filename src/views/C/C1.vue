@@ -312,6 +312,25 @@
                   />
                 </div>
               </div>
+              <div class="row mb-3">
+                <label for="desc" class="col-sm-2 col-form-label">簡述<span class="text-danger"></span></label>
+                <div class="col-sm-10">
+                  <Field
+                    as="textarea"
+                    :rules="{required:addForm.transType&&addForm.transType.includes('SALE')?true:false}"
+                    v-model="addForm.storeDesc"
+                    class="form-control"
+                    :class="{ 'is-invalid': errors['簡述'] }"
+                    rows="3"
+                    name="簡述"
+                  >
+                  </Field>
+                  <ErrorMessage
+                    name="簡述"
+                    class="invalid-feedback"
+                  />
+                </div>
+              </div>
               <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-warning px-4">新增</button>
               </div>
@@ -582,6 +601,25 @@
                   </Field>
                   <ErrorMessage
                     name="合作狀態"
+                    class="invalid-feedback"
+                  />
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="desc" class="col-sm-2 col-form-label">簡述<span class="text-danger"></span></label>
+                <div class="col-sm-10">
+                  <Field
+                    as="textarea"
+                    :rules="{required:editForm.transType&&editForm.transType.includes('SALE')?true:false}"
+                    v-model="editForm.storeDesc"
+                    class="form-control"
+                    :class="{ 'is-invalid': errors['簡述'] }"
+                    rows="3"
+                    name="簡述"
+                  >
+                  </Field>
+                  <ErrorMessage
+                    name="簡述"
                     class="invalid-feedback"
                   />
                 </div>

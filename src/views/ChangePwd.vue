@@ -33,7 +33,7 @@
                   <div class="col-12 mb-4">
                     <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">修改密碼 :</h5>
                     <div class="position-relative">
-                      <Field id="changePwdInput" v-model="changePwdForm.pd" :rules="checkChangePwd" name="修改密碼" :class="{ 'is-invalid': errors['修改密碼'] }" type="password" class="form-control" style="background-image:none;"></Field>
+                      <Field id="changePwdInput" v-model="changePwdForm.pd" :rules="{checkChangePwd:true,CheckPwd:true}" name="修改密碼" :class="{ 'is-invalid': errors['修改密碼'] }" type="password" class="form-control" style="background-image:none;"></Field>
                       <img v-if="changePwdEyeOpen" @click.prevent="changePwdEyeOpen=!changePwdEyeOpen" class="position-absolute eye-open" src="@/assets/img/open_eye.svg" alt="">
                       <img v-else @click.prevent="changePwdEyeOpen=!changePwdEyeOpen" class="position-absolute eye-close" src="@/assets/img/close_eye.svg" alt="">
                       <ErrorMessage name="修改密碼" class="invalid-feedback"></ErrorMessage>
@@ -41,7 +41,7 @@
                   </div>
                   <div class="col-12 mb-4">
                     <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">確認密碼 :</h5>
-                    <Field :rules="confirmPwd" name="確認密碼" :class="{ 'is-invalid': errors['確認密碼'] }" type="password" class="form-control"></Field>
+                    <Field :rules="{confirmPwd:true,required:true}" name="確認密碼" :class="{ 'is-invalid': errors['確認密碼'] }" type="password" class="form-control"></Field>
                     <ErrorMessage name="確認密碼" class="invalid-feedback"></ErrorMessage>
                   </div>
                 </div>
@@ -78,22 +78,6 @@ export default {
     }
   },
   methods: {
-    checkChangePwd (value) {
-      if (value === this.changePwdForm.oldpd) {
-        return '不可與舊密碼相同'
-      }
-      return this.$custom.validate.CheckPwd(value)
-    },
-    confirmPwd (value) {
-      if (!value) {
-        return '確認密碼為必填'
-      }
-      if (value !== this.changePwdForm.pd) {
-        return '與修改密碼不相同'
-      } else {
-        return true
-      }
-    },
     async changePwd () {
       if (this.isDefault) {
         this.changePwdForm.oldpd = 'UBot123456!'

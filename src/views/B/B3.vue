@@ -7,22 +7,11 @@
             <h2 class="fw-bold mb-3">批次交易取消作業</h2>
             <h6>供帳務科執行整批取消，或單筆取消，僅當日交易完成之批次才可執行取消，若原交易已跨日，請於隔日執行退貨。於營業日9點到五點半才可執行</h6>
           </div>
-          <div class="card-body">
-            <div class="row py-3">
-              <div class="col-xxl-5 d-flex mb-4">
-                <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店代碼:</h5>
-                <input v-model="GroupDataPost.storeId" type="text" class="form-control" placeholder="可不指定[特店代碼須為15碼]">
-              </div>
-            </div>
-            <button @click.prevent="getData" class="btn btn-primary me-3 px-4" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button>
-          </div>
         </div>
         <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
           <template #default>
             <thead>
               <tr>
-                <th scope="col">特店代碼</th>
-                <th scope="col">特店名稱</th>
                 <th scope="col">上傳批次交易檔名</th>
                 <th scope="col">上傳時間</th>
                 <th scope="col">交易處理狀態</th>
@@ -37,9 +26,7 @@
             </thead>
             <tbody>
               <tr v-for="item in gridData" :key="item.batchId">
-                <th scope="row">{{item.batchStoreId}}</th>
-                <td>{{item.batchStoreName}}</td>
-                <td>{{item.batchFileName}}</td>
+                <th scope="row">{{item.batchFileName}}</th>
                 <td>{{item.submitTime}}</td>
                 <td>
                   <span v-if="item.trxStatus==='TRX_WAITING'">等待交易中</span>
@@ -131,7 +118,7 @@
 </template>
 
 <script>
-import service from '@/services/A/A3.service.js'
+import service from '@/services/B/B3.service.js'
 import MainData from '@/components/MainData.vue'
 
 export default {

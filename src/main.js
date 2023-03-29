@@ -3,7 +3,6 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 
 import { Field, Form, ErrorMessage, defineRule, configure } from 'vee-validate'
-import { required, length, email } from '@vee-validate/rules'
 import { localize, setLocale } from '@vee-validate/i18n'
 import zhTW from '@vee-validate/i18n/dist/locale/zh_TW.json'
 
@@ -33,15 +32,6 @@ import moment from 'moment'
 
 import { v4 as uuidv4 } from 'uuid'
 
-defineRule('required', required)
-defineRule('radioRequired', value => {
-  if (value !== false && value !== true) {
-    return '此欄位為必填'
-  }
-  return true
-})
-defineRule('length', length)
-defineRule('email', email)
 // ?加入validate驗證規則
 Object.keys(validate).forEach((rule) => {
   defineRule(rule, validate[rule])

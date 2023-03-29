@@ -3,7 +3,7 @@ import axios from 'axios'
 const service = {
   async getBatchData (postData) {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/a3/findBatch`
+      const url = `${process.env.VUE_APP_BASE_API}/b3/findBatch`
       const res = await axios.post(url, postData)
       return res.data
     } catch (error) {
@@ -17,7 +17,7 @@ const service = {
   },
   async getBatchDetail (batchId) {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/a3/findTxnDetail`
+      const url = `${process.env.VUE_APP_BASE_API}/b3/findTxnDetail`
       const res = await axios.post(url, { batchId: batchId })
       return res.data
     } catch (error) {
@@ -31,7 +31,7 @@ const service = {
   },
   async multipleCancel (batchId) {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/a3/multipleCancel`
+      const url = `${process.env.VUE_APP_BASE_API}/b3/multipleCancel`
       const res = await axios.post(url, { batchId: batchId })
       if (res.data) {
         return true
@@ -47,7 +47,7 @@ const service = {
   },
   async singleCancel (postData) {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/a3/singleCancel`
+      const url = `${process.env.VUE_APP_BASE_API}/b3/singleCancel`
       const res = await axios.post(url, postData)
       if (res.data) {
         return true
