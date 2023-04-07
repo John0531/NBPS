@@ -168,9 +168,9 @@
                     <td>{{detailData.dtSummary.totalRefundCnt}} +</td>
                     <td>{{detailData.dtSummary.totalSaleCnt}} +</td>
                     <td>0 +</td>
-                    <td>0 +</td>
-                    <td>0 +</td>
-                    <td>0</td>
+                    <td>{{detailData.dtSummary.voidAuthCnt}} +</td>
+                    <td>{{detailData.dtSummary.voidRefundCnt}} +</td>
+                    <td>{{detailData.dtSummary.voidSaleCnt}}</td>
                   </tr>
                   <tr>
                     <th>
@@ -183,9 +183,9 @@
                     <td><span class="text-danger">({{$custom.currency(detailData.dtSummary.totalRefundAmt)}})</span> +</td>
                     <td>{{$custom.currency(detailData.dtSummary.totalSaleAmt)}} +</td>
                     <td>0 +</td>
-                    <td>0 +</td>
-                    <td>0 +</td>
-                    <td>0</td>
+                    <td><span class="text-danger">{{$custom.currency(detailData.dtSummary.voidAuthAmt)}}</span> +</td>
+                    <td>{{$custom.currency(detailData.dtSummary.voidRefundAmt)}} +</td>
+                    <td><span class="text-danger">{{$custom.currency(detailData.dtSummary.voidSaleAmt)}}</span></td>
                   </tr>
                   <tr>
                     <th>
@@ -198,9 +198,9 @@
                     <td>{{detailData.dtSummary.successRefundTransCnt}} +</td>
                     <td>{{detailData.dtSummary.successSaleTransCnt}} +</td>
                     <td>0 +</td>
-                    <td>0 +</td>
-                    <td>0 +</td>
-                    <td>0</td>
+                    <td>{{detailData.dtSummary.successVoidAuthCnt}} +</td>
+                    <td>{{detailData.dtSummary.successVoidRefundCnt}} +</td>
+                    <td>{{detailData.dtSummary.successVoidSaleCnt}}</td>
                   </tr>
                   <tr>
                     <th>
@@ -213,9 +213,9 @@
                     <td><span class="text-danger">({{$custom.currency(detailData.dtSummary.successRefundAmtSum)}})</span> +</td>
                     <td>{{$custom.currency(detailData.dtSummary.successSaleAmtSum)}} +</td>
                     <td>0 +</td>
-                    <td>0 +</td>
-                    <td>0 +</td>
-                    <td>0</td>
+                    <td><span class="text-danger">{{$custom.currency(detailData.dtSummary.successVoidAuthAmt)}}</span>  +</td>
+                    <td>{{$custom.currency(detailData.dtSummary.successVoidRefundAmt)}}  +</td>
+                    <td><span class="text-danger">{{$custom.currency(detailData.dtSummary.successVoidSaleAmt)}}</span> </td>
                   </tr>
                   <tr>
                     <th>
@@ -228,9 +228,9 @@
                     <td>{{detailData.dtSummary.failRefundTransCnt}} +</td>
                     <td>{{detailData.dtSummary.failSaleTransCnt}} +</td>
                     <td>0 +</td>
-                    <td>0 +</td>
-                    <td>0 +</td>
-                    <td>0</td>
+                    <td>{{detailData.dtSummary.failVoidAuthCnt}} +</td>
+                    <td>{{detailData.dtSummary.failVoidRefundCnt}} +</td>
+                    <td>{{detailData.dtSummary.failVoidSaleCnt}}</td>
                   </tr>
                   <tr>
                     <th>
@@ -243,9 +243,9 @@
                     <td><span class="text-danger">({{$custom.currency(detailData.dtSummary.failRefundAmtSum)}})</span> +</td>
                     <td>{{$custom.currency(detailData.dtSummary.failSaleAmtSum)}} +</td>
                     <td>0 +</td>
-                    <td>0 +</td>
-                    <td>0 +</td>
-                    <td>0</td>
+                    <td><span class="text-danger">{{$custom.currency(detailData.dtSummary.failVoidAuthAmt)}}</span> +</td>
+                    <td>{{$custom.currency(detailData.dtSummary.failVoidRefundAmt)}} +</td>
+                    <td><span class="text-danger">{{$custom.currency(detailData.dtSummary.failVoidSaleAmt)}}</span></td>
                   </tr>
                 </tbody>
               </table>

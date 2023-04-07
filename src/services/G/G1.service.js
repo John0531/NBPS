@@ -18,7 +18,11 @@ const service = {
   async getBatchDetail (batchId) {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/g1/findTxnDetail`
-      const res = await axios.post(url, { batchId: batchId })
+      const res = await axios({
+        url: url,
+        method: 'POST',
+        data: { batchId: batchId, page: 1, pageSize: 100 }
+      })
       return res.data
     } catch (error) {
       if (error.response.status === 401) {
