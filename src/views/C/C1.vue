@@ -136,7 +136,7 @@
                       id="SALE"
                     />
                     <label class="form-check-label ms-2" for="SALE">
-                      授權與請款
+                      授權與請款(S)
                     </label>
                   </div>
                   <div class="me-3">
@@ -151,7 +151,7 @@
                       id="AUTH"
                     />
                     <label class="form-check-label ms-2" for="AUTH">
-                      授權
+                      授權(A)
                     </label>
                   </div>
                   <div class="me-3">
@@ -166,7 +166,7 @@
                       id="OFF_LINE_SALE"
                     />
                     <label class="form-check-label ms-2" for="OFF_LINE_SALE">
-                      請款
+                      離線請款(O)
                     </label>
                   </div>
                   <div>
@@ -181,7 +181,7 @@
                       id="REFUND"
                     />
                     <label class="form-check-label ms-2" for="REFUND">
-                      退貨
+                      退貨(R)
                     </label>
                   </div>
                   <ErrorMessage
@@ -429,7 +429,7 @@
                       id="SALE2"
                     />
                     <label class="form-check-label ms-2" for="SALE2">
-                      授權與請款
+                      授權與請款(S)
                     </label>
                   </div>
                   <div class="me-3">
@@ -444,7 +444,7 @@
                       id="AUTH2"
                     />
                     <label class="form-check-label ms-2" for="AUTH2">
-                      授權
+                      授權(A)
                     </label>
                   </div>
                   <div class="me-3">
@@ -459,7 +459,7 @@
                       id="OFF_LINE_SALE2"
                     />
                     <label class="form-check-label ms-2" for="OFF_LINE_SALE2">
-                      請款
+                      離線請款(O)
                     </label>
                   </div>
                   <div>
@@ -474,7 +474,7 @@
                       id="REFUND2"
                     />
                     <label class="form-check-label ms-2" for="REFUND2">
-                      退貨
+                      退貨(R)
                     </label>
                   </div>
                   <ErrorMessage
@@ -679,13 +679,13 @@ export default {
         item1.transTypeUI = []
         item1.transType.forEach((item2) => {
           if (item2 === 'SALE') {
-            item1.transTypeUI.push('授權與請款')
+            item1.transTypeUI.push('授權與請款(S)')
           } else if (item2 === 'AUTH') {
-            item1.transTypeUI.push('授權')
+            item1.transTypeUI.push('授權(A)')
           } else if (item2 === 'OFF_LINE_SALE') {
-            item1.transTypeUI.push('請款')
+            item1.transTypeUI.push('離線請款(O)')
           } else if (item2 === 'REFUND') {
-            item1.transTypeUI.push('退貨')
+            item1.transTypeUI.push('退貨(R)')
           }
         })
         item1.transTypeUI = item1.transTypeUI.join()

@@ -1,6 +1,20 @@
 import axios from 'axios'
 
 const service = {
+  async getBatchDefault () {
+    try {
+      const url = `${process.env.VUE_APP_BASE_API}/a1/findDefaultElement`
+      const res = await axios.post(url, {})
+      return res.data
+    } catch (error) {
+      if (error.response.status === 401) {
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
+        if (user) {
+          return service.getBatchDefault()
+        }
+      }
+    }
+  },
   async getBatchData (postData) {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/a2/findBatch`
@@ -18,7 +32,11 @@ const service = {
   async getBatchDetail (batchId) {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/a2/findTxnDetail`
-      const res = await axios.post(url, { batchId: batchId })
+      const res = await axios({
+        url: url,
+        method: 'POST',
+        data: { batchId: batchId, page: 1, pageSize: 100 }
+      })
       return res.data
     } catch (error) {
       if (error.response.status === 401) {

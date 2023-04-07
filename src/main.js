@@ -48,13 +48,12 @@ function currency (num) {
     return null
   }
   const n = parseInt(num, 10)
-  return `${n
-    .toFixed(0)
-    .replace(/./g, (c, i, a) =>
-      i && c !== '.' && (a.length - i) % 3 === 0
-        ? `, ${c}`.replace(/\s/g, '')
-        : c
-    )}`
+  const sign = n < 0 ? '-' : ''
+  const absNum = Math.abs(n)
+  const formattedNum = absNum.toFixed(0).replace(/./g, (c, i, a) =>
+    i && c !== '.' && (a.length - i) % 3 === 0 ? `,${c}` : c
+  )
+  return `${sign}${formattedNum}`
 }
 const app = createApp(App)
 // ?自訂全域屬性

@@ -1,6 +1,20 @@
 import axios from 'axios'
 
 const service = {
+  async getBatchDefault () {
+    try {
+      const url = `${process.env.VUE_APP_BASE_API}/a3/findDefaultElement`
+      const res = await axios.post(url, {})
+      return res.data
+    } catch (error) {
+      if (error.response.status === 401) {
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
+        if (user) {
+          return service.getBatchDefault()
+        }
+      }
+    }
+  },
   async getBatchData (postData) {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/a3/findBatch`

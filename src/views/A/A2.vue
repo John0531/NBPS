@@ -13,11 +13,11 @@
                 <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">確認送出日期:</h5>
                 <div class="input-group">
                   <span class="input-group-text" id="basic-addon1">起日</span>
-                  <Datepicker auto-apply enable-seconds v-model="searchForm.startDate" model-type="yyyy-MM-dd HH:mm:ss" format="yyyy/MM/dd HH:mm:ss"></Datepicker>
+                  <Datepicker auto-apply enable-seconds v-model="searchForm.startDate" model-type="yyyy-MM-dd" format="yyyy/MM/dd"></Datepicker>
                 </div>
                 <div class="input-group">
                   <span class="input-group-text" id="basic-addon1">迄日</span>
-                  <Datepicker auto-apply enable-seconds v-model="searchForm.endDate" model-type="yyyy-MM-dd HH:mm:ss" format="yyyy/MM/dd HH:mm:ss"></Datepicker>
+                  <Datepicker auto-apply enable-seconds v-model="searchForm.endDate" model-type="yyyy-MM-dd" format="yyyy/MM/dd"></Datepicker>
                 </div>
               </div>
               <div class="col-xxl-4"></div>
@@ -35,7 +35,14 @@
               <div class="col-xxl-7"></div>
               <div class="col-xxl-5 d-flex mb-4">
                 <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店代碼:</h5>
-                <input type="text" v-model="searchForm.storeId" class="form-control" placeholder="[特店代碼須為15碼]">
+                  <select class="form-select" v-model="searchForm.storeId">
+                    <option value="" selected>請選擇</option>
+                    <option v-for="item in defaultData" :key="item.id" :value="item.storeId">{{item.storeId}} ({{item.storeName}})</option>
+                  </select>
+                  <ErrorMessage
+                    name="特店代碼"
+                    class="invalid-feedback ms-2"
+                  />
               </div>
             </div>
             <button @click="getData" class="btn btn-primary me-3 px-4" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button>
@@ -147,10 +154,10 @@
                 <thead class="text-center table-success">
                   <tr>
                     <th></th>
-                    <td>授權</td>
-                    <td>退貨</td>
-                    <td>銷售</td>
-                    <td>交易補登請款</td>
+                    <td>(A)授權</td>
+                    <td>(R)退貨</td>
+                    <td>(S)銷售</td>
+                    <td>(O)交易補登請款</td>
                     <td>取消授權</td>
                     <td>取消退貨</td>
                     <td>取消銷售</td>
@@ -271,17 +278,24 @@ export default {
   data () {
     return {
       pageData: {}, // ?分頁資訊
+      defaultData: [],
       searchForm: {
-        startDate: `${this.$custom.moment().format('YYYY-MM-DD')} 00:00:00`,
-        endDate: `${this.$custom.moment().format('YYYY-MM-DD')} 23:59:59`
+        startDate: `${this.$custom.moment().format('YYYY-MM-DD')}`,
+        endDate: `${this.$custom.moment().format('YYYY-MM-DD')}`
       },
       gridData: [],
       detailModal: '',
+      detailDataPost: {
+        batchId: '',
+        page: 1,
+        pageSize: 10
+      },
       detailData: {
         originData: [],
         gridData: []
       },
-      detailPageData: {} // ?詳細分頁資訊
+      detailPageData: {
+      } // ?詳細分頁資訊
     }
   },
   methods: {
@@ -301,6 +315,12 @@ export default {
       }
       // * 前端取得分頁資料(不打api)
       this.detailData.gridData = this.detailData.originData.slice((PageInfo.page - 1) * PageInfo.pageSize, PageInfo.page * PageInfo.pageSize)
+    },
+    async getDefaultData () {
+      this.$store.commit('changeLoading', true)
+      const result = await service.getBatchDefault()
+      this.defaultData = result.storeList
+      this.$store.commit('changeLoading', false)
     },
     async getData () {
       if (this.searchForm.storeId === '') {
@@ -384,6 +404,7 @@ export default {
     }
   },
   mounted () {
+    this.getDefaultData()
     this.detailModal = new this.$custom.bootstrap.Modal(this.$refs.detailModal, { backdrop: 'static' })
   }
 }
