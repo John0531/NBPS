@@ -83,6 +83,14 @@ const routes = [
             }
           },
           {
+            path: 'B5',
+            component: () => import('../views/B/B5.vue'),
+            meta: {
+              group: 'B',
+              code: 'B5'
+            }
+          },
+          {
             path: 'C1',
             component: () => import('../views/C/C1.vue'),
             meta: {
@@ -152,6 +160,14 @@ const routes = [
             meta: {
               group: 'G',
               code: 'G3'
+            }
+          },
+          {
+            path: 'H1',
+            component: () => import('../views/H/H1.vue'),
+            meta: {
+              group: 'H',
+              code: 'H1'
             }
           },
           {

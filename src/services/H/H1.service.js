@@ -3,7 +3,7 @@ import axios from 'axios'
 const service = {
   async getBatchData (postData) {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/b3/findBatch`
+      const url = `${process.env.VUE_APP_BASE_API}/g1/findBatch`
       const res = await axios.post(url, postData)
       return res.data
     } catch (error) {
@@ -17,7 +17,7 @@ const service = {
   },
   async getBatchDetail (batchId) {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/b3/findTxnDetail`
+      const url = `${process.env.VUE_APP_BASE_API}/g1/findTxnDetail`
       const res = await axios({
         url: url,
         method: 'POST',
@@ -33,34 +33,16 @@ const service = {
       }
     }
   },
-  async multipleCancel (batchId) {
+  async getBatchError (postData) {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/b3/multipleCancel`
-      const res = await axios.post(url, { batchId: batchId })
-      if (res.data) {
-        return true
-      }
-    } catch (error) {
-      if (error.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
-        if (user) {
-          return service.multipleCancel(batchId)
-        }
-      }
-    }
-  },
-  async singleCancel (postData) {
-    try {
-      const url = `${process.env.VUE_APP_BASE_API}/b3/singleCancel`
+      const url = `${process.env.VUE_APP_BASE_API}/g1/findBatchError`
       const res = await axios.post(url, postData)
-      if (res.data) {
-        return true
-      }
+      return res.data
     } catch (error) {
       if (error.response.status === 401) {
         const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
-          return service.singleCancel(postData)
+          return service.getBatchError(postData)
         }
       }
     }

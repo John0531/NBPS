@@ -4,8 +4,9 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header">
-            <h2 class="fw-bold mb-3">批次交易查詢作業</h2>
-            <h6>供帳務科經辦依起訖日、特店查詢批次交易結果</h6>
+            <h2 class="fw-bold mb-3">CALL BANK作業</h2>
+            <h6>供發Call Bank 經辦修改授權碼及回應碼，當有CALL BANK條件之交易時，回寄信通知指定的信箱。</h6>
+            <h6 class="text-danger fw-bold">施工中 (假畫面)</h6>
           </div>
           <div class="card-body">
             <div class="row py-3">
@@ -13,11 +14,11 @@
                 <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">確認送出日期:</h5>
                 <div class="input-group">
                   <span class="input-group-text" id="basic-addon1">起日</span>
-                  <Datepicker auto-apply enable-seconds v-model="searchForm.startDate" model-type="yyyy-MM-dd" format="yyyy/MM/dd"></Datepicker>
+                  <Datepicker auto-apply enable-seconds v-model="searchForm.startDate" model-type="yyyy-MM-dd HH:mm:ss" format="yyyy/MM/dd HH:mm:ss"></Datepicker>
                 </div>
                 <div class="input-group">
                   <span class="input-group-text" id="basic-addon1">迄日</span>
-                  <Datepicker auto-apply enable-seconds v-model="searchForm.endDate" model-type="yyyy-MM-dd" format="yyyy/MM/dd"></Datepicker>
+                  <Datepicker auto-apply enable-seconds v-model="searchForm.endDate" model-type="yyyy-MM-dd HH:mm:ss" format="yyyy/MM/dd HH:mm:ss"></Datepicker>
                 </div>
               </div>
               <div class="col-xxl-4"></div>
@@ -33,17 +34,6 @@
                 </select>
               </div>
               <div class="col-xxl-7"></div>
-              <div class="col-xxl-5 d-flex mb-4">
-                <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店代碼:</h5>
-                  <select class="form-select" v-model="searchForm.storeId">
-                    <option value="" selected>請選擇</option>
-                    <option v-for="item in defaultData" :key="item.id" :value="item.storeId">{{item.storeId}} ({{item.storeName}})</option>
-                  </select>
-                  <ErrorMessage
-                    name="特店代碼"
-                    class="invalid-feedback ms-2"
-                  />
-              </div>
             </div>
             <button @click="getData" class="btn btn-primary me-3 px-4" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button>
           </div>
@@ -52,23 +42,26 @@
           <template #default>
             <thead>
               <tr>
-                <th scope="col">特店代碼</th>
-                <th scope="col">特店名稱</th>
                 <th scope="col">上傳批次交易檔名</th>
                 <th scope="col">確認送出時間</th>
+                <th scope="col">作業類型</th>
                 <th scope="col">批次處理狀態</th>
                 <th scope="col">交易處理狀態</th>
                 <th scope="col">總筆數</th>
-                <th scope="col">總金額 A-B</th>
+                <th scope="col">總金額</th>
                 <th scope="col"></th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="item in gridData" :key="item.batchId">
-                <th scope="row">{{item.batchStoreId}}</th>
-                <td>{{item.batchStoreName}}</td>
-                <td>{{item.batchFileName}}</td>
+                <th scope="row">{{item.batchFileNameTxt}}</th>
                 <td>{{item.submitTime}}</td>
+                <td>
+                  <span v-if="item.storeType==='ACQUIRING'">收單</span>
+                  <span v-if="item.storeType==='PUBLIC_UTILITIES'">公共事業</span>
+                  <span v-if="item.storeType==='MAIL_ORDER'">郵購</span>
+                  <span v-if="item.storeType==='ISSUE_CARD'">發卡新消貸</span>
+                </td>
                 <td>
                   <span class="fw-bold" v-if="item.batchStatus==='UPLOAD_SUCCESS'">上傳成功</span>
                   <span class="fw-bold" v-if="item.batchStatus==='UPLAOD_FAIL'">上傳失敗</span>
@@ -89,18 +82,16 @@
                   <span v-if="item.trxStatus==='TRX_PROCESS'">交易處理中</span>
                   <span v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'">交易處理完成但有異常</span>
                   <span v-if="item.trxStatus==='TRX_FINISH'">交易處理完成</span>
-                  <span v-if="item.trxStatus==='TRX_FINISH_REVERSAL'">交易已取消</span>
-                  <span v-if="item.trxStatus==='REPLY_PROCESS'">回覆檔產製中</span>
+                  <span v-if="item.trxStatus==='TRX_ALL_REVERSAL'">交易已整批取消</span>
+                  <span v-if="item.trxStatus==='REPLY_PROCESS'">回覆黨產製中</span>
                   <span v-if="item.trxStatus==='REPLY_SUCCESS'">已下載回覆檔</span>
                   <span v-if="item.trxStatus==='REPLY_FAIL'">下傳回覆檔失敗</span>
                 </td>
                 <td>{{item.totalCnt}}</td>
                 <td>{{$custom.currency(item.totalAmt)}}</td>
                 <td>
-                  <button @click="getDetail(item)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
-                  <button @click="downloadReply(item)" v-if="item.batchStatus==='REPLY_SUCCESS'" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('download')">下載回覆檔</button>
-                  <button @click="downloadExcel(item)" class="btn btn-warning me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('download')">下載總計EXCEL</button>
-                  <button @click="downloadResendTrans(item)" v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'" class="btn btn-danger btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">異常切檔</button>
+                  <button v-if="item.trxStatus==='TRX_FINISH'" @click="getDetail(item)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
+                  <!-- <button v-if="item.batchStatus==='VALIDATE_FAIL'" @click="getError(item)" class="btn btn-danger me-2 btn-sm">檢視錯誤</button> -->
                 </td>
               </tr>
             </tbody>
@@ -119,7 +110,12 @@
           </div>
           <div class="modal-body">
             <h5>檔名: {{detailData.batchFileName}}</h5>
-            <h5>特店名稱: {{detailData.batchStoreName}}</h5>
+            <h5>作業類型:
+              <span v-if="detailData.batchStoreName==='ACQUIRING'">收單</span>
+              <span v-if="detailData.batchStoreName==='PUBLIC_UTILITIES'">公共事業</span>
+              <span v-if="detailData.batchStoreName==='MAIL_ORDER'">郵購</span>
+              <span v-if="detailData.batchStoreName==='ISSUE_CARD'">發卡新消貸</span>
+            </h5>
             <MainData ref="detailMainData" :Page="detailPageData" @ChangePageInfo="getDetailPageInfo">
               <template #default>
                 <thead>
@@ -127,7 +123,6 @@
                     <th scope="col">卡號</th>
                     <th scope="col">交易類別</th>
                     <th scope="col">金額</th>
-                    <th scope="col">帳單描述</th>
                     <th scope="col">回應碼</th>
                     <th scope="col">授權碼</th>
                   </tr>
@@ -142,7 +137,6 @@
                       <span v-if="item.transType==='REFUND'">退貨</span>
                     </td>
                     <td>{{$custom.currency(item.amt)}}</td>
-                    <td>{{item.desc}}</td>
                     <td>{{item.codeH}}</td>
                     <td>{{item.authCode}}</td>
                   </tr>
@@ -154,10 +148,10 @@
                 <thead class="text-center table-success">
                   <tr>
                     <th></th>
-                    <td>(A)授權</td>
-                    <td>(R)退貨</td>
-                    <td>(S)銷售</td>
-                    <td>(O)交易補登請款</td>
+                    <td>授權</td>
+                    <td>退貨</td>
+                    <td>銷售</td>
+                    <td>交易補登請款</td>
                     <td>取消授權</td>
                     <td>取消退貨</td>
                     <td>取消銷售</td>
@@ -264,11 +258,45 @@
         </div>
       </div>
     </div>
+
+    <!-- 檢視錯誤 Modal -->
+    <div class="modal fade" ref="errorModal" tabindex="-1" aria-labelledby="errorModal" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-danger">
+            <h5 class="modal-title text-white">檢視錯誤</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <h5>檔名: {{errorData.batchFileName}}</h5>
+            <MainData :Page="errorPageData" @ChangePageInfo="getErrorPageInfo">
+              <template #default>
+                <thead>
+                  <tr>
+                    <th scope="col">筆數</th>
+                    <th scope="col">錯誤原因</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in errorData.gridData" :key="item.storeId">
+                    <th scope="row">{{item.row}}</th>
+                    <td>{{item.errMsg}}</td>
+                  </tr>
+                </tbody>
+              </template>
+            </MainData>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import service from '@/services/A/A2.service.js'
+import service from '@/services/H/H1.service.js'
 import MainData from '@/components/MainData.vue'
 
 export default {
@@ -278,24 +306,29 @@ export default {
   data () {
     return {
       pageData: {}, // ?分頁資訊
-      defaultData: [],
       searchForm: {
-        startDate: `${this.$custom.moment().format('YYYY-MM-DD')}`,
-        endDate: `${this.$custom.moment().format('YYYY-MM-DD')}`
+        startDate: `${this.$custom.moment().format('YYYY-MM-DD')} 00:00:00`,
+        endDate: `${this.$custom.moment().format('YYYY-MM-DD')} 23:59:59`
       },
       gridData: [],
+      detailPageData: {}, // ?詳細分頁資訊
       detailModal: '',
-      detailDataPost: {
-        batchId: '',
-        page: 1,
-        pageSize: 10
-      },
       detailData: {
         originData: [],
         gridData: []
       },
-      detailPageData: {
-      } // ?詳細分頁資訊
+      errorModal: '',
+      errorDataPost: {
+        batchId: '',
+        page: 1,
+        pageSize: 10
+      },
+      errorData: {
+        batchFileName: '',
+        batchStoreName: '',
+        gridData: []
+      },
+      errorPageData: {}// ?錯誤分頁資訊
     }
   },
   methods: {
@@ -316,16 +349,13 @@ export default {
       // * 前端取得分頁資料(不打api)
       this.detailData.gridData = this.detailData.originData.slice((PageInfo.page - 1) * PageInfo.pageSize, PageInfo.page * PageInfo.pageSize)
     },
-    async getDefaultData () {
-      this.$store.commit('changeLoading', true)
-      const result = await service.getBatchDefault()
-      this.defaultData = result.storeList
-      this.$store.commit('changeLoading', false)
+    // ? 取得 MainData 元件錯誤分頁資訊
+    getErrorPageInfo (PageInfo) {
+      this.errorDataPost.page = PageInfo.page
+      this.errorDataPost.pageSize = PageInfo.pageSize
+      this.getError()
     },
     async getData () {
-      if (this.searchForm.storeId === '') {
-        this.searchForm.storeId = null
-      }
       if (this.searchForm.trxType === '') {
         this.searchForm.trxType = null
       }
@@ -349,63 +379,34 @@ export default {
         this.detailData.originData = result.batchList
         this.detailData.gridData = this.detailData.originData.slice(0, 10)
         // * 傳送分頁資訊(僅第一次打api取得所有資料) end
-        this.detailData.batchFileName = item.batchFileName
-        this.detailData.batchStoreName = item.batchStoreName
+        this.detailData.batchFileName = item.batchFileNameTxt
+        this.detailData.batchStoreName = item.storeType
         this.detailData.dtSummary = result.dtSummary
         // * 將每頁資料數初始化
         this.$refs.detailMainData.PageInfo.pageSize = 10
+        this.detailModal.show()
       }
-      this.detailModal.show()
     },
-    async downloadReply (item) {
+    async getError (item) {
+      if (item) {
+        this.errorDataPost.batchId = item.batchId
+        this.errorDataPost.page = 1
+        this.errorDataPost.pageSize = 10
+      }
       this.$store.commit('changeLoading', true)
-      const result = await service.downloadReply(item.batchId)
+      const result = await service.getBatchError(this.errorDataPost)
       this.$store.commit('changeLoading', false)
-      const a = document.createElement('a')
-      const url = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
-      a.href = url
-      a.style.display = 'none'
-      a.download = item.batchFileName
-      a.click()
-      // 清除暫存
-      a.href = ''
-      window.URL.revokeObjectURL(url)
-    },
-    async downloadExcel (item) {
-      this.$store.commit('changeLoading', true)
-      const result = await service.downloadExcel(item.batchId)
-      this.$store.commit('changeLoading', false)
-      const a = document.createElement('a')
-      const url = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
-      a.href = url
-      a.style.display = 'none'
-      a.download = '總計excel.xlsx'
-      a.click()
-      // 清除暫存
-      a.href = ''
-      window.URL.revokeObjectURL(url)
-    },
-    async downloadResendTrans (item) {
-      this.$store.commit('changeLoading', true)
-      const result = await service.downloadResendTrans({
-        batchId: item.batchId,
-        storeId: item.batchStoreId
-      })
-      this.$store.commit('changeLoading', false)
-      const a = document.createElement('a')
-      const url = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
-      a.href = url
-      a.style.display = 'none'
-      a.download = '異常切檔.zip'
-      a.click()
-      // 清除暫存
-      a.href = ''
-      window.URL.revokeObjectURL(url)
+      if (result) {
+        this.errorPageData = result.pageInfo // ? 傳送分頁資訊
+        this.errorData.batchFileName = item.batchFileNameTxt
+        this.errorData.gridData = result.batchErrorList
+      }
+      this.errorModal.show()
     }
   },
   mounted () {
-    this.getDefaultData()
     this.detailModal = new this.$custom.bootstrap.Modal(this.$refs.detailModal, { backdrop: 'static' })
+    this.errorModal = new this.$custom.bootstrap.Modal(this.$refs.errorModal, { backdrop: 'static' })
   }
 }
 </script>

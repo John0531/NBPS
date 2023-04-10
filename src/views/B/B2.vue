@@ -13,11 +13,11 @@
                 <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">確認送出日期:</h5>
                 <div class="input-group">
                   <span class="input-group-text" id="basic-addon1">起日</span>
-                  <Datepicker auto-apply enable-seconds v-model="searchForm.startDate" model-type="yyyy-MM-dd HH:mm:ss" format="yyyy/MM/dd HH:mm:ss"></Datepicker>
+                  <Datepicker auto-apply enable-seconds v-model="searchForm.startDate" model-type="yyyy-MM-dd" format="yyyy/MM/dd"></Datepicker>
                 </div>
                 <div class="input-group">
                   <span class="input-group-text" id="basic-addon1">迄日</span>
-                  <Datepicker auto-apply enable-seconds v-model="searchForm.endDate" model-type="yyyy-MM-dd HH:mm:ss" format="yyyy/MM/dd HH:mm:ss"></Datepicker>
+                  <Datepicker auto-apply enable-seconds v-model="searchForm.endDate" model-type="yyyy-MM-dd" format="yyyy/MM/dd"></Datepicker>
                 </div>
               </div>
               <div class="col-xxl-4"></div>
@@ -78,8 +78,8 @@
                   <span v-if="item.trxStatus==='TRX_PROCESS'">交易處理中</span>
                   <span v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'">交易處理完成但有異常</span>
                   <span v-if="item.trxStatus==='TRX_FINISH'">交易處理完成</span>
-                  <span v-if="item.trxStatus==='TRX_ALL_REVERSAL'">交易已整批取消</span>
-                  <span v-if="item.trxStatus==='REPLY_PROCESS'">回覆黨產製中</span>
+                  <span v-if="item.trxStatus==='TRX_FINISH_REVERSAL'">交易已取消</span>
+                  <span v-if="item.trxStatus==='REPLY_PROCESS'">回覆檔產製中</span>
                   <span v-if="item.trxStatus==='REPLY_SUCCESS'">已下載回覆檔</span>
                   <span v-if="item.trxStatus==='REPLY_FAIL'">下傳回覆檔失敗</span>
                 </td>
@@ -142,10 +142,10 @@
                 <thead class="text-center table-success">
                   <tr>
                     <th></th>
-                    <td>授權</td>
-                    <td>退貨</td>
-                    <td>銷售</td>
-                    <td>交易補登請款</td>
+                    <td>(A)授權</td>
+                    <td>(R)退貨</td>
+                    <td>(S)銷售</td>
+                    <td>(O)交易補登請款</td>
                     <td>取消授權</td>
                     <td>取消退貨</td>
                     <td>取消銷售</td>
@@ -267,8 +267,8 @@ export default {
     return {
       pageData: {}, // ?分頁資訊
       searchForm: {
-        startDate: `${this.$custom.moment().format('YYYY-MM-DD')} 00:00:00`,
-        endDate: `${this.$custom.moment().format('YYYY-MM-DD')} 23:59:59`
+        startDate: `${this.$custom.moment().format('YYYY-MM-DD')}`,
+        endDate: `${this.$custom.moment().format('YYYY-MM-DD')}`
       },
       gridData: [],
       detailPageData: {}, // ?詳細分頁資訊
