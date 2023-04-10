@@ -120,7 +120,12 @@
           <div class="modal-body">
             <h5>檔名: {{detailData.batchFileName}}</h5>
             <h5>特店名稱: {{detailData.batchStoreName}}</h5>
-            <MainData ref="detailMainData" :Page="detailPageData" @ChangePageInfo="getDetailPageInfo">
+            <h5>batchId: {{detailData.batchId}}</h5>
+            <div class="col-xxl-5 d-flex mb-4">
+              <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">卡號:</h5>
+              <input v-model="pan" v-on:blur="getDetailByPan(detailData.batchId, pan)" type="text" class="form-control">
+            </div>
+            <MainData ref="detailMainData" :Page="detailPageData"  @ChangePageInfo="getDetailPageInfo" >
               <template #default>
                 <thead>
                   <tr>
@@ -285,6 +290,7 @@ export default {
       },
       gridData: [],
       detailModal: '',
+      pan: '',
       detailDataPost: {
         batchId: '',
         page: 1,
@@ -351,6 +357,29 @@ export default {
         // * 傳送分頁資訊(僅第一次打api取得所有資料) end
         this.detailData.batchFileName = item.batchFileName
         this.detailData.batchStoreName = item.batchStoreName
+        this.detailData.dtSummary = result.dtSummary
+        this.detailData.batchId = item.batchId
+        // * 將每頁資料數初始化
+        this.$refs.detailMainData.PageInfo.pageSize = 10
+      }
+      this.detailModal.show()
+    },
+    async getDetailByPan (batchId, pan) {
+      this.$store.commit('changeLoading', true)
+      const result = await service.getBatchDetailByPan(batchId, pan)
+      this.$store.commit('changeLoading', false)
+      if (result) {
+        // * 傳送分頁資訊(僅第一次打api取得所有資料)
+        this.detailPageData = {
+          totalElements: result.batchList.length,
+          currentPage: 1,
+          totalPages: Math.ceil(result.batchList.length / 10)
+        }
+        this.detailData.originData = result.batchList
+        this.detailData.gridData = this.detailData.originData.slice(0, 10)
+        // * 傳送分頁資訊(僅第一次打api取得所有資料) end
+        // this.detailData.batchFileName = item.batchFileName
+        // this.detailData.batchStoreName = item.batchStoreName
         this.detailData.dtSummary = result.dtSummary
         // * 將每頁資料數初始化
         this.$refs.detailMainData.PageInfo.pageSize = 10
