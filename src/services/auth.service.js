@@ -56,6 +56,7 @@ const AuthService = {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/d3/updatePd`
       const postData = {
+        userName: store.state.user.userName,
         oldpd: await forge.encrypt(user.oldpd),
         pd: await forge.encrypt(user.pd)
       }
