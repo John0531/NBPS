@@ -13,11 +13,11 @@
                 <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">確認送出日期:</h5>
                 <div class="input-group">
                   <span class="input-group-text" id="basic-addon1">起日</span>
-                  <Datepicker auto-apply enable-seconds v-model="searchForm.startDate" model-type="yyyy-MM-dd HH:mm:ss" format="yyyy/MM/dd HH:mm:ss"></Datepicker>
+                  <Datepicker auto-apply enable-seconds v-model="searchForm.startDate" model-type="yyyy-MM-dd HH:mm:ss" format="yyyy/MM/dd"></Datepicker>
                 </div>
                 <div class="input-group">
                   <span class="input-group-text" id="basic-addon1">迄日</span>
-                  <Datepicker auto-apply enable-seconds v-model="searchForm.endDate" model-type="yyyy-MM-dd HH:mm:ss" format="yyyy/MM/dd HH:mm:ss"></Datepicker>
+                  <Datepicker auto-apply enable-seconds v-model="searchForm.endDate" model-type="yyyy-MM-dd HH:mm:ss" format="yyyy/MM/dd"></Datepicker>
                 </div>
               </div>
               <div class="col-xxl-4"></div>
@@ -29,7 +29,7 @@
                   <option value="TRX_PROCESS">交易處理中</option>
                   <option value="TRX_FINISH_WITH_ERROR">交易處理完成但有異常</option>
                   <option value="TRX_FINISH">交易處理完成</option>
-                  <option value="TRX_ALL_REVERSAL">交易已整批取消</option>
+                  <option value="TRX_FINISH_REVERSAL">交易已取消</option>
                 </select>
               </div>
               <div class="col-xxl-7"></div>
@@ -81,7 +81,7 @@
                   <span v-if="item.trxStatus==='TRX_PROCESS'">交易處理中</span>
                   <span v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'">交易處理完成但有異常</span>
                   <span v-if="item.trxStatus==='TRX_FINISH'">交易處理完成</span>
-                  <span v-if="item.trxStatus==='TRX_ALL_REVERSAL'">交易已整批取消</span>
+                  <span v-if="item.trxStatus==='TRX_FINISH_REVERSAL'">交易已取消</span>
                   <span v-if="item.trxStatus==='REPLY_PROCESS'">回覆黨產製中</span>
                   <span v-if="item.trxStatus==='REPLY_SUCCESS'">已下載回覆檔</span>
                   <span v-if="item.trxStatus==='REPLY_FAIL'">下傳回覆檔失敗</span>
@@ -147,10 +147,10 @@
                 <thead class="text-center table-success">
                   <tr>
                     <th></th>
-                    <td>授權</td>
-                    <td>退貨</td>
-                    <td>銷售</td>
-                    <td>交易補登請款</td>
+                    <td>(A)授權</td>
+                    <td>(R)退貨</td>
+                    <td>(S)銷售</td>
+                    <td>(O)交易補登請款</td>
                     <td>取消授權</td>
                     <td>取消退貨</td>
                     <td>取消銷售</td>
@@ -168,9 +168,9 @@
                     <td>{{detailData.dtSummary.totalRefundCnt}} +</td>
                     <td>{{detailData.dtSummary.totalSaleCnt}} +</td>
                     <td>0 +</td>
-                    <td>{{detailData.dtSummary.voidAuthCnt}} +</td>
-                    <td>{{detailData.dtSummary.voidRefundCnt}} +</td>
-                    <td>{{detailData.dtSummary.voidSaleCnt}}</td>
+                    <td><span class="text-danger">{{'('+detailData.dtSummary.voidAuthCnt+')'}}</span> +</td>
+                    <td><span class="text-danger">{{'('+detailData.dtSummary.voidRefundCnt+')'}}</span> +</td>
+                    <td><span class="text-danger">{{'('+detailData.dtSummary.voidSaleCnt+')'}}</span></td>
                   </tr>
                   <tr>
                     <th>
@@ -183,9 +183,9 @@
                     <td><span class="text-danger">({{$custom.currency(detailData.dtSummary.totalRefundAmt)}})</span> +</td>
                     <td>{{$custom.currency(detailData.dtSummary.totalSaleAmt)}} +</td>
                     <td>0 +</td>
-                    <td><span class="text-danger">{{$custom.currency(detailData.dtSummary.voidAuthAmt)}}</span> +</td>
-                    <td>{{$custom.currency(detailData.dtSummary.voidRefundAmt)}} +</td>
-                    <td><span class="text-danger">{{$custom.currency(detailData.dtSummary.voidSaleAmt)}}</span></td>
+                    <td><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.voidAuthAmt)+')'}}</span> +</td>
+                    <td><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.voidRefundAmt)+')'}}</span> +</td>
+                    <td><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.voidSaleAmt)+')'}}</span></td>
                   </tr>
                   <tr>
                     <th>
@@ -198,9 +198,9 @@
                     <td>{{detailData.dtSummary.successRefundTransCnt}} +</td>
                     <td>{{detailData.dtSummary.successSaleTransCnt}} +</td>
                     <td>0 +</td>
-                    <td>{{detailData.dtSummary.successVoidAuthCnt}} +</td>
-                    <td>{{detailData.dtSummary.successVoidRefundCnt}} +</td>
-                    <td>{{detailData.dtSummary.successVoidSaleCnt}}</td>
+                    <td><span class="text-danger">{{'('+detailData.dtSummary.successVoidAuthCnt+')'}}</span> +</td>
+                    <td><span class="text-danger">{{'('+detailData.dtSummary.successVoidRefundCnt+')'}}</span> +</td>
+                    <td><span class="text-danger">{{'('+detailData.dtSummary.successVoidSaleCnt+')'}}</span></td>
                   </tr>
                   <tr>
                     <th>
@@ -213,9 +213,9 @@
                     <td><span class="text-danger">({{$custom.currency(detailData.dtSummary.successRefundAmtSum)}})</span> +</td>
                     <td>{{$custom.currency(detailData.dtSummary.successSaleAmtSum)}} +</td>
                     <td>0 +</td>
-                    <td><span class="text-danger">{{$custom.currency(detailData.dtSummary.successVoidAuthAmt)}}</span>  +</td>
-                    <td>{{$custom.currency(detailData.dtSummary.successVoidRefundAmt)}}  +</td>
-                    <td><span class="text-danger">{{$custom.currency(detailData.dtSummary.successVoidSaleAmt)}}</span> </td>
+                    <td><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.successVoidAuthAmt)+')'}}</span>  +</td>
+                    <td><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.successVoidRefundAmt)+')'}}</span>  +</td>
+                    <td><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.successVoidSaleAmt)+')'}}</span> </td>
                   </tr>
                   <tr>
                     <th>
@@ -228,9 +228,9 @@
                     <td>{{detailData.dtSummary.failRefundTransCnt}} +</td>
                     <td>{{detailData.dtSummary.failSaleTransCnt}} +</td>
                     <td>0 +</td>
-                    <td>{{detailData.dtSummary.failVoidAuthCnt}} +</td>
-                    <td>{{detailData.dtSummary.failVoidRefundCnt}} +</td>
-                    <td>{{detailData.dtSummary.failVoidSaleCnt}}</td>
+                    <td><span class="text-danger">{{'('+detailData.dtSummary.failVoidAuthCnt+')'}}</span> +</td>
+                    <td><span class="text-danger">{{'('+detailData.dtSummary.failVoidRefundCnt+')'}}</span> +</td>
+                    <td><span class="text-danger">{{'('+detailData.dtSummary.failVoidSaleCnt+')'}}</span></td>
                   </tr>
                   <tr>
                     <th>
@@ -243,9 +243,9 @@
                     <td><span class="text-danger">({{$custom.currency(detailData.dtSummary.failRefundAmtSum)}})</span> +</td>
                     <td>{{$custom.currency(detailData.dtSummary.failSaleAmtSum)}} +</td>
                     <td>0 +</td>
-                    <td><span class="text-danger">{{$custom.currency(detailData.dtSummary.failVoidAuthAmt)}}</span> +</td>
-                    <td>{{$custom.currency(detailData.dtSummary.failVoidRefundAmt)}} +</td>
-                    <td><span class="text-danger">{{$custom.currency(detailData.dtSummary.failVoidSaleAmt)}}</span></td>
+                    <td><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.failVoidAuthAmt)+')'}}</span> +</td>
+                    <td><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.failVoidRefundAmt)+')'}}</span> +</td>
+                    <td><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.failVoidSaleAmt)+')'}}</span></td>
                   </tr>
                 </tbody>
               </table>
@@ -306,8 +306,8 @@ export default {
     return {
       pageData: {}, // ?分頁資訊
       searchForm: {
-        startDate: `${this.$custom.moment().format('YYYY-MM-DD')} 00:00:00`,
-        endDate: `${this.$custom.moment().format('YYYY-MM-DD')} 23:59:59`
+        startDate: `${this.$custom.moment().format('YYYY-MM-DD')}`,
+        endDate: `${this.$custom.moment().format('YYYY-MM-DD')}`
       },
       gridData: [],
       detailPageData: {}, // ?詳細分頁資訊

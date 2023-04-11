@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">批次交易取消作業</h2>
-            <h6>供帳務科執行整批取消，或單筆取消，僅當日交易完成之批次才可執行取消，若原交易已跨日，請於隔日執行退貨。於營業日9點到五點半才可執行</h6>
+            <h6>執行整批取消，或單筆取消，僅當日交易完成之批次才可執行取消，若原交易已跨日，請於隔日執行退貨。於營業日9點到五點半才可執行</h6>
           </div>
         </div>
         <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
@@ -33,7 +33,7 @@
                   <span v-if="item.trxStatus==='TRX_PROCESS'">交易處理中</span>
                   <span v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'">交易處理完成但有異常</span>
                   <span v-if="item.trxStatus==='TRX_FINISH'">交易處理完成</span>
-                  <span v-if="item.trxStatus==='TRX_ALL_REVERSAL'">交易已整批取消</span>
+                  <span v-if="item.trxStatus==='TRX_FINISH_REVERSAL'">交易已取消</span>
                   <span v-if="item.trxStatus==='REPLY_PROCESS'">回覆黨產製中</span>
                   <span v-if="item.trxStatus==='REPLY_SUCCESS'">已下載回覆檔</span>
                   <span v-if="item.trxStatus==='REPLY_FAIL'">下傳回覆檔失敗</span>
@@ -66,6 +66,10 @@
           <div class="modal-body">
             <h5>檔名: {{detailData.batchFileName}}</h5>
             <h5>特店名稱: {{detailData.batchStoreName}}</h5>
+            <div class="d-flex">
+              <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">依卡號查詢:</h5>
+              <input v-model="pan" v-on:blur="getDetailByPan(detailData.batchId, pan)" type="text" class="form-contorl">
+            </div>
             <MainData ref="detailMainData" :Page="detailPageData" @ChangePageInfo="getDetailPageInfo">
               <template #default>
                 <thead>
@@ -134,6 +138,7 @@ export default {
       },
       gridData: [],
       detailModal: '',
+      pan: '',
       detailData: {
         batchId: '',
         originData: [],
@@ -187,6 +192,28 @@ export default {
         // * 傳送分頁資訊(僅第一次打api取得所有資料) end
         this.detailData.batchFileName = item.batchFileName
         this.detailData.batchStoreName = item.batchStoreName
+        // * 將每頁資料數初始化
+        this.$refs.detailMainData.PageInfo.pageSize = 10
+      }
+      this.detailModal.show()
+    },
+    async getDetailByPan (batchId, pan) {
+      this.$store.commit('changeLoading', true)
+      const result = await service.getBatchDetailByPan(batchId, pan)
+      this.$store.commit('changeLoading', false)
+      if (result) {
+        // * 傳送分頁資訊(僅第一次打api取得所有資料)
+        this.detailPageData = {
+          totalElements: result.batchList.length,
+          currentPage: 1,
+          totalPages: Math.ceil(result.batchList.length / 10)
+        }
+        this.detailData.originData = result.batchList
+        this.detailData.gridData = this.detailData.originData.slice(0, 10)
+        // * 傳送分頁資訊(僅第一次打api取得所有資料) end
+        // this.detailData.batchFileName = item.batchFileName
+        // this.detailData.batchStoreName = item.batchStoreName
+        this.detailData.dtSummary = result.dtSummary
         // * 將每頁資料數初始化
         this.$refs.detailMainData.PageInfo.pageSize = 10
       }

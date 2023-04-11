@@ -13,11 +13,11 @@
                 <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">確認送出日期:</h5>
                 <div class="input-group">
                   <span class="input-group-text" id="basic-addon1">起日</span>
-                  <Datepicker auto-apply enable-seconds v-model="searchForm.startDate" model-type="yyyy-MM-dd HH:mm:ss" format="yyyy/MM/dd HH:mm:ss"></Datepicker>
+                  <Datepicker auto-apply enable-seconds v-model="searchForm.startDate" model-type="yyyy-MM-dd" format="yyyy/MM/dd"></Datepicker>
                 </div>
                 <div class="input-group">
                   <span class="input-group-text" id="basic-addon1">迄日</span>
-                  <Datepicker auto-apply enable-seconds v-model="searchForm.endDate" model-type="yyyy-MM-dd HH:mm:ss" format="yyyy/MM/dd HH:mm:ss"></Datepicker>
+                  <Datepicker auto-apply enable-seconds v-model="searchForm.endDate" model-type="yyyy-MM-dd" format="yyyy/MM/dd"></Datepicker>
                 </div>
               </div>
               <div class="col-xxl-4"></div>
@@ -78,8 +78,8 @@ export default {
     return {
       pageData: {}, // ?分頁資訊
       searchForm: {
-        startDate: `${this.$custom.moment().format('YYYY-MM-DD')} 00:00:00`,
-        endDate: `${this.$custom.moment().format('YYYY-MM-DD')} 23:59:59`
+        startDate: `${this.$custom.moment().format('YYYY-MM-DD')}`,
+        endDate: `${this.$custom.moment().format('YYYY-MM-DD')}`
       },
       gridData: []
     }
