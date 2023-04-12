@@ -42,6 +42,8 @@
                   <div class="col-12 mb-4">
                     <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">確認密碼 :</h5>
                     <Field :rules="{confirmPwd:true,required:true}" name="確認密碼" :class="{ 'is-invalid': errors['確認密碼'] }" type="password" class="form-control"></Field>
+                    <img v-if="changePwdEyeOpen" @click.prevent="changePwdEyeOpen=!changePwdEyeOpen" class="position-absolute eye-open" src="@/assets/img/open_eye.svg" alt="">
+                    <img v-else @click.prevent="changePwdEyeOpen=!changePwdEyeOpen" class="position-absolute eye-close" src="@/assets/img/close_eye.svg" alt="">
                     <ErrorMessage name="確認密碼" class="invalid-feedback"></ErrorMessage>
                   </div>
                 </div>
