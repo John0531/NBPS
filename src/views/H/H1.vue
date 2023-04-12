@@ -6,7 +6,6 @@
           <div class="card-header">
             <h2 class="fw-bold mb-3">CALL BANK作業</h2>
             <h6>供發Call Bank 經辦修改授權碼及回應碼，當有CALL BANK條件之交易時，回寄信通知指定的信箱。</h6>
-            <h6 class="text-danger fw-bold">施工中 (假畫面)</h6>
           </div>
           <div class="card-body">
             <div class="row py-3">
@@ -14,24 +13,12 @@
                 <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">確認送出日期:</h5>
                 <div class="input-group">
                   <span class="input-group-text" id="basic-addon1">起日</span>
-                  <Datepicker auto-apply enable-seconds v-model="searchForm.startDate" model-type="yyyy-MM-dd HH:mm:ss" format="yyyy/MM/dd HH:mm:ss"></Datepicker>
+                  <Datepicker auto-apply enable-seconds v-model="searchForm.startDate" model-type="yyyy-MM-dd" format="yyyy/MM/dd "></Datepicker>
                 </div>
                 <div class="input-group">
                   <span class="input-group-text" id="basic-addon1">迄日</span>
-                  <Datepicker auto-apply enable-seconds v-model="searchForm.endDate" model-type="yyyy-MM-dd HH:mm:ss" format="yyyy/MM/dd HH:mm:ss"></Datepicker>
+                  <Datepicker auto-apply enable-seconds v-model="searchForm.endDate" model-type="yyyy-MM-dd" format="yyyy/MM/dd"></Datepicker>
                 </div>
-              </div>
-              <div class="col-xxl-4"></div>
-              <div class="col-xxl-5 d-flex mb-4">
-                <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">交易處理狀態:</h5>
-                <select class="form-select" v-model="searchForm.trxType">
-                  <option selected value="">全部</option>
-                  <option value="TRX_WAITING">等待交易中</option>
-                  <option value="TRX_PROCESS">交易處理中</option>
-                  <option value="TRX_FINISH_WITH_ERROR">交易處理完成但有異常</option>
-                  <option value="TRX_FINISH">交易處理完成</option>
-                  <option value="TRX_ALL_REVERSAL">交易已整批取消</option>
-                </select>
               </div>
               <div class="col-xxl-7"></div>
             </div>
@@ -47,14 +34,14 @@
                 <th scope="col">作業類型</th>
                 <th scope="col">批次處理狀態</th>
                 <th scope="col">交易處理狀態</th>
-                <th scope="col">總筆數</th>
-                <th scope="col">總金額</th>
+                <th scope="col">交易拒絕筆數</th>
+                <th scope="col">交易拒絕金額</th>
                 <th scope="col"></th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="item in gridData" :key="item.batchId">
-                <th scope="row">{{item.batchFileNameTxt}}</th>
+                <th scope="row">{{item.fileName}}</th>
                 <td>{{item.submitTime}}</td>
                 <td>
                   <span v-if="item.storeType==='ACQUIRING'">收單</span>
@@ -69,9 +56,9 @@
                   <span class="fw-bold text-success" v-if="item.batchStatus==='VALIDATE_SUCCESS'">格式檢核成功</span>
                   <span class="fw-bold text-danger" v-if="item.batchStatus==='VALIDATE_FAIL'">格式檢核失敗</span>
                   <span class="fw-bold" v-if="item.batchStatus==='SUBMISSION_AND_TRX_WAIT'">確認送出，等待交易中</span>
-                  <span class="fw-bold" v-if="item.batchStatus==='TRX_WAIT'">等待交易中</span>
                   <span class="fw-bold" v-if="item.batchStatus==='TRX_PROCESS'">交易處理中</span>
                   <span class="fw-bold" v-if="item.batchStatus==='TRX_FINISH'">交易處理完成</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='CALL_BANK_PROCESS'">Call Bank作業中</span>
                   <span class="fw-bold" v-if="item.batchStatus==='REPLY_PROCESS'">回覆檔產製中</span>
                   <span class="fw-bold" v-if="item.batchStatus==='REPLY_SUCCESS'">已下傳回覆檔</span>
                   <span class="fw-bold" v-if="item.batchStatus==='REPLY_FAIL'">下傳回覆檔失敗</span>
@@ -82,15 +69,16 @@
                   <span v-if="item.trxStatus==='TRX_PROCESS'">交易處理中</span>
                   <span v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'">交易處理完成但有異常</span>
                   <span v-if="item.trxStatus==='TRX_FINISH'">交易處理完成</span>
-                  <span v-if="item.trxStatus==='TRX_ALL_REVERSAL'">交易已整批取消</span>
-                  <span v-if="item.trxStatus==='REPLY_PROCESS'">回覆黨產製中</span>
+                  <span v-if="item.trxStatus==='TRX_FINISH_REVERSAL'">交易已取消</span>
+                  <span v-if="item.trxStatus==='REPLY_PROCESS'">回覆檔產製中</span>
                   <span v-if="item.trxStatus==='REPLY_SUCCESS'">已下載回覆檔</span>
                   <span v-if="item.trxStatus==='REPLY_FAIL'">下傳回覆檔失敗</span>
                 </td>
-                <td>{{item.totalCnt}}</td>
-                <td>{{$custom.currency(item.totalAmt)}}</td>
+                <td>{{item.count}}</td>
+                <td>{{$custom.currency(item.amt)}}</td>
                 <td>
-                  <button v-if="item.trxStatus==='TRX_FINISH'" @click="getDetail(item)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
+                  <button  @click="getDetail(item)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
+                  <button  v-if="item.batchStatus !=='REPLY_UPLOAD_SUCCESS'" @click="callBankFTP(item)" class="btn btn-primary me-2 btn-sm">作業完成</button>
                   <!-- <button v-if="item.batchStatus==='VALIDATE_FAIL'" @click="getError(item)" class="btn btn-danger me-2 btn-sm">檢視錯誤</button> -->
                 </td>
               </tr>
@@ -120,174 +108,36 @@
               <template #default>
                 <thead>
                   <tr>
+                    <th scope="col">商店代號</th>
                     <th scope="col">卡號</th>
                     <th scope="col">交易類別</th>
                     <th scope="col">金額</th>
-                    <th scope="col">回應碼</th>
-                    <th scope="col">授權碼</th>
+                    <th scope="col">原始回應碼</th>
+                    <th scope="col">更改回應碼</th>
+                    <th scope="col">更改授權碼</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="item in detailData.gridData" :key="item.pan">
+                  <tr v-for="(item,index)  in detailData.gridData" :key="item.txnId">
+                    <th scope="row">{{item.storeId}}</th>
                     <th scope="row">{{item.pan}}</th>
                     <td>
-                      <span v-if="item.transType==='SALE'">授權與請款</span>
-                      <span v-if="item.transType==='AUTH'">授權</span>
-                      <span v-if="item.transType==='OFF_LINE_SALE'">請款</span>
-                      <span v-if="item.transType==='REFUND'">退貨</span>
+                      <span v-if="item.txnType==='SALE'">授權與請款</span>
+                      <span v-if="item.txnType==='AUTH'">授權</span>
+                      <span v-if="item.txnType==='OFF_LINE_SALE'">請款</span>
+                      <span v-if="item.txnType==='REFUND'">退貨</span>
                     </td>
                     <td>{{$custom.currency(item.amt)}}</td>
                     <td>{{item.codeH}}</td>
-                    <td>{{item.authCode}}</td>
+                    <td><input type="text" v-model = "codeH[index]"  class="input-group-text"></td>
+                    <td><input type="text" v-model = "authCode[index]" class="input-group-text"></td>
                   </tr>
                 </tbody>
               </template>
             </MainData>
-            <div class="mt-3 d-flex justify-content-center" v-if="detailData.dtSummary">
-              <table class="table table-borderless" style="width:auto;font-size:18px;">
-                <thead class="text-center table-success">
-                  <tr>
-                    <th></th>
-                    <td>授權</td>
-                    <td>退貨</td>
-                    <td>銷售</td>
-                    <td>交易補登請款</td>
-                    <td>取消授權</td>
-                    <td>取消退貨</td>
-                    <td>取消銷售</td>
-                  </tr>
-                </thead>
-                <tbody class="text-center">
-                  <tr>
-                    <th>
-                      <div class="d-flex justify-content-between">
-                        <span>交易總筆數</span>
-                        <span>{{detailData.dtSummary.totalCnt}} =</span>
-                      </div>
-                    </th>
-                    <td>{{detailData.dtSummary.totalAuthCnt}} +</td>
-                    <td>{{detailData.dtSummary.totalRefundCnt}} +</td>
-                    <td>{{detailData.dtSummary.totalSaleCnt}} +</td>
-                    <td>0 +</td>
-                    <td>{{detailData.dtSummary.voidAuthCnt}} +</td>
-                    <td>{{detailData.dtSummary.voidRefundCnt}} +</td>
-                    <td>{{detailData.dtSummary.voidSaleCnt}}</td>
-                  </tr>
-                  <tr>
-                    <th>
-                      <div class="d-flex justify-content-between">
-                        <span>交易總金額</span>
-                        <span class="ms-3">{{$custom.currency(detailData.dtSummary.totalAmt)}} =</span>
-                      </div>
-                    </th>
-                    <td>{{$custom.currency(detailData.dtSummary.totalAuthAmt)}} +</td>
-                    <td><span class="text-danger">({{$custom.currency(detailData.dtSummary.totalRefundAmt)}})</span> +</td>
-                    <td>{{$custom.currency(detailData.dtSummary.totalSaleAmt)}} +</td>
-                    <td>0 +</td>
-                    <td><span class="text-danger">{{$custom.currency(detailData.dtSummary.voidAuthAmt)}}</span> +</td>
-                    <td>{{$custom.currency(detailData.dtSummary.voidRefundAmt)}} +</td>
-                    <td><span class="text-danger">{{$custom.currency(detailData.dtSummary.voidSaleAmt)}}</span></td>
-                  </tr>
-                  <tr>
-                    <th>
-                      <div class="d-flex justify-content-between">
-                        <span>交易核准筆數</span>
-                        <span>{{detailData.dtSummary.successTransCnt}} =</span>
-                      </div>
-                    </th>
-                    <td>{{detailData.dtSummary.successAuthTransCnt}} +</td>
-                    <td>{{detailData.dtSummary.successRefundTransCnt}} +</td>
-                    <td>{{detailData.dtSummary.successSaleTransCnt}} +</td>
-                    <td>0 +</td>
-                    <td>{{detailData.dtSummary.successVoidAuthCnt}} +</td>
-                    <td>{{detailData.dtSummary.successVoidRefundCnt}} +</td>
-                    <td>{{detailData.dtSummary.successVoidSaleCnt}}</td>
-                  </tr>
-                  <tr>
-                    <th>
-                      <div class="d-flex justify-content-between">
-                        <span>交易核准金額</span>
-                        <span class="ms-3">{{$custom.currency(detailData.dtSummary.successAmtSum)}} =</span>
-                      </div>
-                    </th>
-                    <td>{{$custom.currency(detailData.dtSummary.successAuthAmtSum)}} +</td>
-                    <td><span class="text-danger">({{$custom.currency(detailData.dtSummary.successRefundAmtSum)}})</span> +</td>
-                    <td>{{$custom.currency(detailData.dtSummary.successSaleAmtSum)}} +</td>
-                    <td>0 +</td>
-                    <td><span class="text-danger">{{$custom.currency(detailData.dtSummary.successVoidAuthAmt)}}</span>  +</td>
-                    <td>{{$custom.currency(detailData.dtSummary.successVoidRefundAmt)}}  +</td>
-                    <td><span class="text-danger">{{$custom.currency(detailData.dtSummary.successVoidSaleAmt)}}</span> </td>
-                  </tr>
-                  <tr>
-                    <th>
-                      <div class="d-flex justify-content-between">
-                        <span>交易拒絕筆數</span>
-                        <span>{{detailData.dtSummary.failTransCnt}} =</span>
-                      </div>
-                    </th>
-                    <td>{{detailData.dtSummary.failAuthTransCnt}} +</td>
-                    <td>{{detailData.dtSummary.failRefundTransCnt}} +</td>
-                    <td>{{detailData.dtSummary.failSaleTransCnt}} +</td>
-                    <td>0 +</td>
-                    <td>{{detailData.dtSummary.failVoidAuthCnt}} +</td>
-                    <td>{{detailData.dtSummary.failVoidRefundCnt}} +</td>
-                    <td>{{detailData.dtSummary.failVoidSaleCnt}}</td>
-                  </tr>
-                  <tr>
-                    <th>
-                      <div class="d-flex justify-content-between">
-                        <span>交易拒絕金額</span>
-                        <span class="ms-3">{{$custom.currency(detailData.dtSummary.failAmtSum)}} =</span>
-                      </div>
-                    </th>
-                    <td>{{$custom.currency(detailData.dtSummary.failAuthAmtSum)}} +</td>
-                    <td><span class="text-danger">({{$custom.currency(detailData.dtSummary.failRefundAmtSum)}})</span> +</td>
-                    <td>{{$custom.currency(detailData.dtSummary.failSaleAmtSum)}} +</td>
-                    <td>0 +</td>
-                    <td><span class="text-danger">{{$custom.currency(detailData.dtSummary.failVoidAuthAmt)}}</span> +</td>
-                    <td>{{$custom.currency(detailData.dtSummary.failVoidRefundAmt)}} +</td>
-                    <td><span class="text-danger">{{$custom.currency(detailData.dtSummary.failVoidSaleAmt)}}</span></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-success px-4" @click="updateCallBank()" data-bs-dismiss="modal">全部儲存</button>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 檢視錯誤 Modal -->
-    <div class="modal fade" ref="errorModal" tabindex="-1" aria-labelledby="errorModal" aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header bg-danger">
-            <h5 class="modal-title text-white">檢視錯誤</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <h5>檔名: {{errorData.batchFileName}}</h5>
-            <MainData :Page="errorPageData" @ChangePageInfo="getErrorPageInfo">
-              <template #default>
-                <thead>
-                  <tr>
-                    <th scope="col">筆數</th>
-                    <th scope="col">錯誤原因</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="item in errorData.gridData" :key="item.storeId">
-                    <th scope="row">{{item.row}}</th>
-                    <td>{{item.errMsg}}</td>
-                  </tr>
-                </tbody>
-              </template>
-            </MainData>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           </div>
         </div>
       </div>
@@ -307,8 +157,8 @@ export default {
     return {
       pageData: {}, // ?分頁資訊
       searchForm: {
-        startDate: `${this.$custom.moment().format('YYYY-MM-DD')} 00:00:00`,
-        endDate: `${this.$custom.moment().format('YYYY-MM-DD')} 23:59:59`
+        startDate: `${this.$custom.moment().format('YYYY-MM-DD')}`,
+        endDate: `${this.$custom.moment().format('YYYY-MM-DD')}`
       },
       gridData: [],
       detailPageData: {}, // ?詳細分頁資訊
@@ -317,17 +167,15 @@ export default {
         originData: [],
         gridData: []
       },
-      errorModal: '',
       errorDataPost: {
         batchId: '',
         page: 1,
         pageSize: 10
       },
-      errorData: {
-        batchFileName: '',
-        batchStoreName: '',
-        gridData: []
-      },
+      codeH: [],
+      authCode: [],
+      txnId: [],
+      updateData: {},
       errorPageData: {}// ?錯誤分頁資訊
     }
   },
@@ -356,57 +204,87 @@ export default {
       this.getError()
     },
     async getData () {
-      if (this.searchForm.trxType === '') {
-        this.searchForm.trxType = null
-      }
       this.$store.commit('changeLoading', true)
-      const result = await service.getBatchData(this.searchForm)
+      const result = await service.getCallBankData(this.searchForm)
       this.$store.commit('changeLoading', false)
       this.pageData = result.pageInfo // ? 傳送分頁資訊
-      this.gridData = result.batchList
+      this.gridData = result.batchTxnAuthCallBankData
     },
     async getDetail (item) {
       this.$store.commit('changeLoading', true)
-      const result = await service.getBatchDetail(item.batchId)
+      const result = await service.getCallBankDetail(item.batchId)
       this.$store.commit('changeLoading', false)
       if (result) {
         // * 傳送分頁資訊(僅第一次打api取得所有資料)
         this.detailPageData = {
-          totalElements: result.batchList.length,
+          totalElements: result.txnAuthCallBankDetailData.length,
           currentPage: 1,
-          totalPages: Math.ceil(result.batchList.length / 10)
+          totalPages: Math.ceil(result.txnAuthCallBankDetailData.length / 10)
         }
-        this.detailData.originData = result.batchList
+        this.detailData.originData = result.txnAuthCallBankDetailData
         this.detailData.gridData = this.detailData.originData.slice(0, 10)
         // * 傳送分頁資訊(僅第一次打api取得所有資料) end
-        this.detailData.batchFileName = item.batchFileNameTxt
+        this.detailData.batchFileName = item.fileName
         this.detailData.batchStoreName = item.storeType
-        this.detailData.dtSummary = result.dtSummary
         // * 將每頁資料數初始化
         this.$refs.detailMainData.PageInfo.pageSize = 10
         this.detailModal.show()
       }
     },
-    async getError (item) {
-      if (item) {
-        this.errorDataPost.batchId = item.batchId
-        this.errorDataPost.page = 1
-        this.errorDataPost.pageSize = 10
-      }
+    async updateCallBank () {
       this.$store.commit('changeLoading', true)
-      const result = await service.getBatchError(this.errorDataPost)
+      const data = []
+      for (let i = 0; i < this.detailData.gridData.length; i++) {
+        const newitem = {
+          codeH: this.codeH[i],
+          authCode: this.authCode[i],
+          txnId: this.detailData.gridData[i].txnId
+        }
+        data.push(newitem)
+      }
+      this.postdata = data
+      const updateData = {
+        msgId: this.gridData.msgId,
+        updateData: data.map(({ authCode, codeH, txnId }) => ({
+          codeH: String(codeH),
+          authCode: String(authCode),
+          txnId: String(txnId)
+        }))
+      }
+      const dataList = JSON.parse(JSON.stringify(updateData))
+      console.log(dataList)
+      const result = await service.updateCallBankCode(dataList)
       this.$store.commit('changeLoading', false)
       if (result) {
-        this.errorPageData = result.pageInfo // ? 傳送分頁資訊
-        this.errorData.batchFileName = item.batchFileNameTxt
-        this.errorData.gridData = result.batchErrorList
+        this.detailModal.hide()
+        this.$swal.fire({
+          toast: true,
+          position: 'center',
+          icon: 'success',
+          title: '修改成功！',
+          showConfirmButton: false,
+          timer: 1500,
+          width: 500,
+          background: '#F0F0F2',
+          padding: 25,
+          customClass: {
+            container: 'z-10000'
+          }
+        })
+        this.getData()
       }
-      this.errorModal.show()
+    },
+    async callBankFTP (item) {
+      this.$store.commit('changeLoading', true)
+      const result = await service.getCallBankFTP(item.batchId)
+      this.$store.commit('changeLoading', false)
+      if (result) {
+        this.getData()
+      }
     }
   },
   mounted () {
     this.detailModal = new this.$custom.bootstrap.Modal(this.$refs.detailModal, { backdrop: 'static' })
-    this.errorModal = new this.$custom.bootstrap.Modal(this.$refs.errorModal, { backdrop: 'static' })
   }
 }
 </script>
