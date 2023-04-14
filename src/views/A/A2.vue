@@ -88,16 +88,24 @@
                   <span v-if="item.trxStatus==='TRX_WAITING'">等待交易中</span>
                   <span v-if="item.trxStatus==='TRX_PROCESS'">交易處理中</span>
                   <span v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'">交易處理完成但有異常</span>
-                  <span v-if="item.trxStatus==='TRX_FINISH'">交易處理完成</span>
+                  <span v-if="item.trxStatus==='TRX_ERROR_PROCESS'">異常交易取消中</span>
+                  <span v-if="item.trxStatus==='TRX_ERROR_REVERSAL'">異常交易已取消</span>
+                  <span v-if="item.trxStatus==='TRX_ERROR_FAIL'">異常交易取消錯誤</span>
+                  <span v-if="item.trxStatus==='TRX_ALL_VOID_WAITING'">等待整批交易取消中</span>
+                  <span v-if="item.trxStatus==='TRX_ALL_VOID_PROCESS'">交易整批取消中</span>
+                  <span v-if="item.trxStatus==='TRX_ALL_VOID_FAIL'">交易整批取消錯誤</span>
                   <span v-if="item.trxStatus==='TRX_FINISH_REVERSAL'">交易已取消</span>
+                  <span v-if="item.trxStatus==='TRX_FINISH'">交易處理完成</span>
                   <span v-if="item.trxStatus==='REPLY_PROCESS'">回覆檔產製中</span>
                   <span v-if="item.trxStatus==='REPLY_SUCCESS'">已下載回覆檔</span>
                   <span v-if="item.trxStatus==='REPLY_FAIL'">下傳回覆檔失敗</span>
+                  <span v-if="item.trxStatus==='REPLY_UPLOAD_SUCCESS'">回覆檔上傳FTP成功</span>
+                  <span v-if="item.trxStatus==='REPLY_DOWNLOAD_SUCCESS'">回覆檔FTP下載成功</span>
                 </td>
                 <td>{{item.totalCnt}}</td>
                 <td>{{$custom.currency(item.totalAmt)}}</td>
                 <td>
-                  <button @click="getDetail(item,pan,defaultDetailPage.page,defaultDetailPage.pageSize)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
+                  <button @click="getDetail(item,pan,defaultDetailPage.page,defaultDetailPage.pageSize)" class="btn btn-primary me-2 btn-sm" :disabled="!showBtn(item.batchStatus)">檢視明細</button>
                   <button @click="downloadReply(item)" v-if="item.batchStatus==='REPLY_SUCCESS'" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('download')">下載回覆檔</button>
                   <button @click="downloadExcel(item)" class="btn btn-warning me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('download')">下載總計EXCEL</button>
                   <button @click="downloadResendTrans(item)" v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'" class="btn btn-danger btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">異常切檔</button>
@@ -309,6 +317,25 @@ export default {
     }
   },
   methods: {
+    // ? 判斷是否顯示檢係明細按鈕
+    showBtn (status) {
+      switch (status) {
+        case 'TRX_FINISH':
+          return true
+        case 'REPLY_PROCESS':
+          return true
+        case 'REPLY_SUCCESS':
+          return true
+        case 'REPLY_FAIL':
+          return true
+        case 'REPLY_UPLOAD_SUCCESS':
+          return true
+        case 'REPLY_DOWNLOAD_SUCCESS':
+          return true
+        default:
+          return false
+      }
+    },
     // ? 取得 MainData 元件分頁資訊
     getPageInfo (PageInfo) {
       this.searchForm.page = PageInfo.page
