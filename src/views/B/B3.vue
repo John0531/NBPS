@@ -45,7 +45,7 @@
                 <td>{{item.refundCnt}}</td>
                 <td>{{$custom.currency(item.refundAmt)}}</td>
                 <td>
-                  <button @click="getDetail(item)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
+                  <button @click="getDetail(item,pan,defaultDetailPage.page,defaultDetailPage.pageSize)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
                   <button @click="multipleCancel(item)" v-if="item.trxStatus!=='TRX_ALL_REVERSAL'" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">整批取消</button>
                 </td>
               </tr>
@@ -67,8 +67,9 @@
             <h5>檔名: {{detailData.batchFileName}}</h5>
             <h5>特店名稱: {{detailData.batchStoreName}}</h5>
             <div class="d-flex">
-              <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">依卡號查詢:</h5>
-              <input v-model="pan" v-on:blur="getDetailByPan(detailData.batchId, pan)" type="text" class="form-contorl">
+              <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">卡號:</h5>
+              <input v-model="pan" type="text" class="form-contorl" style="margin-right: 1em;border-radius: 10px;">
+              <button @click="getDetail(detailPageData, pan, defaultDetailPage.page, defaultDetailPage.pageSize)" class="btn btn-primary me-2 btn-sm"> 查詢</button>
             </div>
             <MainData ref="detailMainData" :Page="detailPageData" @ChangePageInfo="getDetailPageInfo">
               <template #default>
@@ -88,10 +89,10 @@
                   <tr v-for="item in detailData.gridData" :key="item.txnAuthId">
                     <th scope="row">{{item.pan}}</th>
                     <td>
-                      <span v-if="item.type==='SALE'">授權與請款</span>
-                      <span v-if="item.type==='AUTH'">授權</span>
-                      <span v-if="item.type==='OFF_LINE_SALE'">請款</span>
-                      <span v-if="item.type==='REFUND'">退貨</span>
+                      <span v-if="item.type==='SALE'">(S)授權與請款</span>
+                      <span v-if="item.type==='AUTH'">(A)授權</span>
+                      <span v-if="item.type==='OFF_LINE_SALE'">(O)請款</span>
+                      <span v-if="item.type==='REFUND'">(R)退貨</span>
                     </td>
                     <td>{{$custom.currency(item.amt)}}</td>
                     <td>{{item.desc}}</td>
@@ -131,6 +132,10 @@ export default {
   },
   data () {
     return {
+      defaultDetailPage: { // ?檢視詳細資料第一次的分頁資訊
+        page: 1,
+        pageSize: 10
+      },
       pageData: {}, // ?分頁資訊
       GroupDataPost: {
         page: 1,
@@ -158,12 +163,13 @@ export default {
     getDetailPageInfo (PageInfo) {
       // * 傳送分頁資訊
       this.detailPageData = {
-        totalElements: this.detailData.originData.length,
+        totalElements: this.detailData.totalElements,
         currentPage: PageInfo.page,
-        totalPages: Math.ceil(this.detailData.originData.length / PageInfo.pageSize)
+        totalPages: Math.ceil(this.detailData.totalElements / PageInfo.pageSize),
+        batchId: this.detailPageData.batchId
       }
-      // * 前端取得分頁資料(不打api)
-      this.detailData.gridData = this.detailData.originData.slice((PageInfo.page - 1) * PageInfo.pageSize, PageInfo.page * PageInfo.pageSize)
+      // 前端打API取得分頁資料
+      this.getDetail(this.detailPageData, PageInfo.page, PageInfo.pageSize)
     },
     async getData () {
       if (this.GroupDataPost.storeId === '') {
@@ -175,47 +181,53 @@ export default {
       this.pageData = result.pageInfo // ? 傳送分頁資訊
       this.gridData = result.batchList
     },
-    async getDetail (item) {
-      this.detailData.batchId = item.batchId
+    async getDetail (item, page, pageSize) {
       this.$store.commit('changeLoading', true)
-      const result = await service.getBatchDetail(item.batchId)
+      const result = await service.getBatchDetail(item.batchId, page, pageSize)
       this.$store.commit('changeLoading', false)
       if (result) {
-        // * 傳送分頁資訊(僅第一次打api取得所有資料)
+        // * 傳送分頁資訊
         this.detailPageData = {
-          totalElements: result.batchList.length,
-          currentPage: 1,
-          totalPages: Math.ceil(result.batchList.length / 10)
+          totalElements: result.pageInfo.totalElements,
+          currentPage: result.pageInfo.currentPage,
+          totalPages: Math.ceil(result.pageInfo.totalElements / pageSize),
+          batchId: item.batchId
         }
         this.detailData.originData = result.batchList
-        this.detailData.gridData = this.detailData.originData.slice(0, 10)
+        this.detailData.gridData = this.detailData.originData.slice(0, pageSize)
         // * 傳送分頁資訊(僅第一次打api取得所有資料) end
         this.detailData.batchFileName = item.batchFileName
         this.detailData.batchStoreName = item.batchStoreName
+        this.detailData.dtSummary = result.dtSummary
+        this.detailData.batchId = item.batchId
+        this.detailData.transType = item.transType
         // * 將每頁資料數初始化
-        this.$refs.detailMainData.PageInfo.pageSize = 10
+        this.$refs.detailMainData.PageInfo.pageSize = pageSize
       }
       this.detailModal.show()
     },
-    async getDetailByPan (batchId, pan) {
+    async getDetailByPan (item, pan, page, pageSize) {
       this.$store.commit('changeLoading', true)
-      const result = await service.getBatchDetailByPan(batchId, pan)
+      const result = await service.getBatchDetailByPan(item.batchId, pan, page, pageSize)
       this.$store.commit('changeLoading', false)
       if (result) {
-        // * 傳送分頁資訊(僅第一次打api取得所有資料)
+        // * 傳送分頁資訊
         this.detailPageData = {
-          totalElements: result.batchList.length,
-          currentPage: 1,
-          totalPages: Math.ceil(result.batchList.length / 10)
+          totalElements: result.pageInfo.totalElements,
+          currentPage: result.pageInfo.currentPage,
+          totalPages: Math.ceil(result.pageInfo.totalElements / pageSize),
+          batchId: item.batchId
         }
         this.detailData.originData = result.batchList
-        this.detailData.gridData = this.detailData.originData.slice(0, 10)
+        this.detailData.gridData = this.detailData.originData.slice(0, pageSize)
         // * 傳送分頁資訊(僅第一次打api取得所有資料) end
-        // this.detailData.batchFileName = item.batchFileName
-        // this.detailData.batchStoreName = item.batchStoreName
+        this.detailData.batchFileName = item.batchFileName
+        this.detailData.batchStoreName = item.batchStoreName
         this.detailData.dtSummary = result.dtSummary
+        this.detailData.batchId = item.batchId
+        this.detailData.transType = item.transType
         // * 將每頁資料數初始化
-        this.$refs.detailMainData.PageInfo.pageSize = 10
+        this.$refs.detailMainData.PageInfo.pageSize = pageSize
       }
       this.detailModal.show()
     },

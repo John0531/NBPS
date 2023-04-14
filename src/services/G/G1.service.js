@@ -15,13 +15,13 @@ const service = {
       }
     }
   },
-  async getBatchDetail (batchId) {
+  async getBatchDetail (batchId, page, pageSize) {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/g1/findTxnDetail`
       const res = await axios({
         url: url,
         method: 'POST',
-        data: { batchId: batchId, page: 1, pageSize: 100 }
+        data: { batchId: batchId, page: page, pageSize: pageSize }
       })
       return res.data
     } catch (error) {

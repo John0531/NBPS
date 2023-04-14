@@ -68,28 +68,40 @@
                   <span class="fw-bold text-success" v-if="item.batchStatus==='VALIDATE_SUCCESS'">格式檢核成功</span>
                   <span class="fw-bold text-danger" v-if="item.batchStatus==='VALIDATE_FAIL'">格式檢核失敗</span>
                   <span class="fw-bold" v-if="item.batchStatus==='SUBMISSION_AND_TRX_WAIT'">確認送出，等待交易中</span>
-                  <span class="fw-bold" v-if="item.batchStatus==='TRX_WAIT'">等待交易中</span>
+                  <!-- <span class="fw-bold" v-if="item.batchStatus==='TRX_WAIT'">等待交易中</span> -->
                   <span class="fw-bold" v-if="item.batchStatus==='TRX_PROCESS'">交易處理中</span>
                   <span class="fw-bold" v-if="item.batchStatus==='TRX_FINISH'">交易處理完成</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='CALL_BANK_PROCESS'">Call Bank作業中</span>
                   <span class="fw-bold" v-if="item.batchStatus==='REPLY_PROCESS'">回覆檔產製中</span>
                   <span class="fw-bold" v-if="item.batchStatus==='REPLY_SUCCESS'">已下傳回覆檔</span>
                   <span class="fw-bold" v-if="item.batchStatus==='REPLY_FAIL'">下傳回覆檔失敗</span>
                   <span class="fw-bold" v-if="item.batchStatus==='DOWLOAD_REPLY'">特店已下載回覆檔</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='REPLY_UPLOAD_SUCCESS'">回覆檔上傳FTP成功</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='REPLY_UPLOAD_FAIL'">回覆檔上傳FTP失敗</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='CALL_BANK_SUCCESS'">Call Bank作業完成</span>
                 </td>
                 <td>
                   <span v-if="item.trxStatus==='TRX_WAITING'">等待交易中</span>
                   <span v-if="item.trxStatus==='TRX_PROCESS'">交易處理中</span>
                   <span v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'">交易處理完成但有異常</span>
-                  <span v-if="item.trxStatus==='TRX_FINISH'">交易處理完成</span>
+                  <span v-if="item.trxStatus==='TRX_ERROR_PROCESS'">異常交易取消中</span>
+                  <span v-if="item.trxStatus==='TRX_ERROR_REVERSAL'">異常交易已取消</span>
+                  <span v-if="item.trxStatus==='TRX_ERROR_FAIL'">異常交易取消錯誤</span>
+                  <span v-if="item.trxStatus==='TRX_ALL_VOID_WAITING'">等待整批交易取消中</span>
+                  <span v-if="item.trxStatus==='TRX_ALL_VOID_PROCESS'">交易整批取消中</span>
+                  <span v-if="item.trxStatus==='TRX_ALL_VOID_FAIL'">交易整批取消錯誤</span>
                   <span v-if="item.trxStatus==='TRX_FINISH_REVERSAL'">交易已取消</span>
-                  <span v-if="item.trxStatus==='REPLY_PROCESS'">回覆黨產製中</span>
+                  <span v-if="item.trxStatus==='TRX_FINISH'">交易處理完成</span>
+                  <span v-if="item.trxStatus==='REPLY_PROCESS'">回覆檔產製中</span>
                   <span v-if="item.trxStatus==='REPLY_SUCCESS'">已下載回覆檔</span>
                   <span v-if="item.trxStatus==='REPLY_FAIL'">下傳回覆檔失敗</span>
+                  <span v-if="item.trxStatus==='REPLY_UPLOAD_SUCCESS'">回覆檔上傳FTP成功</span>
+                  <span v-if="item.trxStatus==='REPLY_DOWNLOAD_SUCCESS'">回覆檔FTP下載成功</span>
                 </td>
                 <td>{{item.totalCnt}}</td>
                 <td>{{$custom.currency(item.totalAmt)}}</td>
                 <td>
-                  <button v-if="item.trxStatus==='TRX_FINISH'" @click="getDetail(item)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
+                  <button v-if="item.trxStatus==='TRX_FINISH'" @click="getDetail(item,defaultDetailPage.page,defaultDetailPage.pageSize)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
                   <!-- <button v-if="item.batchStatus==='VALIDATE_FAIL'" @click="getError(item)" class="btn btn-danger me-2 btn-sm">檢視錯誤</button> -->
                 </td>
               </tr>
@@ -108,12 +120,12 @@
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <h5>檔名: {{detailData.batchFileName}}</h5>
+            <h5>檔名: {{detailPageData.batchFileNameTxt}}</h5>
             <h5>作業類型:
-              <span v-if="detailData.batchStoreName==='ACQUIRING'">收單</span>
-              <span v-if="detailData.batchStoreName==='PUBLIC_UTILITIES'">公共事業</span>
-              <span v-if="detailData.batchStoreName==='MAIL_ORDER'">郵購</span>
-              <span v-if="detailData.batchStoreName==='ISSUE_CARD'">發卡新消貸</span>
+              <span v-if="detailPageData.storeType==='ACQUIRING'">收單</span>
+              <span v-if="detailPageData.storeType==='PUBLIC_UTILITIES'">公共事業</span>
+              <span v-if="detailPageData.storeType==='MAIL_ORDER'">郵購</span>
+              <span v-if="detailPageData.storeType==='ISSUE_CARD'">發卡新消貸</span>
             </h5>
             <MainData ref="detailMainData" :Page="detailPageData" @ChangePageInfo="getDetailPageInfo">
               <template #default>
@@ -130,10 +142,10 @@
                   <tr v-for="item in detailData.gridData" :key="item.pan">
                     <th scope="row">{{item.pan}}</th>
                     <td>
-                      <span v-if="item.transType==='SALE'">授權與請款</span>
-                      <span v-if="item.transType==='AUTH'">授權</span>
-                      <span v-if="item.transType==='OFF_LINE_SALE'">請款</span>
-                      <span v-if="item.transType==='REFUND'">退貨</span>
+                      <span v-if="item.transType==='SALE'">(S)授權與請款</span>
+                      <span v-if="item.transType==='AUTH'">(A)授權</span>
+                      <span v-if="item.transType==='OFF_LINE_SALE'">(O)請款</span>
+                      <span v-if="item.transType==='REFUND'">(R)退貨</span>
                     </td>
                     <td>{{$custom.currency(item.amt)}}</td>
                     <td>{{item.codeH}}</td>
@@ -147,13 +159,13 @@
                 <thead class="text-center table-success">
                   <tr>
                     <th></th>
-                    <td>(A)授權</td>
-                    <td>(R)退貨</td>
-                    <td>(S)銷售</td>
-                    <td>(O)交易補登請款</td>
-                    <td>取消授權</td>
-                    <td>取消退貨</td>
-                    <td>取消銷售</td>
+                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0">(A)授權</td>
+                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0">(R)退貨</td>
+                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0">(S)銷售</td>
+                    <td v-if="OffLineSale">(O)交易補登請款</td>
+                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0">取消授權</td>
+                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0">取消退貨</td>
+                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0">取消銷售</td>
                   </tr>
                 </thead>
                 <tbody class="text-center">
@@ -164,13 +176,13 @@
                         <span>{{detailData.dtSummary.totalCnt}} =</span>
                       </div>
                     </th>
-                    <td>{{detailData.dtSummary.totalAuthCnt}} +</td>
-                    <td>{{detailData.dtSummary.totalRefundCnt}} +</td>
-                    <td>{{detailData.dtSummary.totalSaleCnt}} +</td>
-                    <td>0 +</td>
-                    <td><span class="text-danger">{{'('+detailData.dtSummary.voidAuthCnt+')'}}</span> +</td>
-                    <td><span class="text-danger">{{'('+detailData.dtSummary.voidRefundCnt+')'}}</span> +</td>
-                    <td><span class="text-danger">{{'('+detailData.dtSummary.voidSaleCnt+')'}}</span></td>
+                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0">{{detailData.dtSummary.totalAuthCnt}} +</td>
+                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0">{{detailData.dtSummary.totalRefundCnt}} +</td>
+                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0">{{detailData.dtSummary.totalSaleCnt}} +</td>
+                    <td v-if="OffLineSale">0 +</td>
+                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0"><span class="text-danger">{{'('+detailData.dtSummary.voidAuthCnt+')'}}</span> +</td>
+                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0"><span class="text-danger">{{'('+detailData.dtSummary.voidRefundCnt+')'}}</span> +</td>
+                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0"><span class="text-danger">{{'('+detailData.dtSummary.voidSaleCnt+')'}}</span></td>
                   </tr>
                   <tr>
                     <th>
@@ -179,13 +191,13 @@
                         <span class="ms-3">{{$custom.currency(detailData.dtSummary.totalAmt)}} =</span>
                       </div>
                     </th>
-                    <td>{{$custom.currency(detailData.dtSummary.totalAuthAmt)}} +</td>
-                    <td><span class="text-danger">({{$custom.currency(detailData.dtSummary.totalRefundAmt)}})</span> +</td>
-                    <td>{{$custom.currency(detailData.dtSummary.totalSaleAmt)}} +</td>
-                    <td>0 +</td>
-                    <td><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.voidAuthAmt)+')'}}</span> +</td>
-                    <td><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.voidRefundAmt)+')'}}</span> +</td>
-                    <td><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.voidSaleAmt)+')'}}</span></td>
+                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0">{{$custom.currency(detailData.dtSummary.totalAuthAmt)}} +</td>
+                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0"><span class="text-danger">({{$custom.currency(detailData.dtSummary.totalRefundAmt)}})</span> +</td>
+                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0">{{$custom.currency(detailData.dtSummary.totalSaleAmt)}} +</td>
+                    <td v-if="OffLineSale">0 +</td>
+                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0"><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.voidAuthAmt)+')'}}</span> +</td>
+                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0"><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.voidRefundAmt)+')'}}</span> +</td>
+                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0"><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.voidSaleAmt)+')'}}</span></td>
                   </tr>
                   <tr>
                     <th>
@@ -194,13 +206,13 @@
                         <span>{{detailData.dtSummary.successTransCnt}} =</span>
                       </div>
                     </th>
-                    <td>{{detailData.dtSummary.successAuthTransCnt}} +</td>
-                    <td>{{detailData.dtSummary.successRefundTransCnt}} +</td>
-                    <td>{{detailData.dtSummary.successSaleTransCnt}} +</td>
-                    <td>0 +</td>
-                    <td><span class="text-danger">{{'('+detailData.dtSummary.successVoidAuthCnt+')'}}</span> +</td>
-                    <td><span class="text-danger">{{'('+detailData.dtSummary.successVoidRefundCnt+')'}}</span> +</td>
-                    <td><span class="text-danger">{{'('+detailData.dtSummary.successVoidSaleCnt+')'}}</span></td>
+                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0">{{detailData.dtSummary.successAuthTransCnt}} +</td>
+                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0">{{detailData.dtSummary.successRefundTransCnt}} +</td>
+                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0">{{detailData.dtSummary.successSaleTransCnt}} +</td>
+                    <td v-if="OffLineSale">0 +</td>
+                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0"><span class="text-danger">{{'('+detailData.dtSummary.successVoidAuthCnt+')'}}</span> +</td>
+                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0"><span class="text-danger">{{'('+detailData.dtSummary.successVoidRefundCnt+')'}}</span> +</td>
+                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0"><span class="text-danger">{{'('+detailData.dtSummary.successVoidSaleCnt+')'}}</span></td>
                   </tr>
                   <tr>
                     <th>
@@ -209,13 +221,13 @@
                         <span class="ms-3">{{$custom.currency(detailData.dtSummary.successAmtSum)}} =</span>
                       </div>
                     </th>
-                    <td>{{$custom.currency(detailData.dtSummary.successAuthAmtSum)}} +</td>
-                    <td><span class="text-danger">({{$custom.currency(detailData.dtSummary.successRefundAmtSum)}})</span> +</td>
-                    <td>{{$custom.currency(detailData.dtSummary.successSaleAmtSum)}} +</td>
-                    <td>0 +</td>
-                    <td><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.successVoidAuthAmt)+')'}}</span>  +</td>
-                    <td><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.successVoidRefundAmt)+')'}}</span>  +</td>
-                    <td><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.successVoidSaleAmt)+')'}}</span> </td>
+                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0">{{$custom.currency(detailData.dtSummary.successAuthAmtSum)}} +</td>
+                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0"><span class="text-danger">({{$custom.currency(detailData.dtSummary.successRefundAmtSum)}})</span> +</td>
+                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0">{{$custom.currency(detailData.dtSummary.successSaleAmtSum)}} +</td>
+                    <td v-if="OffLineSale">0 +</td>
+                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0"><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.successVoidAuthAmt)+')'}}</span>  +</td>
+                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0"><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.successVoidRefundAmt)+')'}}</span>  +</td>
+                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0"><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.successVoidSaleAmt)+')'}}</span> </td>
                   </tr>
                   <tr>
                     <th>
@@ -224,13 +236,13 @@
                         <span>{{detailData.dtSummary.failTransCnt}} =</span>
                       </div>
                     </th>
-                    <td>{{detailData.dtSummary.failAuthTransCnt}} +</td>
-                    <td>{{detailData.dtSummary.failRefundTransCnt}} +</td>
-                    <td>{{detailData.dtSummary.failSaleTransCnt}} +</td>
-                    <td>0 +</td>
-                    <td><span class="text-danger">{{'('+detailData.dtSummary.failVoidAuthCnt+')'}}</span> +</td>
-                    <td><span class="text-danger">{{'('+detailData.dtSummary.failVoidRefundCnt+')'}}</span> +</td>
-                    <td><span class="text-danger">{{'('+detailData.dtSummary.failVoidSaleCnt+')'}}</span></td>
+                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0">{{detailData.dtSummary.failAuthTransCnt}} +</td>
+                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0">{{detailData.dtSummary.failRefundTransCnt}} +</td>
+                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0">{{detailData.dtSummary.failSaleTransCnt}} +</td>
+                    <td v-if="OffLineSale">0 +</td>
+                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0"><span class="text-danger">{{'('+detailData.dtSummary.failVoidAuthCnt+')'}}</span> +</td>
+                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0"><span class="text-danger">{{'('+detailData.dtSummary.failVoidRefundCnt+')'}}</span> +</td>
+                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0"><span class="text-danger">{{'('+detailData.dtSummary.failVoidSaleCnt+')'}}</span></td>
                   </tr>
                   <tr>
                     <th>
@@ -239,13 +251,13 @@
                         <span class="ms-3">{{$custom.currency(detailData.dtSummary.failAmtSum)}} =</span>
                       </div>
                     </th>
-                    <td>{{$custom.currency(detailData.dtSummary.failAuthAmtSum)}} +</td>
-                    <td><span class="text-danger">({{$custom.currency(detailData.dtSummary.failRefundAmtSum)}})</span> +</td>
-                    <td>{{$custom.currency(detailData.dtSummary.failSaleAmtSum)}} +</td>
-                    <td>0 +</td>
-                    <td><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.failVoidAuthAmt)+')'}}</span> +</td>
-                    <td><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.failVoidRefundAmt)+')'}}</span> +</td>
-                    <td><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.failVoidSaleAmt)+')'}}</span></td>
+                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0">{{$custom.currency(detailData.dtSummary.failAuthAmtSum)}} +</td>
+                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0"><span class="text-danger">({{$custom.currency(detailData.dtSummary.failRefundAmtSum)}})</span> +</td>
+                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0">{{$custom.currency(detailData.dtSummary.failSaleAmtSum)}} +</td>
+                    <td v-if="OffLineSale">0 +</td>
+                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0"><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.failVoidAuthAmt)+')'}}</span> +</td>
+                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0"><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.failVoidRefundAmt)+')'}}</span> +</td>
+                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0"><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.failVoidSaleAmt)+')'}}</span></td>
                   </tr>
                 </tbody>
               </table>
@@ -304,6 +316,11 @@ export default {
   },
   data () {
     return {
+      defaultDetailPage: { // ?檢視詳細資料第一次的分頁資訊
+        page: 1,
+        pageSize: 10
+      },
+      OffLineSale: false,
       pageData: {}, // ?分頁資訊
       searchForm: {
         startDate: `${this.$custom.moment().format('YYYY-MM-DD')}`,
@@ -341,12 +358,15 @@ export default {
     getDetailPageInfo (PageInfo) {
       // * 傳送分頁資訊
       this.detailPageData = {
-        totalElements: this.detailData.originData.length,
+        totalElements: this.detailData.totalElements,
         currentPage: PageInfo.page,
-        totalPages: Math.ceil(this.detailData.originData.length / PageInfo.pageSize)
+        totalPages: Math.ceil(this.detailData.totalElements / PageInfo.pageSize),
+        batchId: this.detailData.batchId,
+        batchFileNameTxt: this.detailData.batchFileNameTxt,
+        storeType: this.detailData.storeType
       }
-      // * 前端取得分頁資料(不打api)
-      this.detailData.gridData = this.detailData.originData.slice((PageInfo.page - 1) * PageInfo.pageSize, PageInfo.page * PageInfo.pageSize)
+      // 前端打API取得分頁資料
+      this.getDetail(this.detailPageData, PageInfo.page, PageInfo.pageSize)
     },
     // ? 取得 MainData 元件錯誤分頁資訊
     getErrorPageInfo (PageInfo) {
@@ -364,27 +384,32 @@ export default {
       this.pageData = result.pageInfo // ? 傳送分頁資訊
       this.gridData = result.batchList
     },
-    async getDetail (item) {
+    async getDetail (item, page, pageSize) {
       this.$store.commit('changeLoading', true)
-      const result = await service.getBatchDetail(item.batchId)
+      const result = await service.getBatchDetail(item.batchId, page, pageSize)
       this.$store.commit('changeLoading', false)
       if (result) {
-        // * 傳送分頁資訊(僅第一次打api取得所有資料)
+        // * 傳送分頁資訊
         this.detailPageData = {
-          totalElements: result.batchList.length,
-          currentPage: 1,
-          totalPages: Math.ceil(result.batchList.length / 10)
+          totalElements: result.pageInfo.totalElements,
+          currentPage: result.pageInfo.currentPage,
+          totalPages: Math.ceil(result.pageInfo.totalElements / pageSize),
+          batchId: item.batchId,
+          batchFileNameTxt: item.batchFileNameTxt,
+          storeType: item.storeType
         }
         this.detailData.originData = result.batchList
-        this.detailData.gridData = this.detailData.originData.slice(0, 10)
+        this.detailData.gridData = this.detailData.originData.slice(0, pageSize)
         // * 傳送分頁資訊(僅第一次打api取得所有資料) end
-        this.detailData.batchFileName = item.batchFileNameTxt
-        this.detailData.batchStoreName = item.storeType
+        this.detailData.batchFileNameTxt = item.batchFileNameTxt
+        this.detailData.storeType = item.storeType
         this.detailData.dtSummary = result.dtSummary
+        this.detailData.batchId = item.batchId
+        this.detailData.transType = item.transType
         // * 將每頁資料數初始化
-        this.$refs.detailMainData.PageInfo.pageSize = 10
-        this.detailModal.show()
+        this.$refs.detailMainData.PageInfo.pageSize = pageSize
       }
+      this.detailModal.show()
     },
     async getError (item) {
       if (item) {

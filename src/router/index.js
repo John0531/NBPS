@@ -195,6 +195,14 @@ const routes = [
             }
           },
           {
+            path: 'I4',
+            component: () => import('../views/I/I4.vue'),
+            meta: {
+              group: 'I',
+              code: 'I4'
+            }
+          },
+          {
             path: 'I5',
             component: () => import('../views/I/I5.vue'),
             meta: {

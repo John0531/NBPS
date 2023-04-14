@@ -43,7 +43,7 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">文字回覆檔轉Excel檔</h2>
-            <h6>上傳Txt文字檔案(回覆檔)</h6>
+            <h6>上傳txt文字檔案(回覆檔),副檔名需為小寫的.txt</h6>
             <!-- <h6 class="text-danger fw-bold">*檔名為: 商店代碼後九碼 + "." + YYYYMMDD(自動帶出今日日期) + "." + A(第一次上傳為A，第二次為B，以此類推)+"."txt(大、小寫皆可)。例如：XXXXXXXXX.20230317.A.txt(TXT)。</h6> -->
           </div>
           <div class="card-body">

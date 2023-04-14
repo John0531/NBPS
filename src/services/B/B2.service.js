@@ -29,13 +29,13 @@ const service = {
       }
     }
   },
-  async getBatchDetail (batchId) {
+  async getBatchDetail (batchId, page, pageSize) {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/b2/findTxnDetail`
       const res = await axios({
         url: url,
         method: 'POST',
-        data: { batchId: batchId, page: 1, pageSize: 100 }
+        data: { batchId: batchId, page: page, pageSize: pageSize }
       })
       return res.data
     } catch (error) {
@@ -47,14 +47,14 @@ const service = {
       }
     }
   },
-  async getBatchDetailByPan (batchId, pan) {
+  async getBatchDetailByPan (batchId, pan, page, pageSize) {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/b2/findTxnDetail`
       console.log(pan)
       const res = await axios({
         url: url,
         method: 'POST',
-        data: { batchId: batchId, pan: pan, page: 1, pageSize: 100 }
+        data: { batchId: batchId, pan: pan, page: page, pageSize: pageSize }
       })
       return res.data
     } catch (error) {
