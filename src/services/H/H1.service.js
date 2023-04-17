@@ -21,7 +21,7 @@ const service = {
       const res = await axios({
         url: url,
         method: 'POST',
-        data: { batchid: batchId, page: page, pageSize: pageSize }
+        data: { batchId: batchId, page: page, pageSize: pageSize }
       })
       return res.data
     } catch (error) {

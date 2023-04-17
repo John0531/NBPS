@@ -143,6 +143,7 @@
                     <td>{{item.codeH}}</td>
                     <td><input type="text" v-model = "codeH[item.txnId]"  v-bind:required="true"  class="input-group-text"></td>
                     <td><input type="text" v-model = "authCode[item.txnId]"  v-bind:required="true" class="input-group-text"></td>
+                    <td>{{item.txnId}}</td>
                   </tr>
                 </tbody>
               </template>
@@ -185,6 +186,7 @@ export default {
       },
       codeH: [],
       authCode: [],
+      txnId: [],
       updateData: {}
     }
   },
@@ -231,7 +233,6 @@ export default {
       const result = await service.getCallBankDetail(item.batchId, page, pageSize)
       this.$store.commit('changeLoading', false)
       if (result) {
-        // * 傳送分頁資訊(僅第一次打api取得所有資料)
         this.detailPageData = {
           totalElements: result.pageInfo.totalElements,
           currentPage: result.pageInfo.currentPage,
@@ -242,7 +243,6 @@ export default {
         }
         this.detailData.originData = result.txnAuthCallBankDetailData
         this.detailData.gridData = this.detailData.originData.slice(0, pageSize)
-        // * 傳送分頁資訊(僅第一次打api取得所有資料) end
         this.detailData.fileName = item.fileName
         this.detailData.storeType = item.storeType
         this.detailData.batchId = item.batchId
@@ -271,7 +271,6 @@ export default {
         }))
       }
       const dataList = JSON.parse(JSON.stringify(updateData))
-      console.log(dataList)
       const result = await service.updateCallBankCode(dataList)
       this.$store.commit('changeLoading', false)
       if (result) {
@@ -298,6 +297,20 @@ export default {
       const result = await service.getCallBankFTP(item.batchId)
       this.$store.commit('changeLoading', false)
       if (result) {
+        this.$swal.fire({
+          toast: true,
+          position: 'center',
+          icon: 'success',
+          title: '上傳成功！',
+          showConfirmButton: false,
+          timer: 1500,
+          width: 500,
+          background: '#F0F0F2',
+          padding: 25,
+          customClass: {
+            container: 'z-10000'
+          }
+        })
         this.getData()
       }
     }
