@@ -56,6 +56,7 @@
                   <span class="fw-bold text-success" v-if="item.batchStatus==='VALIDATE_SUCCESS'">格式檢核成功</span>
                   <span class="fw-bold text-danger" v-if="item.batchStatus==='VALIDATE_FAIL'">格式檢核失敗</span>
                   <span class="fw-bold" v-if="item.batchStatus==='SUBMISSION_AND_TRX_WAIT'">確認送出，等待交易中</span>
+                  <!-- <span class="fw-bold" v-if="item.batchStatus==='TRX_WAIT'">等待交易中</span> -->
                   <span class="fw-bold" v-if="item.batchStatus==='TRX_PROCESS'">交易處理中</span>
                   <span class="fw-bold" v-if="item.batchStatus==='TRX_FINISH'">交易處理完成</span>
                   <span class="fw-bold" v-if="item.batchStatus==='CALL_BANK_PROCESS'">Call Bank作業中</span>
@@ -63,21 +64,32 @@
                   <span class="fw-bold" v-if="item.batchStatus==='REPLY_SUCCESS'">已下傳回覆檔</span>
                   <span class="fw-bold" v-if="item.batchStatus==='REPLY_FAIL'">下傳回覆檔失敗</span>
                   <span class="fw-bold" v-if="item.batchStatus==='DOWLOAD_REPLY'">特店已下載回覆檔</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='REPLY_UPLOAD_SUCCESS'">回覆檔上傳FTP成功</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='REPLY_UPLOAD_FAIL'">回覆檔上傳FTP失敗</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='CALL_BANK_SUCCESS'">Call Bank作業完成</span>
                 </td>
                 <td>
                   <span v-if="item.trxStatus==='TRX_WAITING'">等待交易中</span>
                   <span v-if="item.trxStatus==='TRX_PROCESS'">交易處理中</span>
                   <span v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'">交易處理完成但有異常</span>
-                  <span v-if="item.trxStatus==='TRX_FINISH'">交易處理完成</span>
+                  <span v-if="item.trxStatus==='TRX_ERROR_PROCESS'">異常交易取消中</span>
+                  <span v-if="item.trxStatus==='TRX_ERROR_REVERSAL'">異常交易已取消</span>
+                  <span v-if="item.trxStatus==='TRX_ERROR_FAIL'">異常交易取消錯誤</span>
+                  <span v-if="item.trxStatus==='TRX_ALL_VOID_WAITING'">等待整批交易取消中</span>
+                  <span v-if="item.trxStatus==='TRX_ALL_VOID_PROCESS'">交易整批取消中</span>
+                  <span v-if="item.trxStatus==='TRX_ALL_VOID_FAIL'">交易整批取消錯誤</span>
                   <span v-if="item.trxStatus==='TRX_FINISH_REVERSAL'">交易已取消</span>
+                  <span v-if="item.trxStatus==='TRX_FINISH'">交易處理完成</span>
                   <span v-if="item.trxStatus==='REPLY_PROCESS'">回覆檔產製中</span>
                   <span v-if="item.trxStatus==='REPLY_SUCCESS'">已下載回覆檔</span>
                   <span v-if="item.trxStatus==='REPLY_FAIL'">下傳回覆檔失敗</span>
+                  <span v-if="item.trxStatus==='REPLY_UPLOAD_SUCCESS'">回覆檔上傳FTP成功</span>
+                  <span v-if="item.trxStatus==='REPLY_DOWNLOAD_SUCCESS'">回覆檔FTP下載成功</span>
                 </td>
                 <td>{{item.count}}</td>
                 <td>{{$custom.currency(item.amt)}}</td>
                 <td>
-                  <button  @click="getDetail(item)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
+                  <button v-if="item.trxStatus==='TRX_FINISH'" @click="getDetail(item,defaultDetailPage.page,defaultDetailPage.pageSize)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
                   <button  v-if="item.batchStatus !=='REPLY_UPLOAD_SUCCESS'" @click="callBankFTP(item)" class="btn btn-primary me-2 btn-sm">作業完成</button>
                   <!-- <button v-if="item.batchStatus==='VALIDATE_FAIL'" @click="getError(item)" class="btn btn-danger me-2 btn-sm">檢視錯誤</button> -->
                 </td>
@@ -97,12 +109,12 @@
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <h5>檔名: {{detailData.batchFileName}}</h5>
+            <h5>檔名: {{detailData.fileName}}</h5>
             <h5>作業類型:
-              <span v-if="detailData.batchStoreName==='ACQUIRING'">收單</span>
-              <span v-if="detailData.batchStoreName==='PUBLIC_UTILITIES'">公共事業</span>
-              <span v-if="detailData.batchStoreName==='MAIL_ORDER'">郵購</span>
-              <span v-if="detailData.batchStoreName==='ISSUE_CARD'">發卡新消貸</span>
+              <span v-if="detailData.storeType==='ACQUIRING'">收單</span>
+              <span v-if="detailData.storeType==='PUBLIC_UTILITIES'">公共事業</span>
+              <span v-if="detailData.storeType==='MAIL_ORDER'">郵購</span>
+              <span v-if="detailData.storeType==='ISSUE_CARD'">發卡新消貸</span>
             </h5>
             <MainData ref="detailMainData" :Page="detailPageData" @ChangePageInfo="getDetailPageInfo">
               <template #default>
@@ -118,7 +130,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(item,index)  in detailData.gridData" :key="item.txnId">
+                  <tr v-for="item  in detailData.gridData" :key="item.txnId">
                     <th scope="row">{{item.storeId}}</th>
                     <th scope="row">{{item.pan}}</th>
                     <td>
@@ -129,8 +141,9 @@
                     </td>
                     <td>{{$custom.currency(item.amt)}}</td>
                     <td>{{item.codeH}}</td>
-                    <td><input type="text" v-model = "codeH[index]"  class="input-group-text"></td>
-                    <td><input type="text" v-model = "authCode[index]" class="input-group-text"></td>
+                    <td><input type="text" v-model = "codeH[item.txnId]"  v-bind:required="true"  class="input-group-text"></td>
+                    <td><input type="text" v-model = "authCode[item.txnId]"  v-bind:required="true" class="input-group-text"></td>
+                    <td>{{item.txnId}}</td>
                   </tr>
                 </tbody>
               </template>
@@ -155,6 +168,10 @@ export default {
   },
   data () {
     return {
+      defaultDetailPage: { // ?檢視詳細資料第一次的分頁資訊
+        page: 1,
+        pageSize: 10
+      },
       pageData: {}, // ?分頁資訊
       searchForm: {
         startDate: `${this.$custom.moment().format('YYYY-MM-DD')}`,
@@ -167,16 +184,9 @@ export default {
         originData: [],
         gridData: []
       },
-      errorDataPost: {
-        batchId: '',
-        page: 1,
-        pageSize: 10
-      },
       codeH: [],
       authCode: [],
-      txnId: [],
-      updateData: {},
-      errorPageData: {}// ?錯誤分頁資訊
+      updateData: {}
     }
   },
   methods: {
@@ -188,20 +198,15 @@ export default {
     },
     // ? 取得 MainData 元件詳細分頁資訊
     getDetailPageInfo (PageInfo) {
-      // * 傳送分頁資訊
       this.detailPageData = {
-        totalElements: this.detailData.originData.length,
+        totalElements: this.detailData.totalElements,
         currentPage: PageInfo.page,
-        totalPages: Math.ceil(this.detailData.originData.length / PageInfo.pageSize)
+        totalPages: Math.ceil(this.detailData.totalElements / PageInfo.pageSize),
+        batchId: this.detailData.batchId,
+        fileName: this.detailData.fileName,
+        storeType: this.detailData.storeType
       }
-      // * 前端取得分頁資料(不打api)
-      this.detailData.gridData = this.detailData.originData.slice((PageInfo.page - 1) * PageInfo.pageSize, PageInfo.page * PageInfo.pageSize)
-    },
-    // ? 取得 MainData 元件錯誤分頁資訊
-    getErrorPageInfo (PageInfo) {
-      this.errorDataPost.page = PageInfo.page
-      this.errorDataPost.pageSize = PageInfo.pageSize
-      this.getError()
+      this.getDetail(this.detailPageData, PageInfo.page, PageInfo.pageSize)
     },
     async getData () {
       this.$store.commit('changeLoading', true)
@@ -210,39 +215,62 @@ export default {
       this.pageData = result.pageInfo // ? 傳送分頁資訊
       this.gridData = result.batchTxnAuthCallBankData
     },
-    async getDetail (item) {
+    async getDetail (item, page, pageSize) {
       this.$store.commit('changeLoading', true)
-      const result = await service.getCallBankDetail(item.batchId)
+      const result = await service.getCallBankDetail(item.batchId, page, pageSize)
       this.$store.commit('changeLoading', false)
       if (result) {
         // * 傳送分頁資訊(僅第一次打api取得所有資料)
         this.detailPageData = {
-          totalElements: result.txnAuthCallBankDetailData.length,
-          currentPage: 1,
-          totalPages: Math.ceil(result.txnAuthCallBankDetailData.length / 10)
+          totalElements: result.pageInfo.totalElements,
+          currentPage: result.pageInfo.currentPage,
+          totalPages: Math.ceil(result.pageInfo.totalElements / pageSize),
+          batchId: item.batchId,
+          fileName: item.fileName,
+          storeType: item.storeType
         }
         this.detailData.originData = result.txnAuthCallBankDetailData
-        this.detailData.gridData = this.detailData.originData.slice(0, 10)
+        this.detailData.gridData = this.detailData.originData.slice(0, pageSize)
         // * 傳送分頁資訊(僅第一次打api取得所有資料) end
-        this.detailData.batchFileName = item.fileName
-        this.detailData.batchStoreName = item.storeType
+        this.detailData.fileName = item.fileName
+        this.detailData.storeType = item.storeType
+        this.detailData.batchId = item.batchId
+        this.detailData.totalElements = result.pageInfo.totalElements
         // * 將每頁資料數初始化
-        this.$refs.detailMainData.PageInfo.pageSize = 10
-        this.detailModal.show()
+        this.$refs.detailMainData.PageInfo.pageSize = pageSize
       }
+      this.detailModal.show()
     },
     async updateCallBank () {
       this.$store.commit('changeLoading', true)
       const data = []
+      console.log(this.detailData.gridData.length)
       for (let i = 0; i < this.detailData.gridData.length; i++) {
         const newitem = {
-          codeH: this.codeH[i],
-          authCode: this.authCode[i],
+          codeH: this.codeH[this.detailData.gridData[i].txnId],
+          authCode: this.authCode[this.detailData.gridData[i].txnId],
           txnId: this.detailData.gridData[i].txnId
         }
+        // if (!this.codeH[this.detailData.gridData[i].txnId] || !this.authCode[this.detailData.gridData[i].txnId]) {
+        //   this.$swal.fire({
+        //     toast: true,
+        //     position: 'center',
+        //     icon: 'fail',
+        //     title: '輸入值不能為空!',
+        //     showConfirmButton: false,
+        //     timer: 1500,
+        //     width: 500,
+        //     background: '#F0F0F2',
+        //     padding: 25,
+        //     customClass: {
+        //       container: 'z-10000'
+        //     }
+        //   })
+        //   this.$store.commit('changeLoading', false)
+        //   return
+        // }
         data.push(newitem)
       }
-      this.postdata = data
       const updateData = {
         msgId: this.gridData.msgId,
         updateData: data.map(({ authCode, codeH, txnId }) => ({
@@ -270,7 +298,7 @@ export default {
           customClass: {
             container: 'z-10000'
           }
-        })
+        })// * 無法更新整個檔案 只更新當前page的筆數
         this.getData()
       }
     },

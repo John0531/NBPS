@@ -96,7 +96,7 @@
                 <td>
                   <button @click="getDetail(item,pan,defaultDetailPage.page,defaultDetailPage.pageSize)" class="btn btn-primary me-2 btn-sm" :disabled="!showBtn(item.batchStatus)">檢視明細</button>
                   <button @click="downloadReply(item)" v-if="item.batchStatus==='REPLY_SUCCESS'" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('download')">下載回覆檔</button>
-                  <button @click="downloadExcel(item)" class="btn btn-warning me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('download')">下載總計EXCEL</button>
+                  <button @click="downloadExcel(item)" class="btn btn-warning me-2 btn-sm" v-if="item.batchStatus==='REPLY_SUCCESS'" :disabled="!$store.state.pageBtnPermission.includes('download')">下載總計EXCEL</button>
                 </td>
               </tr>
             </tbody>

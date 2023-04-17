@@ -15,20 +15,20 @@ const service = {
       }
     }
   },
-  async getCallBankDetail (batchId) {
+  async getCallBankDetail (batchId, page, pageSize) {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/h1/findTxnAuthData`
       const res = await axios({
         url: url,
         method: 'POST',
-        data: { batchid: batchId, page: 1, pageSize: 10 }
+        data: { batchid: batchId, page: page, pageSize: pageSize }
       })
       return res.data
     } catch (error) {
       if (error.response.status === 401) {
         const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
-          return service.getCallBankDetail(batchId)
+          return service.getCallBankDetail(batchId, page, pageSize)
         }
       }
     }
