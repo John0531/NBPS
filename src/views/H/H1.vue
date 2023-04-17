@@ -143,7 +143,6 @@
                     <td>{{item.codeH}}</td>
                     <td><input type="text" v-model = "codeH[item.txnId]"  v-bind:required="true"  class="input-group-text"></td>
                     <td><input type="text" v-model = "authCode[item.txnId]"  v-bind:required="true" class="input-group-text"></td>
-                    <td>{{item.txnId}}</td>
                   </tr>
                 </tbody>
               </template>
@@ -187,6 +186,18 @@ export default {
       codeH: [],
       authCode: [],
       updateData: {}
+    }
+  },
+  watch: {
+    authCode: {
+      deep: true,
+      handler (newValue) {
+        for (const txnId in newValue) {
+          if (newValue[txnId]) {
+            this.codeH[txnId] = '00'
+          }
+        }
+      }
     }
   },
   methods: {
@@ -235,7 +246,6 @@ export default {
         this.detailData.fileName = item.fileName
         this.detailData.storeType = item.storeType
         this.detailData.batchId = item.batchId
-        this.detailData.totalElements = result.pageInfo.totalElements
         // * 將每頁資料數初始化
         this.$refs.detailMainData.PageInfo.pageSize = pageSize
       }
@@ -244,31 +254,12 @@ export default {
     async updateCallBank () {
       this.$store.commit('changeLoading', true)
       const data = []
-      console.log(this.detailData.gridData.length)
       for (let i = 0; i < this.detailData.gridData.length; i++) {
         const newitem = {
+          txnId: this.detailData.gridData[i].txnId,
           codeH: this.codeH[this.detailData.gridData[i].txnId],
-          authCode: this.authCode[this.detailData.gridData[i].txnId],
-          txnId: this.detailData.gridData[i].txnId
+          authCode: this.authCode[this.detailData.gridData[i].txnId]
         }
-        // if (!this.codeH[this.detailData.gridData[i].txnId] || !this.authCode[this.detailData.gridData[i].txnId]) {
-        //   this.$swal.fire({
-        //     toast: true,
-        //     position: 'center',
-        //     icon: 'fail',
-        //     title: '輸入值不能為空!',
-        //     showConfirmButton: false,
-        //     timer: 1500,
-        //     width: 500,
-        //     background: '#F0F0F2',
-        //     padding: 25,
-        //     customClass: {
-        //       container: 'z-10000'
-        //     }
-        //   })
-        //   this.$store.commit('changeLoading', false)
-        //   return
-        // }
         data.push(newitem)
       }
       const updateData = {
