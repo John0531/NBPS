@@ -21,13 +21,13 @@
                 </div>
               </div>
               <div class="col-xxl-4"></div>
-              <div class="col-xxl-5 d-flex mb-4">
+              <!-- <div class="col-xxl-5 d-flex mb-4">
                 <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">批次代碼:</h5>
                 <select class="form-select" v-model="searchForm.batchCode">
                   <option selected value="E3">E3:款結果查詢及對帳單產製批次</option>
-                  <option value="E5">E5:分析報表產製批次</option>
+                  <option value="E5">E5分析報表下載作業批次</option>
                 </select>
-              </div>
+              </div> -->
             </div>
             <button @click="getData" class="btn btn-primary me-3 px-4" :disabled="!$store.state.pageBtnPermission.includes('view')">查詢紀錄</button>
           </div>
@@ -45,18 +45,16 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in gridData" :key="item.batchId">
-                <th scope="row">{{item.time}}</th>
+              <tr v-for="item in gridData" :key="item.id">
+                <th scope="row">{{item.lastExecuteTime}}</th>
                 <td>{{item.name}}</td>
+                <td>{{item.status}} </td>
+                <td>{{item.errMsg}}</td>
+                <td>{{item.reExecuteTime}}</td>
                 <td>
-                  <span v-if="item.result==='SUCCESS'">成功</span>
-                  <span v-if="item.result==='FAIL'">失敗</span>
-                </td>
-                <td>{{item.msgId}}</td>
-                <td>{{item.time}}</td>
-                <td>
-                  <button v-if="item.result==='SUCCESS'" @click="getDetail(item)" class="btn btn-success me-2 btn-sm">重新執行批次</button>
-                  <button v-if="item.result==='FAIL'" @click="getSendData(item)" class="btn btn-success me-2 btn-sm">重新執行批次</button>
+                  <button @click="getDetail(item)" class="btn btn-success me-2 btn-sm">重新執行批次</button>
+                  <!-- <button v-if="item.name==='E5分析報表下載作業批次'" @click="getDetail(item)" class="btn btn-success me-2 btn-sm">重新執行批次</button>
+                  <button v-if="item.name==='E3請款結果查詢及對帳單產製批次'" @click="getDetail(item)" class="btn btn-success me-2 btn-sm">重新執行批次</button> -->
                 </td>
               </tr>
             </tbody>
@@ -66,7 +64,7 @@
     </div>
 
     <!-- 重新執行E5批次 Modal -->
-    <div class="modal fade" ref="detailModal" tabindex="-1" aria-labelledby="detailModal" aria-hidden="true">
+    <div class="modal fade" ref="detailE5Modal" tabindex="-1" aria-labelledby="detailE5Modal" aria-hidden="true">
       <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header bg-success">
@@ -78,37 +76,37 @@
               <div class="col-12">
                 <div class="card">
                   <div class="card-header">
-                    <h2 class="fw-bold mb-3">分析報表產製批次</h2>
+                    <h2 class="fw-bold mb-3">E5:分析報表下載作業批次</h2>
                     <h6>依年、月份產製分析報表</h6>
                   </div>
                   <div class="card-body">
                     <div class="row py-3">
                       <div class="col-xxl-8 d-flex mb-4">
                         <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">日期:</h5>
-                        <Datepicker class="w-xxl-50 w-100" v-model="date" month-picker auto-apply format="yyyy年MM月"></Datepicker>
+                        <Datepicker class="w-xxl-50 w-100" v-model="reExeDate" month-picker auto-apply format="yyyy年MM月"></Datepicker>
                       </div>
                     </div>
-                    <button @click="downloadReport" :disabled="!$store.state.pageBtnPermission.includes('download')" class="btn btn-primary me-3 px-4">執行批次</button>
+                    <button @click="reExecureE5(this.detailE5Modal)" :disabled="!$store.state.pageBtnPermission.includes('execute')" class="btn btn-primary me-3 px-4">執行批次</button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- 重新執行E3批次 Modal -->
-    <div class="modal fade" ref="sendDataModal" tabindex="-1" aria-labelledby="detailModal" aria-hidden="true">
+    <div class="modal fade" ref="detailE3Modal" tabindex="-1" aria-labelledby="detailE3Modal" aria-hidden="true">
       <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header bg-success">
             <h5 class="modal-title text-white">重新執行E3批次</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" @click="getData" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <!-- <h5>msgId: {{sendData.msgId}}</h5>
@@ -117,24 +115,24 @@
               <div class="col-12">
                 <div class="card">
                   <div class="card-header">
-                    <h2 class="fw-bold mb-3">E3:對帳單產製批次</h2>
-                    <h6>對帳單產製批次</h6>
+                    <h2 class="fw-bold mb-3">E3:款結果查詢及對帳單產製批次</h2>
+                    <h6>對帳單產製批次(*後端未完成)</h6>
                   </div>
                   <div class="card-body">
                     <div class="row py-3">
                       <div class="col-xxl-8 d-flex mb-4">
                         <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">日期:</h5>
-                        <Datepicker class="w-xxl-50 w-100" v-model="date" month-picker auto-apply format="yyyy年MM月"></Datepicker>
+                        <Datepicker class="w-xxl-50 w-100" v-model="reExeDate" month-picker auto-apply format="yyyy年MM月"></Datepicker>
                       </div>
                     </div>
-                    <button @click="downloadReport" :disabled="!$store.state.pageBtnPermission.includes('download')" class="btn btn-primary me-3 px-4">執行批次</button>
+                    <button @click="reExecureE3(this.detailE5Modal)" :disabled="!$store.state.pageBtnPermission.includes('execute')" class="btn btn-primary me-3 px-4">執行批次</button>
                   </div>
                 </div>
               </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
             </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          </div>
         </div>
       </div>
     </div>
@@ -151,16 +149,15 @@ export default {
   },
   data () {
     return {
-      date: null,
+      reExeDate: `${this.$custom.moment().format('YYYY-MM-DD')}`,
       pageData: {}, // ?分頁資訊
       searchForm: {
         startDate: `${this.$custom.moment().format('YYYY-MM-DD')} 00:00:00`,
-        endDate: `${this.$custom.moment().format('YYYY-MM-DD')} 23:59:59`,
-        batchCode: '',
-        result: 'FAIL'
+        endDate: `${this.$custom.moment().format('YYYY-MM-DD')} 23:59:59`
+        // batchCode: '',
       },
       gridData: [],
-      detailModal: '',
+      detailE3Modal: '',
       detailDataPost: {
         msgId: '',
         page: 1,
@@ -171,11 +168,31 @@ export default {
         gridData: []
       },
       detailPageData: {}, // ?詳細分頁資訊
-      sendDataModal: '',
+      detailE5Modal: '',
       sendData: {}
     }
   },
   methods: {
+    getDetail (item) {
+      switch (item.name) {
+        case 'E3請款結果查詢及對帳單產製批次':
+          this.detailE3Modal = new this.$custom.bootstrap.Modal(this.$refs.detailE3Modal, { backdrop: 'static' })
+          // this.detailE3Modal.msgId = item.msgId
+          this.detailE3Modal.batchHistoryId = item.id
+          this.detailE3Modal.batchCode = 'E3'
+          this.detailE3Modal.show()
+          break
+        case 'E5分析報表下載作業批次':
+          this.detailE5Modal = new this.$custom.bootstrap.Modal(this.$refs.detailE5Modal, { backdrop: 'static' })
+          // this.detailE5Modal.msgId = item.msgId
+          this.detailE5Modal.batchHistoryId = item.id
+          this.detailE5Modal.batchCode = 'E5'
+          this.detailE5Modal.show()
+          break
+        default:
+          break
+      }
+    },
     // ? 取得 MainData 元件分頁資訊
     getPageInfo (PageInfo) {
       this.searchForm.page = PageInfo.page
@@ -190,41 +207,78 @@ export default {
     },
     async getData () {
       this.$store.commit('changeLoading', true)
-      const result = await service.getUserLog(this.searchForm)
+      const result = await service.getBatchExeLog(this.searchForm)
       this.$store.commit('changeLoading', false)
       this.pageData = result.pageInfo // ? 傳送分頁資訊
-      this.gridData = result.errorLogList
+      this.gridData = result.batchHistoryList // ? 依照日期搜尋後的結果
     },
-    async getDetail (item) {
+    async reExecureE5 (item) { // ? 重新執行E5批次
+      console.log('item.id=' + item.batchHistoryId)
+      if (item) {
+        // this.detailDataPost.msgId = item.msgId
+        this.detailDataPost.page = 1
+        this.detailDataPost.pageSize = 10
+        this.detailDataPost.batchCode = 'E5'
+        this.detailDataPost.batchHistoryId = item.batchHistoryId
+        this.detailDataPost.datetimeE5 = this.reExeDate // 傳送產製批次指定的日期
+      }
+      this.$store.commit('changeLoading', true)
+      const result = await service.batchExecute(this.detailDataPost)
+      this.$store.commit('changeLoading', false)
+      if (result) {
+        this.$swal.fire({
+          toast: true,
+          position: 'center',
+          icon: 'success',
+          title: '批次已重新執行',
+          showConfirmButton: false,
+          timer: 1500,
+          width: 500,
+          background: '#F0F0F2',
+          padding: 25,
+          customClass: {
+            container: 'z-10000'
+          }
+        })
+      }
+      this.detailE5Modal.show()
+    },
+    async reExecureE3 (item) {
       if (item) {
         this.detailDataPost.msgId = item.msgId
         this.detailDataPost.page = 1
-        // this.detailDataPost.pageSize = 10
-        this.detailDataPost.batchCode = 'E5'
+        this.detailDataPost.pageSize = 10
+        this.detailDataPost.batchCode = 'E3'
+        this.detailDataPost.batchHistoryId = item.id
+        this.detailDataPost.datetimeE5 = this.reExeDate // 傳送產製批次指定的日期
       }
       this.$store.commit('changeLoading', true)
-      const result = await service.getLogDetail(this.detailDataPost)
+      const result = await service.batchExecute(this.detailDataPost)
       this.$store.commit('changeLoading', false)
       if (result) {
-        this.detailPageData = result.pageInfo // ? 傳送分頁資訊
-        if (item) {
-          this.detailData.msgId = item.msgId
-        }
-        this.detailData.gridData = result.statLogList
+        this.$swal.fire({
+          toast: true,
+          position: 'center',
+          icon: 'success',
+          title: '批次已重新執行',
+          showConfirmButton: false,
+          timer: 1500,
+          width: 500,
+          background: '#F0F0F2',
+          padding: 25,
+          customClass: {
+            container: 'z-10000'
+          }
+        })
       }
-      this.detailModal.show()
+      this.detailE3Modal.show()
+      this.getData()
     },
-    getSendData (item) {
-      this.sendData.msgId = item.msgId
-      this.sendData.input = JSON.stringify(item.input)
-      this.sendData.input = this.sendData.input.replaceAll(',', ',<br>')
-      this.sendData.batchCode = 'E3'
-      this.sendDataModal.show()
+    mounted () {
+      this.getData()
+      this.detailE3Modal = new this.$custom.bootstrap.Modal(this.$refs.detailE3Modal, { backdrop: 'static' })
+      this.detailE5Modal = new this.$custom.bootstrap.Modal(this.$refs.detailE5Modal, { backdrop: 'static' })
     }
-  },
-  mounted () {
-    this.detailModal = new this.$custom.bootstrap.Modal(this.$refs.detailModal, { backdrop: 'static' })
-    this.sendDataModal = new this.$custom.bootstrap.Modal(this.$refs.sendDataModal, { backdrop: 'static' })
   }
 }
 </script>
