@@ -27,7 +27,9 @@ const service = {
         const contentType = response.headers['content-type']
         if (contentType === 'text/plain') {
           // 下載後端回覆的txt檔案
-          const downloadUrl = URL.createObjectURL(new Blob([response.data], { type: 'text/plain' }))
+          let fileContent = response.data
+          fileContent = fileContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+          const downloadUrl = URL.createObjectURL(new Blob([fileContent], { type: 'text/plain' }))
           const link = document.createElement('a')
           link.href = downloadUrl
           link.download = postData.get('fileName').replace(/\.\w+$/, '') + '.txt'
