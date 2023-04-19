@@ -24,14 +24,17 @@ const service = {
           'Content-Type': 'multipart/form-data'
         }
       }).then(response => {
-        // 下載後端回覆的txt檔案
-        const downloadUrl = URL.createObjectURL(new Blob([response.data], { type: 'text/plain' }))
-        const link = document.createElement('a')
-        link.href = downloadUrl
-        link.download = postData.get('fileName').replace(/\.\w+$/, '') + '.txt'
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
+        const contentType = response.headers['content-type']
+        if (contentType === 'text/plain') {
+          // 下載後端回覆的txt檔案
+          const downloadUrl = URL.createObjectURL(new Blob([response.data], { type: 'text/plain' }))
+          const link = document.createElement('a')
+          link.href = downloadUrl
+          link.download = postData.get('fileName').replace(/\.\w+$/, '') + '.txt'
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+        }
       })
     } catch (error) {
       if (error.response.status === 401) {
