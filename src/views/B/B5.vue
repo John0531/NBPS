@@ -34,7 +34,7 @@
                 </div>
                 <div class="col-xxl-6"></div>
               </div>
-              <button type="submit" :disabled="!isBusinessDay||!$store.state.pageBtnPermission.includes('execute')" class="btn btn-success me-3 px-4">轉檔</button>
+              <button type="submit" :disabled="!$store.state.pageBtnPermission.includes('execute')" class="btn btn-success me-3 px-4">轉檔</button>
               <button class="btn btn-warning me-3" @click.prevent="downloadExcel" :disabled="!$store.state.pageBtnPermission.includes('execute')">下載範例Excel檔</button>
             </Form>
           </div>
@@ -72,7 +72,7 @@
                 </div>
                 <div class="col-xxl-6"></div>
               </div>
-              <button type="submit" :disabled="!isBusinessDay||!$store.state.pageBtnPermission.includes('execute')" class="btn btn-success me-3 px-4">轉檔</button>
+              <button type="submit" :disabled="!$store.state.pageBtnPermission.includes('execute')" class="btn btn-success me-3 px-4">轉檔</button>
               <!-- <button class="btn btn-warning me-3" @click.prevent="downloadExcel" :disabled="!$store.state.pageBtnPermission.includes('download')">下載範例</button> -->
               <!-- <button class="btn btn-success" @click.prevent="downloadFormat" :disabled="!$store.state.pageBtnPermission.includes('download')">下載批次交易檔規格</button> -->
             </Form>

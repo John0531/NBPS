@@ -22,21 +22,19 @@ const service = {
       await axios.post(url, postData, {
         headers: {
           'Content-Type': 'multipart/form-data'
-        }
+        },
+        responseType: 'text/plain'
       }).then(response => {
-        const contentType = response.headers['content-type']
-        if (contentType === 'text/plain') {
-          // 下載後端回覆的txt檔案
-          let fileContent = response.data
-          fileContent = fileContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-          const downloadUrl = URL.createObjectURL(new Blob([fileContent], { type: 'text/plain' }))
-          const link = document.createElement('a')
-          link.href = downloadUrl
-          link.download = postData.get('fileName').replace(/\.\w+$/, '') + '.txt'
-          document.body.appendChild(link)
-          link.click()
-          document.body.removeChild(link)
-        }
+        // 下載後端回覆的txt檔案
+        let fileContent = response.data
+        fileContent = fileContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        const downloadUrl = URL.createObjectURL(new Blob([fileContent], { type: 'text/plain' }))
+        const link = document.createElement('a')
+        link.href = downloadUrl
+        link.download = postData.get('fileName').replace(/\.\w+$/, '') + '.txt'
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
       })
     } catch (error) {
       if (error.response.status === 401) {
