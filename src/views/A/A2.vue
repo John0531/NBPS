@@ -106,7 +106,7 @@
                 <td>{{$custom.currency(item.totalAmt)}}</td>
                 <td>
                   <button @click="getDetail(item,pan,defaultDetailPage.page,defaultDetailPage.pageSize)" class="btn btn-primary me-2 btn-sm" :disabled="!showBtn(item.batchStatus)">檢視明細</button>
-                  <button @click="downloadReply(item)" v-if="item.batchStatus==='REPLY_SUCCESS'" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('download')">下載回覆檔</button>
+                  <button @click="downloadReply(item)" v-if="item.batchStatus==='REPLY_SUCCESS'" class="btn btn-success me-2 btn-sm" :disabled="!($store.state.pageBtnPermission.includes('download')&&showDLbtn(item.trxStatus))">下載回覆檔</button>
                   <button @click="downloadExcel(item)" class="btn btn-warning me-2 btn-sm" v-if="item.batchStatus==='REPLY_SUCCESS'" :disabled="!$store.state.pageBtnPermission.includes('download')">下載總計EXCEL</button>
                   <button @click="downloadResendTrans(item)" v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'" class="btn btn-danger btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">異常切檔</button>
                 </td>
@@ -143,6 +143,7 @@
                     <th scope="col">帳單描述</th>
                     <th scope="col">回應碼</th>
                     <th scope="col">授權碼</th>
+                    <th scope="col">交易取消結果</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -158,6 +159,10 @@
                     <td>{{item.desc}}</td>
                     <td>{{item.codeH}}</td>
                     <td>{{item.authCode}}</td>
+                    <td>
+                      <span v-if="(item.authVoidStatus==='00'&&item.settleVoidStatus==='0000')">取消成功</span>
+                      <span v-if="(item.authVoidStatus!='00'&&item.settleVoidStatus!='0000')"></span>
+                    </td>
                   </tr>
                 </tbody>
               </template>
@@ -167,13 +172,14 @@
                 <thead class="text-center table-success">
                   <tr>
                     <th></th>
-                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0">(A)授權</td>
-                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0">(R)退貨</td>
-                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0">(S)銷售</td>
+                    <th>加總</th>
+                    <td v-if="(detailData.dtSummary.totalAuthCnt)!=0">(A)授權</td>
+                    <td v-if="(detailData.dtSummary.totalRefundCnt)!=0">(R)退貨</td>
+                    <td v-if="(detailData.dtSummary.totalSaleCnt)!=0">(S)銷售</td>
                     <td v-if="OffLineSale">(O)交易補登請款</td>
-                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0">取消授權</td>
-                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0">取消退貨</td>
-                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0">取消銷售</td>
+                    <td v-if="(detailData.dtSummary.voidAuthCnt)!=0">取消授權</td>
+                    <td v-if="(detailData.dtSummary.voidRefundCnt)!=0">取消退貨</td>
+                    <td v-if="(detailData.dtSummary.voidSaleCnt)!=0">取消銷售</td>
                   </tr>
                 </thead>
                 <tbody class="text-center">
@@ -181,91 +187,91 @@
                     <th>
                       <div class="d-flex justify-content-between">
                         <span>交易總筆數</span>
-                        <span>{{detailData.dtSummary.totalCnt}} =</span>
                       </div>
                     </th>
-                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0">{{detailData.dtSummary.totalAuthCnt}} +</td>
-                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0">{{detailData.dtSummary.totalRefundCnt}} +</td>
-                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0">{{detailData.dtSummary.totalSaleCnt}} +</td>
-                    <td v-if="OffLineSale">0 +</td>
-                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0"><span class="text-danger">{{'('+detailData.dtSummary.voidAuthCnt+')'}}</span> +</td>
-                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0"><span class="text-danger">{{'('+detailData.dtSummary.voidRefundCnt+')'}}</span> +</td>
-                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0"><span class="text-danger">{{'('+detailData.dtSummary.voidSaleCnt+')'}}</span></td>
+                    <th><span>{{detailData.dtSummary.totalCnt}} =</span></th>
+                    <td v-if="(detailData.dtSummary.totalAuthCnt)!=0">{{detailData.dtSummary.totalAuthCnt}} </td>
+                    <td v-if="(detailData.dtSummary.totalRefundCnt)!=0">+{{detailData.dtSummary.totalRefundCnt}} </td>
+                    <td v-if="(detailData.dtSummary.totalSaleCnt)!=0">+{{detailData.dtSummary.totalSaleCnt}} </td>
+                    <td v-if="OffLineSale">0 </td>
+                    <td v-if="(detailData.dtSummary.voidAuthCnt)!=0">+<span class="text-danger">({{detailData.dtSummary.voidAuthCnt}})</span> </td>
+                    <td v-if="(detailData.dtSummary.voidRefundCnt)!=0">+<span class="text-danger">({{detailData.dtSummary.voidRefundCnt}})</span> </td>
+                    <td v-if="(detailData.dtSummary.voidSaleCnt)!=0">+<span class="text-danger">({{detailData.dtSummary.voidSaleCnt}})</span></td>
                   </tr>
                   <tr>
                     <th>
                       <div class="d-flex justify-content-between">
                         <span>交易總金額</span>
-                        <span class="ms-3">{{$custom.currency(detailData.dtSummary.totalAmt)}} =</span>
                       </div>
                     </th>
-                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0">{{$custom.currency(detailData.dtSummary.totalAuthAmt)}} +</td>
-                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0"><span class="text-danger">({{$custom.currency(detailData.dtSummary.totalRefundAmt)}})</span> +</td>
-                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0">{{$custom.currency(detailData.dtSummary.totalSaleAmt)}} +</td>
-                    <td v-if="OffLineSale">0 +</td>
-                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0"><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.voidAuthAmt)+')'}}</span> +</td>
-                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0"><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.voidRefundAmt)+')'}}</span> +</td>
-                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0"><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.voidSaleAmt)+')'}}</span></td>
+                    <th><span class="ms-3">{{$custom.currency(detailData.dtSummary.totalAmt)}} =</span></th>
+                    <td v-if="(detailData.dtSummary.totalAuthCnt)!=0">{{$custom.currency(detailData.dtSummary.totalAuthAmt)}} </td>
+                    <td v-if="(detailData.dtSummary.totalRefundCnt)!=0">+<span class="text-danger">({{$custom.currency(detailData.dtSummary.totalRefundAmt)}})</span> </td>
+                    <td v-if="(detailData.dtSummary.totalSaleCnt)!=0">+{{$custom.currency(detailData.dtSummary.totalSaleAmt)}} </td>
+                    <td v-if="OffLineSale">+ 0 </td>
+                    <td v-if="(detailData.dtSummary.voidAuthCnt)!=0">+<span class="text-danger"> ({{$custom.currency(detailData.dtSummary.voidAuthAmt)}})</span></td>
+                    <td v-if="(detailData.dtSummary.voidRefundCnt)!=0"><span>+{{$custom.currency(detailData.dtSummary.voidRefundAmt)}}</span></td>
+                    <td v-if="(detailData.dtSummary.voidSaleCnt)!=0">+<span class="text-danger"> ({{$custom.currency(detailData.dtSummary.voidSaleAmt)}})</span></td>
                   </tr>
                   <tr>
                     <th>
                       <div class="d-flex justify-content-between">
                         <span>交易核准筆數</span>
-                        <span>{{detailData.dtSummary.successTransCnt}} =</span>
                       </div>
                     </th>
-                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0">{{detailData.dtSummary.successAuthTransCnt}} +</td>
-                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0">{{detailData.dtSummary.successRefundTransCnt}} +</td>
-                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0">{{detailData.dtSummary.successSaleTransCnt}} +</td>
-                    <td v-if="OffLineSale">0 +</td>
-                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0"><span class="text-danger">{{'('+detailData.dtSummary.successVoidAuthCnt+')'}}</span> +</td>
-                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0"><span class="text-danger">{{'('+detailData.dtSummary.successVoidRefundCnt+')'}}</span> +</td>
-                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0"><span class="text-danger">{{'('+detailData.dtSummary.successVoidSaleCnt+')'}}</span></td>
+                    <th><span>{{detailData.dtSummary.successTransCnt}} =</span></th>
+                    <td v-if="(detailData.dtSummary.totalAuthCnt)!=0">{{detailData.dtSummary.successAuthTransCnt}} </td>
+                    <td v-if="(detailData.dtSummary.totalRefundCnt)!=0">+{{detailData.dtSummary.successRefundTransCnt}} </td>
+                    <td v-if="(detailData.dtSummary.totalSaleCnt)!=0">+{{detailData.dtSummary.successSaleTransCnt}} </td>
+                    <td v-if="OffLineSale">+ 0 </td>
+                    <td v-if="(detailData.dtSummary.voidAuthCnt)!=0">+<span class="text-danger">({{+detailData.dtSummary.successVoidAuthCnt}})</span></td>
+                    <td v-if="(detailData.dtSummary.voidRefundCnt)!=0">+<span class="text-danger">({{detailData.dtSummary.successVoidRefundCnt}})</span></td>
+                    <td v-if="(detailData.dtSummary.voidSaleCnt)!=0">+<span class="text-danger">({{detailData.dtSummary.successVoidSaleCnt}})</span></td>
                   </tr>
                   <tr>
                     <th>
                       <div class="d-flex justify-content-between">
                         <span>交易核准金額</span>
-                        <span class="ms-3">{{$custom.currency(detailData.dtSummary.successAmtSum)}} =</span>
                       </div>
                     </th>
-                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0">{{$custom.currency(detailData.dtSummary.successAuthAmtSum)}} +</td>
-                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0"><span class="text-danger">({{$custom.currency(detailData.dtSummary.successRefundAmtSum)}})</span> +</td>
-                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0">{{$custom.currency(detailData.dtSummary.successSaleAmtSum)}} +</td>
-                    <td v-if="OffLineSale">0 +</td>
-                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0"><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.successVoidAuthAmt)+')'}}</span>  +</td>
-                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0"><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.successVoidRefundAmt)+')'}}</span>  +</td>
-                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0"><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.successVoidSaleAmt)+')'}}</span> </td>
+                    <th><span class="ms-3">{{$custom.currency(detailData.dtSummary.successAmtSum)}} =</span></th>
+                    <td v-if="(detailData.dtSummary.totalAuthCnt)!=0">{{$custom.currency(detailData.dtSummary.successAuthAmtSum)}} </td>
+                    <td v-if="(detailData.dtSummary.totalRefundCnt)!=0">+<span class="text-danger">({{$custom.currency(detailData.dtSummary.successRefundAmtSum)}})</span> </td>
+                    <td v-if="(detailData.dtSummary.totalSaleCnt)!=0"> + {{$custom.currency(detailData.dtSummary.successSaleAmtSum)}} </td>
+                    <td v-if="OffLineSale">+0 </td>
+                    <td v-if="(detailData.dtSummary.voidAuthCnt)!=0">+<span class="text-danger">({{$custom.currency(detailData.dtSummary.successVoidAuthAmt)}})</span>  </td>
+                    <td v-if="(detailData.dtSummary.voidRefundCnt)!=0">+<span>{{$custom.currency(detailData.dtSummary.successVoidRefundAmt)}}</span>  </td>
+                    <td v-if="(detailData.dtSummary.voidSaleCnt)!=0">+<span class="text-danger">({{$custom.currency(detailData.dtSummary.successVoidSaleAmt)}})</span> </td>
                   </tr>
                   <tr>
                     <th>
                       <div class="d-flex justify-content-between">
                         <span>交易拒絕筆數</span>
-                        <span>{{detailData.dtSummary.failTransCnt}} =</span>
                       </div>
                     </th>
-                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0">{{detailData.dtSummary.failAuthTransCnt}} +</td>
-                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0">{{detailData.dtSummary.failRefundTransCnt}} +</td>
-                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0">{{detailData.dtSummary.failSaleTransCnt}} +</td>
-                    <td v-if="OffLineSale">0 +</td>
-                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0"><span class="text-danger">{{'('+detailData.dtSummary.failVoidAuthCnt+')'}}</span> +</td>
-                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0"><span class="text-danger">{{'('+detailData.dtSummary.failVoidRefundCnt+')'}}</span> +</td>
-                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0"><span class="text-danger">{{'('+detailData.dtSummary.failVoidSaleCnt+')'}}</span></td>
+                    <th><span>{{detailData.dtSummary.failTransCnt}} =</span></th>
+                    <td v-if="(detailData.dtSummary.totalAuthCnt)!=0">{{detailData.dtSummary.failAuthTransCnt}} </td>
+                    <td v-if="(detailData.dtSummary.totalRefundCnt)!=0"> + {{detailData.dtSummary.failRefundTransCnt}} </td>
+                    <td v-if="(detailData.dtSummary.totalSaleCnt)!=0"> + {{detailData.dtSummary.failSaleTransCnt}} </td>
+                    <td v-if="OffLineSale">+0 </td>
+                    <td v-if="(detailData.dtSummary.voidAuthCnt)!=0">+<span class="text-danger">({{detailData.dtSummary.failVoidAuthCnt}})</span> </td>
+                    <td v-if="(detailData.dtSummary.voidRefundCnt)!=0">+<span class="text-danger">({{detailData.dtSummary.failVoidRefundCnt}})</span> </td>
+                    <td v-if="(detailData.dtSummary.voidSaleCnt)!=0">+<span class="text-danger">({{detailData.dtSummary.failVoidSaleCnt}})</span></td>
                   </tr>
                   <tr>
                     <th>
                       <div class="d-flex justify-content-between">
                         <span>交易拒絕金額</span>
-                        <span class="ms-3">{{$custom.currency(detailData.dtSummary.failAmtSum)}} =</span>
                       </div>
                     </th>
-                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0">{{$custom.currency(detailData.dtSummary.failAuthAmtSum)}} +</td>
-                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0"><span class="text-danger">({{$custom.currency(detailData.dtSummary.failRefundAmtSum)}})</span> +</td>
-                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0">{{$custom.currency(detailData.dtSummary.failSaleAmtSum)}} +</td>
-                    <td v-if="OffLineSale">0 +</td>
-                    <td v-if="(detailData.dtSummary.totalAuthCnt+detailData.dtSummary.voidAuthCnt)!=0"><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.failVoidAuthAmt)+')'}}</span> +</td>
-                    <td v-if="(detailData.dtSummary.totalRefundCnt+detailData.dtSummary.voidRefundCnt)!=0"><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.failVoidRefundAmt)+')'}}</span> +</td>
-                    <td v-if="(detailData.dtSummary.totalSaleCnt+detailData.dtSummary.voidSaleCnt)!=0"><span class="text-danger">{{'('+$custom.currency(detailData.dtSummary.failVoidSaleAmt)+')'}}</span></td>
+                    <th><span class="ms-3">{{$custom.currency(detailData.dtSummary.failAmtSum)}} =</span></th>
+                    <td v-if="(detailData.dtSummary.totalAuthCnt)!=0">{{$custom.currency(detailData.dtSummary.failAuthAmtSum)}} </td>
+                    <td v-if="(detailData.dtSummary.totalRefundCnt)!=0">+<span class="text-danger">({{$custom.currency(detailData.dtSummary.failRefundAmtSum)}})</span> </td>
+                    <td v-if="(detailData.dtSummary.totalSaleCnt)!=0">+{{$custom.currency(detailData.dtSummary.failSaleAmtSum)}} </td>
+                    <td v-if="OffLineSale">+0 </td>
+                    <td v-if="(detailData.dtSummary.voidAuthCnt)!=0">+<span class="text-danger">({{$custom.currency(detailData.dtSummary.failVoidAuthAmt)}})</span></td>
+                    <td v-if="(detailData.dtSummary.voidRefundCnt)!=0">+<span>{{$custom.currency(detailData.dtSummary.failVoidRefundAmt)}}</span></td>
+                    <td v-if="(detailData.dtSummary.voidSaleCnt)!=0">+<span class="text-danger">+({{$custom.currency(detailData.dtSummary.failVoidSaleAmt)}})</span></td>
                   </tr>
                 </tbody>
               </table>
@@ -319,6 +325,25 @@ export default {
   methods: {
     // ? 判斷是否顯示檢係明細按鈕
     showBtn (status) {
+      switch (status) {
+        case 'TRX_FINISH':
+          return true
+        case 'REPLY_PROCESS':
+          return true
+        case 'REPLY_SUCCESS':
+          return true
+        case 'REPLY_FAIL':
+          return true
+        case 'REPLY_UPLOAD_SUCCESS':
+          return true
+        case 'REPLY_DOWNLOAD_SUCCESS':
+          return true
+        default:
+          return false
+      }
+    },
+    // ? 判斷是否顯示下載回覆檔按鈕
+    showDLbtn (status) {
       switch (status) {
         case 'TRX_FINISH':
           return true

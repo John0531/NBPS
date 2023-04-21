@@ -109,7 +109,7 @@
                     <th scope="col">帳單描述</th>
                     <th scope="col">授權碼</th>
                     <th scope="col">交易結果</th>
-                    <th scope="col">取消結果</th>
+                    <th scope="col">交易取消結果</th>
                     <th scope="col" v-if="!(detailData.gridData.filter(item => item.voidCodeH).length === detailData.gridData.length)"></th>
                   </tr>
                 </thead>
