@@ -89,7 +89,7 @@
                     <th scope="col">帳單描述</th>
                     <th scope="col">授權碼</th>
                     <th scope="col">交易結果</th>
-                    <th scope="col">取消結果</th>
+                    <th scope="col">交易取消結果</th>
                     <th scope="col" v-if="!(detailData.gridData.filter(item => item.voidCodeH).length === detailData.gridData.length)"></th>
                   </tr>
                 </thead>
@@ -175,10 +175,12 @@ export default {
         totalElements: this.detailData.totalElements,
         currentPage: PageInfo.page,
         totalPages: Math.ceil(this.detailData.totalElements / PageInfo.pageSize),
-        batchId: this.detailPageData.batchId
+        batchId: this.detailData.batchId,
+        batchFileName: this.detailData.batchFileName,
+        batchStoreName: this.detailData.batchStoreName
       }
       // 前端打API取得分頁資料
-      this.getDetail(this.detailPageData, PageInfo.page, PageInfo.pageSize)
+      this.getDetail(this.detailPageData, this.pan, PageInfo.page, PageInfo.pageSize)
     },
     async getData () {
       if (this.GroupDataPost.storeId === '') {
@@ -190,43 +192,13 @@ export default {
       this.pageData = result.pageInfo // ? 傳送分頁資訊
       this.gridData = result.batchList
     },
-    async getDetail (item, page, pageSize) {
-      this.$store.commit('changeLoading', true)
-      const result = await service.getBatchDetail(item.batchId, page, pageSize)
-      this.$store.commit('changeLoading', false)
-      if (result) {
-        // * 傳送分頁資訊
-        this.detailPageData = {
-          totalElements: result.pageInfo.totalElements,
-          currentPage: result.pageInfo.currentPage,
-          totalPages: Math.ceil(result.pageInfo.totalElements / pageSize),
-          batchId: item.batchId
-        }
-        this.detailData.originData = result.batchList
-        this.detailData.gridData = this.detailData.originData.slice(0, pageSize)
-        // * 傳送分頁資訊(僅第一次打api取得所有資料) end
-        this.detailData.batchFileName = item.batchFileName
-        this.detailData.batchStoreName = item.batchStoreName
-        this.detailData.dtSummary = result.dtSummary
-        this.detailData.batchId = item.batchId
-        this.detailData.transType = item.transType
-        // * 將每頁資料數初始化
-        this.$refs.detailMainData.PageInfo.pageSize = pageSize
-      }
-      this.detailModal.show()
-    },
-    async getDetailByPan (item, pan, page, pageSize) {
+    async getDetail (item, pan, page, pageSize) {
       this.$store.commit('changeLoading', true)
       const result = await service.getBatchDetailByPan(item.batchId, pan, page, pageSize)
+      // const result = await service.getBatchDetail(item.batchId, page, pageSize)
       this.$store.commit('changeLoading', false)
       if (result) {
         // * 傳送分頁資訊
-        this.detailPageData = {
-          totalElements: result.pageInfo.totalElements,
-          currentPage: result.pageInfo.currentPage,
-          totalPages: Math.ceil(result.pageInfo.totalElements / pageSize),
-          batchId: item.batchId
-        }
         this.detailData.originData = result.batchList
         this.detailData.gridData = this.detailData.originData.slice(0, pageSize)
         // * 傳送分頁資訊(僅第一次打api取得所有資料) end
@@ -235,6 +207,15 @@ export default {
         this.detailData.dtSummary = result.dtSummary
         this.detailData.batchId = item.batchId
         this.detailData.transType = item.transType
+        this.detailPageData = {
+          totalElements: result.pageInfo.totalElements,
+          currentPage: result.pageInfo.currentPage,
+          totalPages: Math.ceil(result.pageInfo.totalElements / pageSize),
+          batchFileName: item.batchFileName,
+          batchStoreName: item.batchStoreName,
+          batchId: item.batchId
+        }
+
         // * 將每頁資料數初始化
         this.$refs.detailMainData.PageInfo.pageSize = pageSize
       }
