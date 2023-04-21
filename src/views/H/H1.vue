@@ -109,48 +109,53 @@
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <h5>檔名: {{detailData.fileName}}</h5>
-            <h5>作業類型:
-              <span v-if="detailData.storeType==='ACQUIRING'">收單</span>
-              <span v-if="detailData.storeType==='PUBLIC_UTILITIES'">公共事業</span>
-              <span v-if="detailData.storeType==='MAIL_ORDER'">郵購</span>
-              <span v-if="detailData.storeType==='ISSUE_CARD'">發卡新消貸</span>
-            </h5>
-            <MainData ref="detailMainData" :Page="detailPageData" @ChangePageInfo="getDetailPageInfo">
-              <template #default>
-                <thead>
-                  <tr>
-                    <th scope="col">商店代號</th>
-                    <th scope="col">卡號</th>
-                    <th scope="col">交易類別</th>
-                    <th scope="col">金額</th>
-                    <th scope="col">原始回應碼</th>
-                    <th scope="col">更改回應碼</th>
-                    <th scope="col">更改授權碼</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="item  in detailData.gridData" :key="item.txnId">
-                    <th scope="row">{{item.storeId}}</th>
-                    <th scope="row">{{item.pan}}</th>
-                    <td>
-                      <span v-if="item.txnType==='SALE'">授權與請款</span>
-                      <span v-if="item.txnType==='AUTH'">授權</span>
-                      <span v-if="item.txnType==='OFF_LINE_SALE'">請款</span>
-                      <span v-if="item.txnType==='REFUND'">退貨</span>
-                    </td>
-                    <td>{{$custom.currency(item.amt)}}</td>
-                    <td>{{item.codeH}}</td>
-                    <td><input type="text" v-model = "codeH[item.txnId]"  v-bind:required="true"  class="input-group-text"></td>
-                    <td><input type="text" v-model = "authCode[item.txnId]"  v-bind:required="true" class="input-group-text"></td>
-                    <td>{{item.txnId}}</td>
-                  </tr>
-                </tbody>
-              </template>
-            </MainData>
-            <div class="modal-footer">
-            <button type="button" class="btn btn-success px-4" @click="updateCallBank()" data-bs-dismiss="modal">全部儲存</button>
-          </div>
+            <Form>
+              <h5>檔名: {{detailData.fileName}}</h5>
+              <h5>作業類型:
+                <span v-if="detailData.storeType==='ACQUIRING'">收單</span>
+                <span v-if="detailData.storeType==='PUBLIC_UTILITIES'">公共事業</span>
+                <span v-if="detailData.storeType==='MAIL_ORDER'">郵購</span>
+                <span v-if="detailData.storeType==='ISSUE_CARD'">發卡新消貸</span>
+              </h5>
+              <MainData ref="detailMainData" :Page="detailPageData" @ChangePageInfo="getDetailPageInfo">
+                <template #default>
+                  <thead>
+                    <tr>
+                      <th scope="col">商店代號</th>
+                      <th scope="col">卡號</th>
+                      <th scope="col">交易類別</th>
+                      <th scope="col">金額</th>
+                      <th scope="col">原始回應碼</th>
+                      <th scope="col">更改回應碼</th>
+                      <th scope="col">更改授權碼</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="item in detailData.gridData" :key="item.txnId">
+                      <th scope="row">{{item.storeId}}</th>
+                      <th scope="row">{{item.pan}}</th>
+                      <td>
+                        <span v-if="item.txnType==='SALE'">授權與請款</span>
+                        <span v-if="item.txnType==='AUTH'">授權</span>
+                        <span v-if="item.txnType==='OFF_LINE_SALE'">請款</span>
+                        <span v-if="item.txnType==='REFUND'">退貨</span>
+                      </td>
+                      <td>{{$custom.currency(item.amt)}}</td>
+                      <td>{{item.codeH}}</td>
+                      <td>
+                        <input type="text" v-bind:required="true" class="input-group-text">
+                      </td>
+                      <td>
+                        <input type="text" v-bind:required="true" class="input-group-text">
+                      </td>
+                    </tr>
+                  </tbody>
+                </template>
+              </MainData>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-success px-4" @click="updateCallBank()" data-bs-dismiss="modal">全部儲存</button>
+              </div>
+            </Form>
           </div>
         </div>
       </div>
@@ -183,23 +188,11 @@ export default {
       detailData: {
         originData: [],
         gridData: []
-      },
-      codeH: [],
-      authCode: [],
-      txnId: [],
-      updateData: {}
-    }
-  },
-  watch: {
-    authCode: {
-      deep: true,
-      handler (newValue) {
-        for (const txnId in newValue) {
-          if (newValue[txnId]) {
-            this.codeH[txnId] = '00'
-          }
-        }
       }
+      // codeH: [],
+      // authCode: [],
+      // txnId: [],
+      // updateData: {}
     }
   },
   methods: {
