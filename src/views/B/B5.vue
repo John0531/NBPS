@@ -114,6 +114,11 @@ export default {
       console.log(this.uploadPost.file.name)
     },
     async uploadExcelFile () {
+      const fileType = this.uploadPost.file.type
+      if (fileType !== 'application/vnd.ms-excel' && fileType !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+        this.$swal.fire('上傳檔案格式錯誤！請確認是否為.xls或.xlsx檔')
+        return
+      }
       const formData = new FormData()
       formData.append('file', this.uploadPost.file)
       formData.append('fileName', this.uploadPost.file.name)
@@ -142,6 +147,11 @@ export default {
       }
     },
     async uploadTxtFile () {
+      const fileType = this.uploadPost.file.type
+      if (fileType !== 'text/plain') {
+        this.$swal.fire('上傳檔案格式錯誤！請確認是否為.txt檔')
+        return
+      }
       const formData = new FormData()
       formData.append('file', this.uploadPost.file)
       formData.append('fileName', this.uploadPost.file.name)

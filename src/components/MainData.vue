@@ -84,7 +84,7 @@ export default {
     if (keepUpdate.includes(this.$route.meta.code)) {
       setInterval(() => {
         this.$emit('updatePageInfo', this.PageInfo)
-      }, 180000)
+      }, 600000)
     }
   }
 }

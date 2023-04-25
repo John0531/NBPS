@@ -422,7 +422,7 @@ export default {
       const url = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
       a.href = url
       a.style.display = 'none'
-      a.download = '批次交易檔範例.docx'
+      a.download = '批次交易檔範例.pdf'
       a.click()
       // 清除暫存
       a.href = ''
