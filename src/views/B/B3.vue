@@ -53,7 +53,7 @@
                 <td>{{item.refundCnt}}</td>
                 <td>{{$custom.currency(item.refundAmt)}}</td>
                 <td>
-                  <button @click="getDetail(item,pan,defaultDetailPage.page,defaultDetailPage.pageSize)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
+                  <button @click="getDetail(item)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
                   <button @click="multipleCancel(item)" v-if="item.trxStatus!=='TRX_FINISH_REVERSAL'" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">整批取消</button>
                 </td>
               </tr>
@@ -76,8 +76,8 @@
             <h5>特店名稱: {{detailData.batchStoreName}}</h5>
             <div class="d-flex">
               <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">卡號:</h5>
-              <input v-model="pan" type="text" class="form-contorl" style="margin-right: 1em;border-radius: 10px;">
-              <button @click="getDetail(detailPageData, pan, defaultDetailPage.page, defaultDetailPage.pageSize)" class="btn btn-primary me-2 btn-sm"> 查詢</button>
+              <input v-model="detailDataPost.pan" type="text" class="form-contorl" style="margin-right: 1em;border-radius: 10px;">
+              <button @click="getDetail()" class="btn btn-primary me-2 btn-sm"> 查詢</button>
             </div>
             <MainData ref="detailMainData" :Page="detailPageData" @ChangePageInfo="getDetailPageInfo">
               <template #default>
@@ -153,9 +153,15 @@ export default {
       gridData: [],
       detailModal: '',
       pan: '',
-      detailData: {
+      detailDataPost: {
+        pan: '',
         batchId: '',
-        originData: [],
+        page: 1,
+        pageSize: 10
+      },
+      detailData: {
+        batchFileName: '',
+        batchStoreName: '',
         gridData: []
       },
       detailPageData: {} // ?詳細分頁資訊
@@ -170,17 +176,15 @@ export default {
     },
     // ? 取得 MainData 元件詳細分頁資訊
     getDetailPageInfo (PageInfo) {
-      // * 傳送分頁資訊
-      this.detailPageData = {
-        totalElements: this.detailData.totalElements,
-        currentPage: PageInfo.page,
-        totalPages: Math.ceil(this.detailData.totalElements / PageInfo.pageSize),
-        batchId: this.detailData.batchId,
-        batchFileName: this.detailData.batchFileName,
-        batchStoreName: this.detailData.batchStoreName
-      }
-      // 前端打API取得分頁資料
-      this.getDetail(this.detailPageData, this.pan, PageInfo.page, PageInfo.pageSize)
+      this.detailDataPost.page = PageInfo.page
+      this.detailDataPost.pageSize = PageInfo.pageSize
+      this.getDetail()
+    },
+    async getDefaultData () {
+      this.$store.commit('changeLoading', true)
+      const result = await service.getBatchDefault()
+      this.defaultData = result.storeList
+      this.$store.commit('changeLoading', false)
     },
     async getData () {
       if (this.GroupDataPost.storeId === '') {
@@ -192,32 +196,23 @@ export default {
       this.pageData = result.pageInfo // ? 傳送分頁資訊
       this.gridData = result.batchList
     },
-    async getDetail (item, pan, page, pageSize) {
+    async getDetail (item) {
+      if (item) {
+        this.detailDataPost.pan = ''
+        this.detailDataPost.batchId = item.batchId
+        this.detailDataPost.page = 1
+        this.detailDataPost.pageSize = 10
+      }
       this.$store.commit('changeLoading', true)
-      const result = await service.getBatchDetailByPan(item.batchId, pan, page, pageSize)
-      // const result = await service.getBatchDetail(item.batchId, page, pageSize)
+      const result = await service.getBatchDetail(this.detailDataPost)
       this.$store.commit('changeLoading', false)
       if (result) {
-        // * 傳送分頁資訊
-        this.detailData.originData = result.batchList
-        this.detailData.gridData = this.detailData.originData.slice(0, pageSize)
-        // * 傳送分頁資訊(僅第一次打api取得所有資料) end
-        this.detailData.batchFileName = item.batchFileName
-        this.detailData.batchStoreName = item.batchStoreName
-        this.detailData.dtSummary = result.dtSummary
-        this.detailData.batchId = item.batchId
-        this.detailData.transType = item.transType
-        this.detailPageData = {
-          totalElements: result.pageInfo.totalElements,
-          currentPage: result.pageInfo.currentPage,
-          totalPages: Math.ceil(result.pageInfo.totalElements / pageSize),
-          batchFileName: item.batchFileName,
-          batchStoreName: item.batchStoreName,
-          batchId: item.batchId
+        this.detailPageData = result.pageInfo // ? 傳送分頁資訊
+        if (item) {
+          this.detailData.batchFileName = item.batchFileName
+          this.detailData.batchStoreName = item.batchStoreName
         }
-
-        // * 將每頁資料數初始化
-        this.$refs.detailMainData.PageInfo.pageSize = pageSize
+        this.detailData.gridData = result.batchList
       }
       this.detailModal.show()
     },
@@ -252,29 +247,14 @@ export default {
       })
       if (res.isConfirmed) {
         const postData = {
-          txnAuthId: item.txnAuthId
-        }
-        if (item.txnSettleId) {
-          postData.txnSettleId = item.txnSettleId
+          txnAuthId: item.txnAuthId,
+          txnSettleId: item.txnSettleId
         }
         this.$store.commit('changeLoading', true)
         const result = await service.singleCancel(postData)
         this.$store.commit('changeLoading', false)
         if (result) {
-          // ? 重新取得詳細資料後，比對更新渲染資訊
-          this.$store.commit('changeLoading', true)
-          const result2 = await service.getBatchDetail(this.detailData.batchId, this.GroupDataPost.page, this.GroupDataPost.pageSize)
-          this.$store.commit('changeLoading', false)
-          if (result2) {
-            this.detailData.originData = result2.batchList
-            this.detailData.originData.forEach((item) => {
-              this.detailData.gridData.forEach((item2) => {
-                if (item.pan === item2.pan) {
-                  item2.voidCodeH = item.voidCodeH
-                }
-              })
-            })
-          }
+          this.getDetail()
         }
       }
     }
