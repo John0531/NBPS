@@ -89,8 +89,9 @@
                 </div>
               </div>
               <button type="submit" class="btn btn-primary me-3 px-4" :disabled="!$store.state.pageBtnPermission.includes('insert')">上傳</button>
-              <button class="btn btn-warning me-3" @click.prevent="downloadExcel" :disabled="!$store.state.pageBtnPermission.includes('download')">下載範例EXCEL</button>
-              <button class="btn btn-success" @click.prevent="downloadFormat" :disabled="!$store.state.pageBtnPermission.includes('download')">下載批次交易檔規格</button>
+              <button class="btn btn-warning me-3 px-4" @click.prevent="downloadExcel" :disabled="!$store.state.pageBtnPermission.includes('download')">下載範例EXCEL</button>
+              <button class="btn btn-success me-3 px-4" @click.prevent="downloadFormat" :disabled="!$store.state.pageBtnPermission.includes('download')">下載批次交易檔規格</button>
+              <button class="btn btn-info me-3 px-4" @click="convertFile" :disabled="!$store.state.pageBtnPermission.includes('execute')">UB BPS轉檔程式</button>
             </Form>
           </div>
         </div>
@@ -230,6 +231,101 @@
       </div>
     </div>
   </div>
+
+     <!-- 重新執行E5批次 Modal -->
+     <div class="modal fade" ref="convertModal" tabindex="-1" aria-labelledby="convertModal" aria-hidden="true">
+      <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-info">
+            <h5 class="modal-title text-black">UB BPS轉檔程式</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div>
+    <div class="row justify-content-center">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="fw-bold mb-3">Excel檔轉交易檔</h2>
+            <h6>上傳Excel檔案，副檔名需為.xls或.xlsx</h6>
+          </div>
+          <div class="card-body">
+            <Form
+              v-slot="{ errors }"
+              @submit="uploadExcelFile"
+            >
+              <div class="row py-3">
+                <div class="col-xxl-6 d-flex mb-4 align-items-center">
+                  <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">上傳檔案:</h5>
+                  <Field
+                    style="width:400px;"
+                    ref="upload"
+                    type="file"
+                    class="form-control"
+                    placeholder=""
+                    rules="required"
+                    name="上傳檔案"
+                    :class="{ 'is-invalid': errors['上傳檔案'] }"
+                    @change="getFileConv($event)"
+                  />
+                  <ErrorMessage
+                    name="上傳檔案"
+                    class="invalid-feedback ms-2"
+                  />
+                </div>
+                <div class="col-xxl-6"></div>
+              </div>
+              <button type="submit" :disabled="!$store.state.pageBtnPermission.includes('execute')" class="btn btn-success me-3 px-4">轉檔</button>
+            </Form>
+          </div>
+        </div>
+        <br>
+        <div class="card">
+          <div class="card-header">
+            <h2 class="fw-bold mb-3">文字回覆檔轉Excel檔</h2>
+            <h6>上傳txt文字檔案(回覆檔),副檔名需為小寫的.txt</h6>
+          </div>
+          <div class="card-body">
+            <Form
+              v-slot="{ errors }"
+              @submit="uploadTxtFile"
+            >
+              <div class="row py-3">
+                <div class="col-xxl-6 d-flex mb-4 align-items-center">
+                  <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">上傳檔案:</h5>
+                  <Field
+                    style="width:400px;"
+                    ref="upload"
+                    type="file"
+                    class="form-control"
+                    placeholder=""
+                    rules="required"
+                    name="上傳檔案"
+                    :class="{ 'is-invalid': errors['上傳檔案'] }"
+                    @change="getFileConv($event)"
+                  />
+                  <ErrorMessage
+                    name="上傳檔案"
+                    class="invalid-feedback ms-2"
+                  />
+                </div>
+                <div class="col-xxl-6"></div>
+              </div>
+              <button type="submit" :disabled="!$store.state.pageBtnPermission.includes('execute')" class="btn btn-success me-3 px-4">轉檔</button>
+            </Form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+          </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
 </template>
 
 <script>
@@ -250,6 +346,7 @@ export default {
       defaultData: [],
       gridData: [],
       uploadPost: {},
+      uploadConv: {},
       detailModal: '',
       detailDataPost: {
         batchId: '',
@@ -277,6 +374,10 @@ export default {
     }
   },
   methods: {
+    convertFile () {
+      this.convertModal = new this.$custom.bootstrap.Modal(this.$refs.convertModal, { backdrop: 'static' })
+      this.convertModal.show()
+    },
     // ? 取得 MainData 元件分頁資訊
     getPageInfo (PageInfo) {
       this.GroupDataPost = PageInfo
@@ -348,6 +449,9 @@ export default {
     getFile (event) {
       this.uploadPost.file = event.target.files[0]
     },
+    getFileConv (event) {
+      this.uploadConv.file = event.target.files[0]
+    },
     async uploadFile () {
       const formData = new FormData()
       formData.append('file', this.uploadPost.file)
@@ -376,6 +480,71 @@ export default {
         this.uploadPost = {}
         this.$refs.upload.value = ''
         this.getData()
+      }
+    },
+    async uploadExcelFile () {
+      const fileType = this.uploadConv.file.type
+      if (fileType !== 'application/vnd.ms-excel' && fileType !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+        this.$swal.fire('上傳檔案格式錯誤！請確認是否為.xls或.xlsx檔')
+        return
+      }
+      const formData = new FormData()
+      formData.append('file', this.uploadConv.file)
+      formData.append('fileName', this.uploadConv.file.name)
+      formData.append('msgId', this.$custom.uuidv4())
+      this.$store.commit('changeLoading', true)
+      const result = await service.uploadExcel(formData)
+      this.$store.commit('changeLoading', false)
+      if (result) {
+        this.$swal.fire({
+          toast: true,
+          position: 'center',
+          icon: 'success',
+          title: '轉檔成功！',
+          showConfirmButton: false,
+          timer: 1500,
+          width: 500,
+          background: '#F0F0F2',
+          padding: 25,
+          customClass: {
+            container: 'z-10000'
+          }
+        })
+        this.uploaduploadConv = {}
+        this.$refs.upload.value = ''
+      }
+    },
+    async uploadTxtFile () {
+      const fileType = this.uploadConv.file.type
+      if (fileType !== 'text/plain') {
+        this.$swal.fire('上傳檔案格式錯誤！請確認是否為.txt檔')
+        return
+      }
+      const formData = new FormData()
+      formData.append('file', this.uploadConv.file)
+      formData.append('fileName', this.uploadConv.file.name)
+      formData.append('msgId', this.$custom.uuidv4())
+      this.$store.commit('changeLoading', true)
+      const result = await service.uploadTxt(formData)
+      this.$store.commit('changeLoading', false)
+      if (result) {
+        this.$swal.fire({
+          toast: true,
+          position: 'center',
+          icon: 'success',
+          title: '轉檔成功！',
+          showConfirmButton: false,
+          timer: 1500,
+          width: 500,
+          background: '#F0F0F2',
+          padding: 25,
+          customClass: {
+            container: 'z-10000'
+          }
+        })
+        this.uploadConv = {}
+        this.$refs.upload.value = ''
+        // this.getData()
       }
     },
     confirmBatch (item) {
