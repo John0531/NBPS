@@ -478,10 +478,10 @@ export default {
           }
         })
         this.uploadPost = {}
-        this.$refs.upload.type = 'text'
         this.$refs.upload.value = ''
-        this.$refs.upload.type = 'file'
-        this.forceUpdate()
+        var obj = document.getElementByName('上傳檔案')
+        obj.select()
+        document.selection.clear()
       }
     },
     async uploadExcelFile () {
@@ -513,10 +513,10 @@ export default {
           }
         })
         this.uploadConv = {}
-        this.$refs.upload.type = 'text'
         this.$refs.upload.value = ''
-        this.$refs.upload.type = 'file'
-        this.forceUpdate()
+        var obj = document.getElementByName('上傳檔案')
+        obj.select()
+        document.selection.clear()
       }
     },
     async uploadTxtFile () {
@@ -548,10 +548,10 @@ export default {
           }
         })
         this.uploadConv = {}
-        this.$refs.upload.type = 'text'
         this.$refs.upload.value = ''
-        this.$refs.upload.type = 'file'
-        this.forceUpdate()
+        var obj = document.getElementByName('上傳檔案')
+        obj.select()
+        document.selection.clear()
       }
     },
     confirmBatch (item) {

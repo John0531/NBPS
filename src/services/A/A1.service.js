@@ -23,18 +23,13 @@ const service = {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
-        responseType: 'text/plain'
+        responseType: 'arraybuffer'
       }).then(response => {
         // 下載後端回覆的txt檔案
-        let fileContent = response.data
-        fileContent = fileContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-        const downloadUrl = URL.createObjectURL(new Blob([fileContent], { type: 'text/plain;charset=big5' }))
-        const link = document.createElement('a')
-        link.href = downloadUrl
-        link.download = postData.get('fileName').replace(/\.\w+$/, '') + '.txt'
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
+        const blob = new Blob([response.data], { type: 'text/plain;charset=big5' })
+        const fileName = postData.get('fileName').replace(/\.\w+$/, '') + '.txt'
+        // 使用FileSaver.js下載檔案
+        FileSaver.saveAs(blob, fileName)
       })
     } catch (error) {
       if (error.response.status === 401) {
