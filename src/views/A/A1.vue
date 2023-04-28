@@ -478,8 +478,10 @@ export default {
           }
         })
         this.uploadPost = {}
+        this.$refs.upload.type = 'text'
         this.$refs.upload.value = ''
-        this.getData()
+        this.$refs.upload.type = 'file'
+        this.forceUpdate()
       }
     },
     async uploadExcelFile () {
@@ -510,8 +512,11 @@ export default {
             container: 'z-10000'
           }
         })
-        this.uploaduploadConv = {}
+        this.uploadConv = {}
+        this.$refs.upload.type = 'text'
         this.$refs.upload.value = ''
+        this.$refs.upload.type = 'file'
+        this.forceUpdate()
       }
     },
     async uploadTxtFile () {
@@ -543,8 +548,10 @@ export default {
           }
         })
         this.uploadConv = {}
+        this.$refs.upload.type = 'text'
         this.$refs.upload.value = ''
-        // this.getData()
+        this.$refs.upload.type = 'file'
+        this.forceUpdate()
       }
     },
     confirmBatch (item) {

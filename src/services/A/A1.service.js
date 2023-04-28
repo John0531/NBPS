@@ -28,7 +28,7 @@ const service = {
         // 下載後端回覆的txt檔案
         let fileContent = response.data
         fileContent = fileContent.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-        const downloadUrl = URL.createObjectURL(new Blob([fileContent], { type: 'text/plain' }))
+        const downloadUrl = URL.createObjectURL(new Blob([fileContent], { type: 'text/plain;charset=big5' }))
         const link = document.createElement('a')
         link.href = downloadUrl
         link.download = postData.get('fileName').replace(/\.\w+$/, '') + '.txt'
