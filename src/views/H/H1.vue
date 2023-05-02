@@ -90,7 +90,7 @@
                 <td>{{$custom.currency(item.amt)}}</td>
                 <td>
                   <button v-if="item.trxStatus==='TRX_FINISH'" @click="getDetail(item,defaultDetailPage.page,defaultDetailPage.pageSize)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
-                  <button  v-if="item.batchStatus !=='REPLY_UPLOAD_SUCCESS'" @click="callBankFTP(item)" class="btn btn-primary me-2 btn-sm">作業完成</button>
+                  <button  v-if="item.batchStatus !=='CALL_BANK_SUCCESS'" @click="callBankFTP(item)" :disabled="!((item.count===0)&&($custom.currency(item.amt)===0))" class="btn btn-success me-2 btn-sm">作業完成</button>
                   <!-- <button v-if="item.batchStatus==='VALIDATE_FAIL'" @click="getError(item)" class="btn btn-danger me-2 btn-sm">檢視錯誤</button> -->
                 </td>
               </tr>
@@ -109,7 +109,6 @@
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <Form>
               <h5>檔名: {{detailData.fileName}}</h5>
               <h5>作業類型:
                 <span v-if="detailData.storeType==='ACQUIRING'">收單</span>
@@ -131,7 +130,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="item in detailData.gridData" :key="item.txnId">
+                    <tr v-for="(item, index) in detailData.gridData" :key="item.txnId">
                       <th scope="row">{{item.storeId}}</th>
                       <th scope="row">{{item.pan}}</th>
                       <td>
@@ -141,12 +140,14 @@
                         <span v-if="item.txnType==='REFUND'">退貨</span>
                       </td>
                       <td>{{$custom.currency(item.amt)}}</td>
-                      <td>{{item.codeH}}</td>
                       <td>
-                        <input type="text" v-bind:required="true" class="input-group-text">
+                        {{item.codeH}} & {{item.txnId}}
                       </td>
                       <td>
-                        <input type="text" v-bind:required="true" class="input-group-text">
+                        <input type="text" v-model="nowCodeH[index]" maxlength="2" class="input-group-text" @change="addData(index)">
+                      </td>
+                      <td>
+                        <input type="text" v-model="nowAuthCode[index]" maxlength="6" class="input-group-text" @change="addData()">
                       </td>
                     </tr>
                   </tbody>
@@ -155,7 +156,6 @@
               <div class="modal-footer">
                 <button type="button" class="btn btn-success px-4" @click="updateCallBank()" data-bs-dismiss="modal">全部儲存</button>
               </div>
-            </Form>
           </div>
         </div>
       </div>
@@ -188,14 +188,75 @@ export default {
       detailData: {
         originData: [],
         gridData: []
+      },
+      pageDataList: {
+        CodeH: [],
+        authCode: [],
+        txnId: []
+      },
+      CodeH: [],
+      authCode: [],
+      txnId: [],
+
+      defaultCodeH: '00',
+      defaultAuthCode: '123456',
+      inputCodeH: [],
+      inputAuthCode: []
+    }
+  },
+  computed: {
+    nowCodeH () {
+      return this.inputCodeH.map((value) => value !== '' ? value : this.defaultCodeH)
+    },
+    nowAuthCode: {
+      get () {
+        return this.inputAuthCode !== '' ? this.inputAuthCode : this.defaultAuthCode
+      },
+      set (value) {
+        this.inputAuthCode = value
       }
-      // codeH: [],
-      // authCode: [],
-      // txnId: [],
-      // updateData: {}
+    },
+    paginatedData () {
+      // 使用slice方法将detailData数组分为大小为pageSize的块
+      // const pageCount = Math.ceil(this.detailData.gridData.length / this.pageSize)
+      const pageDataList = []
+      for (let i = 0; i < this.detailPageData.pageSize; i++) {
+        const currentElment = (this.detailPageData.currentPage - 1) * this.detailPageData.pageSize + i
+        const paginatedData = this.detailData.gridData.slice(i, i)
+        pageDataList.push({
+          editData: paginatedData,
+          num: currentElment
+        })
+      }
+      return pageDataList
     }
   },
   methods: {
+    cleanData () {
+      console.log('save page data')
+      console.log('clean page data')
+      this.nowCodeH.splice(0, this.nowCodeH.length)
+    },
+    addData (index) {
+      // for (let i = 0; i < this.detailPageData.pageSize; i++) {
+      //   const num = (this.detailPageData.currentPage - 1) * this.detailPageData.pageSize + i
+      //   console.log('Num: ' + num)
+      // }
+      // pageDataList.authCode[num] =
+      // this.pageDataList.push({
+      //   CodeH: this.newCodeH,
+      //   authCode: this.authCode,
+      //   txnId: this.txnId
+      // })
+      // console.log('Num: ' + num)
+      console.log('Index: ' + index)
+      console.log('nowCodeH[]: ' + this.nowCodeH)
+      console.log('Page: ' + this.detailPageData.currentPage)
+      // 清空 input 資料
+      // this.inputCodeH = this.defualtCodeH
+      // this.authCode = ''
+      // this.txnId = ''
+    },
     // ? 取得 MainData 元件分頁資訊
     getPageInfo (PageInfo) {
       this.searchForm.page = PageInfo.page
@@ -213,6 +274,7 @@ export default {
         storeType: this.detailData.storeType
       }
       this.getDetail(this.detailPageData, PageInfo.page, PageInfo.pageSize)
+      // this.cleanData()
     },
     async getData () {
       this.$store.commit('changeLoading', true)

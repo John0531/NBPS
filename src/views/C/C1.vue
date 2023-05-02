@@ -156,6 +156,7 @@
                   </div>
                   <div class="me-3">
                     <Field
+                      :disabled="true"
                       rules="required"
                       :class="{ 'is-invalid': errors['支援交易方式'] }"
                       v-model="addForm.transType"
@@ -449,12 +450,14 @@
                   </div>
                   <div class="me-3">
                     <Field
+                      :disabled="true"
                       rules="required"
                       :class="{ 'is-invalid': errors['支援交易方式'] }"
                       v-model="editForm.transType"
                       value="OFF_LINE_SALE"
                       class="form-check-input"
                       type="checkbox"
+                      checked="false"
                       name="支援交易方式"
                       id="OFF_LINE_SALE2"
                     />
