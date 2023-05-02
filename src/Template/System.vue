@@ -15,3 +15,9 @@ export default {
   }
 }
 </script>
+
+<style lang="css">
+  th{
+    min-width: 65px;
+  }
+</style>

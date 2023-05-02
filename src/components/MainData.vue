@@ -11,7 +11,7 @@
           <option :value="100">100</option>
         </select>
     </div>
-    <div class="tbl-container">
+    <div class="tbl-container table-responsive">
       <table class="table table-striped table-bordered table-hover" v-if="pageData&&pageData.totalElements">
         <slot></slot>
       </table>

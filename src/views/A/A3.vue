@@ -172,7 +172,6 @@ export default {
       defaultData: [],
       gridData: [],
       detailModal: '',
-      pan: '',
       detailDataPost: {
         pan: '',
         batchId: '',
