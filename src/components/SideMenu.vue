@@ -1,8 +1,8 @@
 <template>
   <div class="space"></div>
   <div class="shadow pt-4 menu position-fixed">
-    <h4 class="fw-bold text-center">聯邦銀行信用卡批次授權系統</h4>
-    <h5 class="fw-bold text-danger ms-2">登入帳號: {{$store.state.user.userName}}</h5>
+    <h4 class="title fw-bold text-center">聯邦銀行信用卡批次授權系統</h4>
+    <h5 class="user-name fw-bold text-danger ms-2">登入帳號: {{$store.state.user.userName}}</h5>
     <div class="accordion accordion-flush my-4" id="accordion">
       <div v-for="(item1) in permissions" :key="item1.code" class="accordion-item">
         <h2 class="accordion-header">
@@ -136,4 +136,27 @@ li a:hover {
 .accordion-body{
   padding: 0;
 }
+
+@media (max-width: 1200px) {
+  .space{
+    width: 16%;
+  }
+  .menu{
+    width: 16%;
+    padding: 0 10px;
+  }
+  .title{
+    font-size: 20px;
+  }
+  .user-name{
+    font-size: 18px;
+  }
+  .accordion-button{
+    font-size: 16px;
+  }
+  li a {
+    font-size: 14px !important;
+  }
+}
+
 </style>
