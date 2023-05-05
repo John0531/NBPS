@@ -15,34 +15,32 @@ const service = {
       }
     }
   },
-  async getCallBankDetail (batchId, page, pageSize) {
+  async getCallBankDetail (postData) {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/h1/findTxnAuthData`
-      const res = await axios({
-        url: url,
-        method: 'POST',
-        data: { batchId: batchId, page: page, pageSize: pageSize }
-      })
+      const res = await axios.post(url, postData)
       return res.data
     } catch (error) {
       if (error.response.status === 401) {
         const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
-          return service.getCallBankDetail(batchId, page, pageSize)
+          return service.getCallBankDetail(postData)
         }
       }
     }
   },
-  async updateCallBankCode (dataList) {
+  async updateCallBankCode (postData) {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/h1/updateCodeHAndAuthCode`
-      const res = await axios.post(url, dataList)
-      return res.data
+      const res = await axios.post(url, postData)
+      if (res.data === '成功') {
+        return true
+      }
     } catch (error) {
       if (error.response.status === 401) {
         const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
-          return service.updateCallBankCode(dataList)
+          return service.updateCallBankCode(postData)
         }
       }
     }
@@ -50,12 +48,10 @@ const service = {
   async getCallBankFTP (batchId) {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/h1/callBankFTP`
-      const res = await axios({
-        url: url,
-        method: 'POST',
-        data: { batchid: batchId, page: 1, pageSize: 10 }
-      })
-      return res.data
+      const res = await axios.post(url, { batchid: batchId })
+      if (res.data === '成功') {
+        return true
+      }
     } catch (error) {
       if (error.response.status === 401) {
         const user = JSON.parse(localStorage.getItem('NBPS_USER'))

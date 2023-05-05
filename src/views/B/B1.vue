@@ -11,6 +11,7 @@
           </div>
           <div class="card-body">
             <Form
+              ref="form"
               v-slot="{ errors }"
               @submit="uploadFile"
             >
@@ -18,6 +19,7 @@
                 <div class="col-xxl-6 d-flex mb-4 align-items-center">
                   <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">批次交易檔:</h5>
                   <Field
+                    id="batchFile"
                     style="width:400px;"
                     ref="upload"
                     type="file"
@@ -70,7 +72,7 @@
               <button type="submit" :disabled="!isBusinessDay||!$store.state.pageBtnPermission.includes('insert')" class="btn btn-primary me-3 px-4">上傳</button>
               <button class="btn btn-warning me-3 px-4" @click.prevent="downloadExcel" :disabled="!$store.state.pageBtnPermission.includes('download')">下載範例EXCEL</button>
               <button class="btn btn-success me-3 px-4" @click.prevent="downloadFormat" :disabled="!$store.state.pageBtnPermission.includes('download')">下載批次交易檔規格</button>
-              <button class="btn btn-info me-3 px-4" @click="convertFile" :disabled="!$store.state.pageBtnPermission.includes('execute')">UB BPS轉檔程式</button>
+              <button class="btn btn-info me-3 px-4" @click.prevent="convertFile" :disabled="!$store.state.pageBtnPermission.includes('execute')">UB BPS轉檔程式</button>
             </Form>
           </div>
         </div>
@@ -149,7 +151,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="item in detailData.gridData" :key="item.pan">
+                  <tr v-for="(item,index) in detailData.gridData" :key="`A+${index}`">
                     <th scope="row">{{item.pan}}</th>
                     <td>
                       <span v-if="item.transType==='SALE'">授權與請款</span>
@@ -225,6 +227,7 @@
           </div>
           <div class="card-body">
             <Form
+              ref="excelForm"
               v-slot="{ errors }"
               @submit="uploadExcelFile"
             >
@@ -232,6 +235,7 @@
                 <div class="col-xxl-6 d-flex mb-4 align-items-center">
                   <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">上傳檔案:</h5>
                   <Field
+                    id="excelFile"
                     style="width:400px;"
                     ref="upload"
                     type="file"
@@ -261,6 +265,7 @@
           </div>
           <div class="card-body">
             <Form
+              ref="txtForm"
               v-slot="{ errors }"
               @submit="uploadTxtFile"
             >
@@ -268,6 +273,7 @@
                 <div class="col-xxl-6 d-flex mb-4 align-items-center">
                   <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">上傳檔案:</h5>
                   <Field
+                    id="txtFile"
                     style="width:400px;"
                     ref="upload"
                     type="file"
@@ -349,7 +355,6 @@ export default {
   },
   methods: {
     convertFile () {
-      this.convertModal = new this.$custom.bootstrap.Modal(this.$refs.convertModal, { backdrop: 'static' })
       this.convertModal.show()
     },
     // ? 取得 MainData 元件分頁資訊
@@ -449,7 +454,8 @@ export default {
           }
         })
         this.uploadPost = {}
-        this.$refs.upload.value = ''
+        document.querySelector('#batchFile').value = ''
+        this.$refs.form.resetForm()
         this.getData()
       }
     },
@@ -481,8 +487,9 @@ export default {
             container: 'z-10000'
           }
         })
-        this.uploaduploadConv = {}
-        this.$refs.upload.value = ''
+        this.uploadConv = {}
+        document.querySelector('#excelFile').value = ''
+        this.$refs.excelForm.resetForm()
       }
     },
     async uploadTxtFile () {
@@ -514,8 +521,8 @@ export default {
           }
         })
         this.uploadConv = {}
-        this.$refs.upload.value = ''
-        // this.getData()
+        document.querySelector('#txtFile').value = ''
+        this.$refs.txtForm.resetForm()
       }
     },
     confirmBatch (item) {
@@ -573,6 +580,7 @@ export default {
     this.getBusinessDay()
     this.detailModal = new this.$custom.bootstrap.Modal(this.$refs.detailModal, { backdrop: 'static' })
     this.errorModal = new this.$custom.bootstrap.Modal(this.$refs.errorModal, { backdrop: 'static' })
+    this.convertModal = new this.$custom.bootstrap.Modal(this.$refs.convertModal, { backdrop: 'static' })
   }
 }
 </script>

@@ -29,39 +29,16 @@ const service = {
       }
     }
   },
-  async getBatchDetail (batchId, page, pageSize) {
+  async getBatchDetail (postData) {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/a2/findTxnDetail`
-      const res = await axios({
-        url: url,
-        method: 'POST',
-        data: { batchId: batchId, page: page, pageSize: pageSize }
-      })
+      const res = await axios.post(url, postData)
       return res.data
     } catch (error) {
       if (error.response.status === 401) {
         const user = JSON.parse(localStorage.getItem('NBPS_USER'))
         if (user) {
-          return service.getBatchDetail(batchId)
-        }
-      }
-    }
-  },
-  async getBatchDetailByPan (batchId, pan, page, pageSize) {
-    try {
-      const url = `${process.env.VUE_APP_BASE_API}/a2/findTxnDetail`
-      console.log(pan)
-      const res = await axios({
-        url: url,
-        method: 'POST',
-        data: { batchId: batchId, pan: pan, page: page, pageSize: pageSize }
-      })
-      return res.data
-    } catch (error) {
-      if (error.response.status === 401) {
-        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
-        if (user) {
-          return service.getBatchDetail(batchId)
+          return service.getBatchDetail(postData)
         }
       }
     }

@@ -139,7 +139,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="item in detailData.gridData" :key="item.pan">
+                  <tr v-for="(item,index) in detailData.gridData" :key="`A+${index}`">
                     <th scope="row">{{item.pan}}</th>
                     <td>
                       <span v-if="item.transType==='SALE'">(S)授權與請款</span>

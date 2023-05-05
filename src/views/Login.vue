@@ -12,8 +12,12 @@
                 <ErrorMessage name="帳號" class="invalid-feedback"></ErrorMessage>
               </div>
               <div class="mb-4">
-                <Field name="密碼" :class="{ 'is-invalid': errors['密碼'] }" class="form-control form-control-lg" type="password" placeholder="密碼" rules="CheckPwd" v-model="user.pd"></Field>
-                <ErrorMessage name="密碼" class="invalid-feedback"></ErrorMessage>
+                <div class="position-relative">
+                  <Field id="PwdInput" name="密碼" :class="{ 'is-invalid': errors['密碼'] }" class="form-control form-control-lg" type="password" placeholder="密碼" rules="CheckPwd" v-model="user.pd" style="background-image:none;"></Field>
+                  <img v-if="PwdEyeOpen" @click.prevent="PwdEyeOpen=!PwdEyeOpen" class="position-absolute eye-open" src="@/assets/img/open_eye.svg" alt="">
+                  <img v-else @click.prevent="PwdEyeOpen=!PwdEyeOpen" class="position-absolute eye-close" src="@/assets/img/close_eye.svg" alt="">
+                  <ErrorMessage name="密碼" class="invalid-feedback"></ErrorMessage>
+                </div>
               </div>
               <div class="mb-4 input-group">
                 <Field name="驗證碼" :class="{ 'is-invalid': errors['驗證碼'] }" class="form-control form-control-lg" type="text" placeholder="驗證碼" rules="required" v-model="user.validateCode"></Field>
@@ -45,7 +49,13 @@ export default {
         userName: '',
         pd: '',
         validateCode: ''
-      }
+      },
+      PwdEyeOpen: false
+    }
+  },
+  watch: {
+    PwdEyeOpen (n, o) {
+      n ? document.querySelector('#PwdInput').type = 'text' : document.querySelector('#PwdInput').type = 'password'
     }
   },
   methods: {
@@ -101,5 +111,22 @@ export default {
 }
 .z-10000{
   z-index: 10000;
+}
+.change-pwd{
+  height: 100vh;
+}
+.eye-open{
+  top:14px;
+  right: 13px;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+}
+.eye-close{
+  top:15px;
+  right: 13px;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
 }
 </style>

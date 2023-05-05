@@ -38,6 +38,11 @@ const Validate = {
     }
     return true
   },
+  // ? 只可以輸入數字
+  // *搭配@keyup事件使用，直接過濾所有輸入字元必定為數字
+  OnlyNumPress (value) {
+    return value.replace(/[^\d]+/g, '')
+  },
   required,
   length,
   email

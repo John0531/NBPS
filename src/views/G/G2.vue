@@ -10,6 +10,7 @@
           </div>
           <div class="card-body">
             <Form
+              ref="form"
               v-slot="{ errors }"
               @submit="uploadFile"
             >
@@ -17,6 +18,7 @@
                 <div class="col-xxl-6 d-flex mb-4 align-items-center">
                   <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">批次交易檔:</h5>
                   <Field
+                    id="batchFile"
                     style="width:400px;"
                     ref="upload"
                     type="file"
@@ -288,7 +290,8 @@ export default {
           }
         })
         this.uploadPost = {}
-        this.$refs.upload.value = ''
+        document.querySelector('#batchFile').value = ''
+        this.$refs.form.resetForm()
         this.getData()
       }
     },

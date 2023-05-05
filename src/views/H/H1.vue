@@ -89,8 +89,8 @@
                 <td>{{item.count}}</td>
                 <td>{{$custom.currency(item.amt)}}</td>
                 <td>
-                  <button v-if="item.trxStatus==='TRX_FINISH'" @click="getDetail(item,defaultDetailPage.page,defaultDetailPage.pageSize)" :diable="!item.trxStatus===REPLY_UPLOAD_SUCCESS" class="btn btn-primary me-2 btn-sm">檢視明細</button>
-                  <button  v-if="item.batchStatus !=='CALL_BANK_SUCCESS'" @click="callBankFTP(item)" :disabled="!((item.count===0)&&($custom.currency(item.amt)===0))" class="btn btn-success me-2 btn-sm">作業完成</button>
+                  <button v-if="item.batchStatus==='TRX_FINISH'||item.batchStatus==='CALL_BANK_PROCESS'" @click="getDetail(item)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
+                  <button v-if="item.batchStatus ==='CALL_BANK_SUCCESS'" @click="callBankFTP(item)" class="btn btn-success me-2 btn-sm">作業完成</button>
                   <!-- <button v-if="item.batchStatus==='VALIDATE_FAIL'" @click="getError(item)" class="btn btn-danger me-2 btn-sm">檢視錯誤</button> -->
                 </td>
               </tr>
@@ -106,7 +106,7 @@
         <div class="modal-content">
           <div class="modal-header bg-success">
             <h5 class="modal-title text-white">檢視明細</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button @click.prevent="closeDetailModel" type="button" class="btn-close btn-close-white" aria-label="Close"></button>
           </div>
           <div class="modal-body">
               <h5>檔名: {{detailData.fileName}}</h5>
@@ -130,7 +130,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(item, index) in detailData.gridData" :key="item.txnId">
+                    <tr v-for="item in detailData.gridData" :key="item.txnId">
                       <th scope="row">{{item.storeId}}</th>
                       <th scope="row">{{item.pan}}</th>
                       <td>
@@ -144,17 +144,17 @@
                         {{item.codeH}}
                       </td>
                       <td>
-                        <input type="text" v-model="nowCodeH[index]" maxlength="2" class="input-group-text" @change="addData(index)">
+                        <input type="text" v-model="item.modifyCodeH" maxlength="2" class="form-control" style="text-align:center" @keyup="modifyCode(item)">
                       </td>
                       <td>
-                        <input type="text" v-model="nowAuthCode[index]" maxlength="6" class="input-group-text" @change="addData(index)">
+                        <input type="text" v-model="item.modifyAuthCode" maxlength="6" class="form-control" style="text-align:center" @keyup="modifyCode(item)" :disabled="item.modifyCodeH!=='00'">
                       </td>
                     </tr>
                   </tbody>
                 </template>
               </MainData>
               <div class="modal-footer">
-                <button type="button" class="btn btn-success px-4" @click="updateCallBank()" data-bs-dismiss="modal">全部儲存</button>
+                <button type="button" class="btn btn-success px-4" @click.prevent="updateCallBank">儲存全部變更</button>
               </div>
           </div>
         </div>
@@ -173,101 +173,29 @@ export default {
   },
   data () {
     return {
-      nowPage: 1,
-      eleNum: 10,
-      defaultDetailPage: { // ?檢視詳細資料第一次的分頁資訊
-        page: 1,
-        pageSize: 10
-      },
-      pageData: {}, // ?分頁資訊
       searchForm: {
         startDate: `${this.$custom.moment().format('YYYY-MM-DD')}`,
         endDate: `${this.$custom.moment().format('YYYY-MM-DD')}`
       },
+      pageData: {}, // ?分頁資訊
       gridData: [],
-      detailPageData: {
+      detailModal: '',
+      detailDataPost: {
+        batchId: '',
         page: 1,
         pageSize: 10
-      }, // ?詳細分頁資訊
-      detailModal: '',
+      },
       detailData: {
-        originData: [],
-        gridData: []
+        fileName: '',
+        storeType: '',
+        gridData: [],
+        batchId: ''
       },
-      pageDataList: {
-        CodeH: [],
-        authCode: [],
-        txnId: []
-      },
-      CodeH: [],
-      authCode: [],
-      txnId: [],
-
-      defaultCodeH: '00',
-      defaultAuthCode: '',
-      inputCodeH: Array.from({ length: 10 }, () => '00'),
-      inputAuthCode: Array.from({ length: 10 }, () => ''),
-      num: '',
-      totalElements: ''
-    }
-  },
-  computed: {
-    nowCodeH () {
-      return this.inputCodeH.map((value) => value !== '' ? value : this.defaultCodeH)
-    },
-    nowAuthCode () {
-      return this.inputAuthCode.map((value) => value !== '' ? value : this.defaultAuthCode)
+      detailPageData: {}, // ?詳細分頁資訊
+      keepDetailData: [] // ? 暫存資訊
     }
   },
   methods: {
-    addTxnId (page, pageSize) {
-      var stN = (page - 1) * pageSize
-      var edN = (page - 1) * pageSize + (pageSize - 1)
-      for (let j = stN, i = 0; j <= edN; j++) {
-        // console.log('from ' + stN + 'to' + edN + ', i=:' + i)
-        this.pageDataList.txnId[j] = this.detailData.gridData[i].txnId
-        i++
-      }
-      console.log('TxnId: ' + this.pageDataList.txnId)
-    },
-    cleanData () {
-      // this.nowCodeH.splice(0, this.nowCodeH.length)
-      const pageSize = this.detailPageData.pageSize
-      // ? 資料更新,填入欄位值
-      var stNum = (this.detailPageData.currentPage - 1) * pageSize
-      var edNum = (this.detailPageData.currentPage - 1) * pageSize + (pageSize - 1)
-      // console.log('update data: ' + this.pageDataList.CodeH)
-      // console.log(stNum + 'to' + edNum)
-      for (let j = stNum, n = 0; j <= edNum; j++) {
-        // this.pageDataList.txnId[j] = this.detailData.gridData[n].txnId
-        // console.log(this.detailData.gridData[n].txnId)
-        this.nowCodeH[n] = this.pageDataList.CodeH[j]
-        this.nowAuthCode[n] = this.pageDataList.authCode[j]
-        n++
-      }
-      console.log('clean page data')
-      // console.log('added TxnId: ' + this.pageDataList.txnId)
-      // this.nowCodeH.splice(0, this.nowCodeH.length)
-      // this.nowAuthCode.splice(0, this.nowAuthCode.length)
-    },
-    addData (index) {
-      const pageSize = this.detailPageData.totalElements / this.detailPageData.totalPages
-      var num = (this.detailPageData.currentPage - 1) * pageSize + index
-      // console.log('Element Num: ' + num)
-      console.log('nowCodeH: ' + this.nowCodeH)
-      // console.log('nowAuthCode[]' + this.nowAuthCode)
-      console.log('save page data')
-      this.pageDataList.CodeH[num] = this.nowCodeH[index]
-      this.pageDataList.authCode[num] = this.nowAuthCode[index]
-      // ? 若AuthCode有值則將CodeH設為00
-      if (this.nowAuthCode[index] !== undefined || this.nowAuthCode[index] !== '') {
-        this.nowCodeH.splice(index, 1, '00')
-        this.pageDataList.CodeH[num] = this.defaultCodeH
-      }
-      // console.log('this.pageDataList.CodeH[]' + this.pageDataList.CodeH)
-      // console.log('this.pageDataList.authCode[]' + this.pageDataList.authCode)
-      // this.inputAuthCode = this.pageDataList.authCode
-    },
     // ? 取得 MainData 元件分頁資訊
     getPageInfo (PageInfo) {
       this.searchForm.page = PageInfo.page
@@ -276,17 +204,9 @@ export default {
     },
     // ? 取得 MainData 元件詳細分頁資訊
     getDetailPageInfo (PageInfo) {
-      this.detailPageData = {
-        totalElements: this.detailData.totalElements,
-        currentPage: PageInfo.page,
-        totalPages: Math.ceil(this.detailData.totalElements / PageInfo.pageSize),
-        pageSize: PageInfo.pageSize,
-        batchId: this.detailData.batchId,
-        fileName: this.detailData.fileName,
-        storeType: this.detailData.storeType
-      }
-      this.getDetail(this.detailPageData, PageInfo.page, PageInfo.pageSize)
-      this.cleanData()
+      this.detailDataPost.page = PageInfo.page
+      this.detailDataPost.pageSize = PageInfo.pageSize
+      this.getDetail()
     },
     async getData () {
       this.$store.commit('changeLoading', true)
@@ -295,62 +215,119 @@ export default {
       this.pageData = result.pageInfo // ? 傳送分頁資訊
       this.gridData = result.batchTxnAuthCallBankData
     },
-    async getDetail (item, page, pageSize) {
-      this.eleNum = pageSize // ? 設定初始 inputCodeH 陣列的數量
+    async getDetail (item) {
+      if (item) {
+        this.detailDataPost.batchId = item.batchId
+        this.detailDataPost.page = 1
+        this.detailDataPost.pageSize = 10
+      }
       this.$store.commit('changeLoading', true)
-      const result = await service.getCallBankDetail(item.batchId, page, pageSize)
+      const result = await service.getCallBankDetail(this.detailDataPost)
       this.$store.commit('changeLoading', false)
       if (result) {
-        this.detailPageData = {
-          totalElements: result.pageInfo.totalElements,
-          currentPage: result.pageInfo.currentPage,
-          totalPages: Math.ceil(result.pageInfo.totalElements / pageSize),
-          batchId: item.batchId,
-          fileName: item.fileName,
-          storeType: item.storeType
+        this.detailPageData = result.pageInfo // ? 傳送分頁資訊
+        if (item) {
+          this.keepDetailData = []
+          this.detailData.fileName = item.fileName
+          this.detailData.storeType = item.storeType
+          this.detailData.batchId = item.batchId
+          // * 將每頁資料數初始化
+          this.$refs.detailMainData.PageInfo.pageSize = 10
         }
-        // this.setPageData(this.detailPageData.pageSize)
-        this.detailData.originData = result.txnAuthCallBankDetailData
-        this.detailData.gridData = this.detailData.originData.slice(0, pageSize)
-        this.detailData.fileName = item.fileName
-        this.detailData.storeType = item.storeType
-        this.detailData.batchId = item.batchId
-        this.totalElements = this.detailPageData.totalElements
-        // * 將每頁資料數初始化
-        this.$refs.detailMainData.PageInfo.pageSize = pageSize
+        this.detailData.gridData = result.txnAuthCallBankDetailData
+        this.detailData.gridData.forEach((item1) => {
+          item1.modifyCodeH = '00'
+          item1.modifyAuthCode = ''
+          this.keepDetailData.forEach((item2) => {
+            console.log(item1.txnId === item2.txnId)
+            if (item1.txnId === item2.txnId) {
+              item1.modifyCodeH = item2.modifyCodeH
+              item1.modifyAuthCode = item2.modifyAuthCode
+            }
+          })
+        })
       }
-      this.setPageData(this.totalElements)
-      this.addTxnId(page, pageSize)
-      // this.cleanData()
       this.detailModal.show()
     },
-    async updateCallBank () {
-      // this.$store.commit('changeLoading', true)
-      // const data = []
-      // for (let i = 0; i < this.detailData.gridData.length; i++) {
-      //   const newitem = {
-      //     txnId: this.detailData.gridData[i].txnId,
-      //     codeH: this.codeH[this.detailData.gridData[i].txnId],
-      //     authCode: this.authCode[this.detailData.gridData[i].txnId]
-      //   }
-      //   data.push(newitem)
-      // }
-      // const updateData = {
-      //   msgId: this.gridData.msgId,
-      //   updateData: data.map(({ authCode, codeH, txnId }) => ({
-      //     codeH: String(codeH),
-      //     authCode: String(authCode),
-      //     txnId: String(txnId)
-      //   }))
-      // }
-      const updateData = {
-        msgId: this.gridData.msgId,
-        updateData: this.pageDataList
+    closeDetailModel () {
+      this.$swal.fire({
+        title: '關閉後不會儲存修改資料，確認是否關閉?',
+        showCancelButton: true,
+        confirmButtonColor: '#0d6efd',
+        cancelButtonColor: '#4D4D4D',
+        confirmButtonText: '確認',
+        cancelButtonText: '取消',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.detailModal.hide()
+        }
+      })
+    },
+    modifyCode (item) {
+      item.modifyCodeH = this.$custom.validate.OnlyNumPress(item.modifyCodeH)
+      item.modifyAuthCode = this.$custom.validate.OnlyNumPress(item.modifyAuthCode)
+      if (item.modifyCodeH !== '00') {
+        item.modifyAuthCode = ''
       }
-      const dataList = JSON.parse(JSON.stringify(updateData))
-      console.log(dataList)
-      // console.table('final data list: ' + dataList)
-      const result = await service.updateCallBankCode(dataList)
+      if (item.modifyAuthCode) {
+        item.modifyCodeH = '00'
+      }
+      if (this.keepDetailData.length === 0) {
+        this.keepDetailData.push({
+          txnId: item.txnId,
+          codeH: item.codeH,
+          authCode: item.authCode,
+          modifyCodeH: item.modifyCodeH,
+          modifyAuthCode: item.modifyAuthCode
+        })
+      } else {
+        const index = this.keepDetailData.findIndex(obj => obj.txnId === item.txnId)
+        if (index === -1) {
+          this.keepDetailData.push({
+            txnId: item.txnId,
+            codeH: item.codeH,
+            authCode: item.authCode,
+            modifyCodeH: item.modifyCodeH,
+            modifyAuthCode: item.modifyAuthCode
+          })
+        } else {
+          this.keepDetailData[index].modifyCodeH = item.modifyCodeH
+          this.keepDetailData[index].modifyAuthCode = item.modifyAuthCode
+        }
+      }
+    },
+    async updateCallBank () {
+      const postData = {
+        batchId: this.detailData.batchId,
+        updateData: this.keepDetailData
+      }
+      console.log(postData.updateData)
+      for (let i = 0; i < postData.updateData.length; i++) {
+        if (postData.updateData[i].modifyCodeH === '00' && postData.updateData[i].modifyAuthCode && postData.updateData[i].modifyAuthCode.length !== 6) {
+          this.$swal.fire({
+            title: '請輸入正確授權碼'
+          })
+          return
+        }
+        if (postData.updateData[i].modifyCodeH.length !== 2) {
+          this.$swal.fire({
+            title: '請輸入正確回應碼'
+          })
+          return
+        }
+      }
+      postData.updateData.forEach((item) => {
+        if (item.modifyCodeH === '00' && item.modifyAuthCode) {
+          item.codeH = '00'
+          item.authCode = item.modifyAuthCode
+        } else if (item.modifyCodeH !== '00') {
+          item.codeH = item.modifyCodeH
+          item.authCode = ''
+        }
+      })
+      this.$store.commit('changeLoading', true)
+      const result = await service.updateCallBankCode(postData)
       this.$store.commit('changeLoading', false)
       if (result) {
         this.detailModal.hide()
@@ -367,50 +344,42 @@ export default {
           customClass: {
             container: 'z-10000'
           }
-        })// * 無法更新整個檔案 只更新當前page的筆數
-        this.getData()
-      }
-    },
-    async callBankFTP (item) {
-      this.$store.commit('changeLoading', true)
-      const result = await service.getCallBankFTP(item.batchId)
-      this.$store.commit('changeLoading', false)
-      if (result) {
-        this.$swal.fire({
-          toast: true,
-          position: 'center',
-          icon: 'success',
-          title: '上傳成功！',
-          showConfirmButton: false,
-          timer: 1500,
-          width: 500,
-          background: '#F0F0F2',
-          padding: 25,
-          customClass: {
-            container: 'z-10000'
-          }
         })
         this.getData()
       }
     },
-    setPageData (N) {
-      // ? 將this.pageDataList.CodeH空值的部分填入預設值00
-      for (let i = 0; i < N; i++) {
-        if (this.pageDataList.CodeH[i] === '' || this.pageDataList.CodeH[i] === undefined) {
-          this.pageDataList.CodeH[i] = '00'
-          this.pageDataList.authCode[i] = '123456'
-          this.pageDataList.txnId[i] = '99'
+    async callBankFTP (item) {
+      const res = await this.$swal.fire({
+        title: '確認是否執行?',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#4D4D4D',
+        confirmButtonText: '是',
+        cancelButtonText: '否',
+        reverseButtons: true
+      })
+      if (res.isConfirmed) {
+        this.$store.commit('changeLoading', true)
+        const result = await service.getCallBankFTP(item.batchId)
+        this.$store.commit('changeLoading', false)
+        if (result) {
+          this.$swal.fire({
+            toast: true,
+            position: 'center',
+            icon: 'success',
+            title: '上傳成功！',
+            showConfirmButton: false,
+            timer: 1500,
+            width: 500,
+            background: '#F0F0F2',
+            padding: 25,
+            customClass: {
+              container: 'z-10000'
+            }
+          })
+          this.getData()
         }
       }
-    }
-  },
-  watch: {
-    eleNum (newVal, oldVal) {
-      // console.log(`eleNum 的新值為 ${newVal}，舊值為 ${oldVal}`)
-      // this.inputCodeH = Array.from({ length: newVal }, () => '00')
-    },
-    nowPage () {
-      // this.cleanData()
     }
   },
   mounted () {

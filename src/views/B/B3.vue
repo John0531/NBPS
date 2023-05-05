@@ -141,10 +141,6 @@ export default {
   data () {
     return {
       CheckStatus: true,
-      defaultDetailPage: { // ?檢視詳細資料第一次的分頁資訊
-        page: 1,
-        pageSize: 10
-      },
       pageData: {}, // ?分頁資訊
       GroupDataPost: {
         page: 1,

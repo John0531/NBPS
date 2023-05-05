@@ -105,10 +105,36 @@
                 <td>{{item.totalCnt}}</td>
                 <td>{{$custom.currency(item.totalAmt)}}</td>
                 <td>
-                  <button @click="getDetail(item,pan,defaultDetailPage.page,defaultDetailPage.pageSize)" class="btn btn-primary me-2 btn-sm" :disabled="!showBtn(item.batchStatus)">檢視明細</button>
-                  <button @click="downloadReply(item)" v-if="item.batchStatus==='REPLY_SUCCESS'" class="btn btn-success me-2 btn-sm" :disabled="!($store.state.pageBtnPermission.includes('download')&&showDLbtn(item.trxStatus))">下載回覆檔</button>
-                  <button @click="downloadExcel(item)" class="btn btn-warning me-2 btn-sm" v-if="item.batchStatus==='REPLY_SUCCESS'" :disabled="!$store.state.pageBtnPermission.includes('download')">下載總計EXCEL</button>
-                  <button @click="downloadResendTrans(item)" v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'" class="btn btn-danger btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">異常切檔</button>
+                  <button
+                    @click="getDetail(item)" class="btn btn-primary me-2 btn-sm"
+                    v-if="showBtn(item.batchStatus)"
+                  >
+                    檢視明細
+                  </button>
+                  <button
+                    @click="downloadReply(item)"
+                    v-if="item.batchStatus==='REPLY_SUCCESS'&&showDLbtn(item.trxStatus)"
+                    class="btn btn-success me-2 btn-sm"
+                    :disabled="!($store.state.pageBtnPermission.includes('download'))"
+                  >
+                    下載回覆檔
+                  </button>
+                  <button
+                    @click="downloadExcel(item)"
+                    class="btn btn-warning me-2 btn-sm"
+                    v-if="item.batchStatus==='REPLY_SUCCESS'"
+                    :disabled="!$store.state.pageBtnPermission.includes('download')"
+                  >
+                    下載總計EXCEL
+                  </button>
+                  <button
+                    @click="downloadResendTrans(item)"
+                    v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'"
+                    class="btn btn-danger btn-sm"
+                    :disabled="!$store.state.pageBtnPermission.includes('execute')"
+                  >
+                    異常切檔
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -130,8 +156,12 @@
             <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店名稱: {{detailData.batchStoreName}} </h5>
             <div class="d-flex">
               <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">卡號:</h5>
-              <input v-model="pan" type="text" class="form-contorl" style="margin-right: 1em;border-radius: 10px;">
-              <button @click="getDetail(detailPageData, pan, defaultDetailPage.page, defaultDetailPage.pageSize)" class="btn btn-primary me-2 btn-sm"> 查詢</button>
+              <input v-model="detailDataPost.pan" type="text" class="form-contorl" style="margin-right: 1em;border-radius: 10px;">
+              <button @click="
+              detailDataPost.page = 1;
+              detailDataPost.pageSize = 10;
+              $refs.detailMainData.PageInfo.pageSize = 10;
+              getDetail()" class="btn btn-primary me-2 btn-sm"> 查詢</button>
             </div>
             <MainData ref="detailMainData" :Page="detailPageData"  @ChangePageInfo="getDetailPageInfo" >
               <template #default>
@@ -147,7 +177,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="item in detailData.gridData" :key="item.pan">
+                  <tr v-for="(item,index) in detailData.gridData" :key="`A+${index}`">
                     <th scope="row">{{item.pan}}</th>
                     <td>
                       <span v-if="item.transType==='SALE'">(S)授權與請款</span>
@@ -296,10 +326,6 @@ export default {
   },
   data () {
     return {
-      defaultDetailPage: { // ?檢視詳細資料第一次的分頁資訊
-        page: 1,
-        pageSize: 10
-      },
       OffLineSale: false,
       pageData: {}, // ?分頁資訊
       defaultData: [],
@@ -309,14 +335,16 @@ export default {
       },
       gridData: [],
       detailModal: '',
-      pan: '',
       detailDataPost: {
         batchId: '',
         page: 1,
-        pageSize: 10
+        pageSize: 10,
+        pan: ''
       },
       detailData: {
-        originData: [],
+        batchFileName: '',
+        batchStoreName: '',
+        dtSummary: {},
         gridData: []
       },
       detailPageData: {} // ?詳細分頁資訊
@@ -369,17 +397,9 @@ export default {
     },
     // ? 取得 MainData 元件詳細分頁資訊
     getDetailPageInfo (PageInfo) {
-      // * 傳送分頁資訊
-      this.detailPageData = {
-        totalElements: this.detailData.totalElements,
-        currentPage: PageInfo.page,
-        totalPages: Math.ceil(this.detailData.totalElements / PageInfo.pageSize),
-        batchId: this.detailData.batchId,
-        batchFileName: this.detailData.batchFileName,
-        batchStoreName: this.detailData.batchStoreName
-      }
-      // 前端打API取得分頁資料
-      this.getDetail(this.detailPageData, this.pan, PageInfo.page, PageInfo.pageSize)
+      this.detailDataPost.page = PageInfo.page
+      this.detailDataPost.pageSize = PageInfo.pageSize
+      this.getDetail()
     },
     async getDefaultData () {
       this.$store.commit('changeLoading', true)
@@ -400,32 +420,26 @@ export default {
       this.pageData = result.pageInfo // ? 傳送分頁資訊
       this.gridData = result.batchList
     },
-    async getDetail (item, pan, page, pageSize) {
+    async getDetail (item) {
+      if (item) {
+        this.detailDataPost.batchId = item.batchId
+        this.detailDataPost.page = 1
+        this.detailDataPost.pageSize = 10
+        this.detailDataPost.pan = ''
+      }
       this.$store.commit('changeLoading', true)
-      const result = await service.getBatchDetailByPan(item.batchId, pan, page, pageSize)
-      // const result = await service.getBatchDetail(item.batchId, page, pageSize)
+      const result = await service.getBatchDetail(this.detailDataPost)
       this.$store.commit('changeLoading', false)
       if (result) {
-        // * 傳送分頁資訊
-        this.detailData.originData = result.batchList
-        this.detailData.gridData = this.detailData.originData.slice(0, pageSize)
-        // * 傳送分頁資訊(僅第一次打api取得所有資料) end
-        this.detailData.batchFileName = item.batchFileName
-        this.detailData.batchStoreName = item.batchStoreName
-        this.detailData.dtSummary = result.dtSummary
-        this.detailData.batchId = item.batchId
-        this.detailData.transType = item.transType
-        this.detailPageData = {
-          totalElements: result.pageInfo.totalElements,
-          currentPage: result.pageInfo.currentPage,
-          totalPages: Math.ceil(result.pageInfo.totalElements / pageSize),
-          batchFileName: item.batchFileName,
-          batchStoreName: item.batchStoreName,
-          batchId: item.batchId
+        this.detailPageData = result.pageInfo // ? 傳送分頁資訊
+        if (item) {
+          this.detailData.batchFileName = item.batchFileName
+          this.detailData.batchStoreName = item.batchStoreName
+          this.detailData.dtSummary = result.dtSummary
+          // * 將每頁資料數初始化
+          this.$refs.detailMainData.PageInfo.pageSize = 10
         }
-
-        // * 將每頁資料數初始化
-        this.$refs.detailMainData.PageInfo.pageSize = pageSize
+        this.detailData.gridData = result.batchList
       }
       this.detailModal.show()
     },
