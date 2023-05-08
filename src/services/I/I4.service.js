@@ -17,9 +17,9 @@ const service = {
   },
   async batchExecute (postData) {
     // 將時間轉換為後端API需求的格式
-    const year = postData.datetimeE5.year
-    const mo = `${postData.datetimeE5.month + 1}`.padStart(2, '0')
-    postData.datetimeE5 = year + '-' + mo + '-' + '01'
+    // const year = postData.datetimeE5.year
+    // const mo = `${postData.datetimeE5.month + 1}`.padStart(2, '0')
+    // postData.datetimeE5 = year + '-' + mo + '-' + '01'
     try {
       const url = `${process.env.VUE_APP_BASE_API}/i4/batchExecute`
       const res = await axios.post(url, postData)

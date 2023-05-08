@@ -77,12 +77,12 @@
                 <div class="card">
                   <div class="card-header">
                     <h2 class="fw-bold mb-3">E5:分析報表下載作業批次</h2>
-                    <h6>依年、月份產製分析報表</h6>
+                    <h6 >產製<span class="fw-bold text-primary">選擇月份的上個月</span>之月結報表 (範例: 選取月份為5月，則產製4月份的報表)</h6>
                   </div>
                   <div class="card-body">
                     <div class="row py-3">
                       <div class="col-xxl-8 d-flex mb-4">
-                        <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">日期:</h5>
+                        <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">月份:</h5>
                         <Datepicker class="w-xxl-50 w-100" v-model="reExeDate" month-picker auto-apply format="yyyy年MM月"></Datepicker>
                       </div>
                     </div>
@@ -106,26 +106,24 @@
         <div class="modal-content">
           <div class="modal-header bg-success">
             <h5 class="modal-title text-white">重新執行E3批次</h5>
-            <button type="button" @click="getData" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <!-- <h5>msgId: {{sendData.msgId}}</h5>
-            <h5 v-html="sendData.input"></h5> -->
             <div class="row justify-content-center">
               <div class="col-12">
                 <div class="card">
                   <div class="card-header">
-                    <h2 class="fw-bold mb-3">E3:款結果查詢及對帳單產製批次</h2>
-                    <h6>對帳單產製批次(*後端未完成)</h6>
+                    <h2 class="fw-bold mb-3">E3:特店月結報表產製作業批次</h2>
+                    <h6 >產製<span class="fw-bold text-primary">選擇月份的上個月</span>之月結報表 (範例: 選取月份為5月，則產製4月份的報表)</h6>
                   </div>
                   <div class="card-body">
                     <div class="row py-3">
                       <div class="col-xxl-8 d-flex mb-4">
-                        <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">日期:</h5>
+                        <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">月份:</h5>
                         <Datepicker class="w-xxl-50 w-100" v-model="reExeDate" month-picker auto-apply format="yyyy年MM月"></Datepicker>
                       </div>
                     </div>
-                    <button @click="reExecureE3(this.detailE5Modal)" :disabled="!$store.state.pageBtnPermission.includes('execute')" class="btn btn-primary me-3 px-4">執行批次</button>
+                    <button @click="reExecureE3(this.detailE3Modal)" :disabled="!$store.state.pageBtnPermission.includes('execute')" class="btn btn-primary me-3 px-4">執行批次</button>
                   </div>
                 </div>
               </div>
@@ -157,7 +155,6 @@ export default {
         // batchCode: '',
       },
       gridData: [],
-      detailE3Modal: '',
       detailDataPost: {
         msgId: '',
         page: 1,
@@ -169,13 +166,14 @@ export default {
       },
       detailPageData: {}, // ?詳細分頁資訊
       detailE5Modal: '',
+      detailE3Modal: '',
       sendData: {}
     }
   },
   methods: {
     getDetail (item) {
       switch (item.name) {
-        case 'E3請款結果查詢及對帳單產製批次':
+        case 'E3特店月結報表產製作業批次':
           this.detailE3Modal = new this.$custom.bootstrap.Modal(this.$refs.detailE3Modal, { backdrop: 'static' })
           // this.detailE3Modal.msgId = item.msgId
           this.detailE3Modal.batchHistoryId = item.id
@@ -243,13 +241,13 @@ export default {
       }
       this.detailE5Modal.show()
     },
-    async reExecureE3 (item) {
+    async reExecureE3 (item) { // ? 重新執行E3批次
       if (item) {
-        this.detailDataPost.msgId = item.msgId
+        // this.detailDataPost.msgId = item.msgId
         this.detailDataPost.page = 1
         this.detailDataPost.pageSize = 10
         this.detailDataPost.batchCode = 'E3'
-        this.detailDataPost.batchHistoryId = item.id
+        this.detailDataPost.batchHistoryId = item.batchHistoryId
         this.detailDataPost.datetimeE5 = this.reExeDate // 傳送產製批次指定的日期
       }
       this.$store.commit('changeLoading', true)
