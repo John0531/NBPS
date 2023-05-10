@@ -18,7 +18,7 @@ const service = {
   },
   async uploadExcel (postData) {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/a1/convertExcelFile`
+      const url = `${process.env.VUE_APP_BASE_API}/b1/convertExcelFile`
       const res = await axios.post(url, postData, {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -43,7 +43,7 @@ const service = {
   },
   async uploadTxt (postData) {
     try {
-      const url = `${process.env.VUE_APP_BASE_API}/a1/convertTxtFile`
+      const url = `${process.env.VUE_APP_BASE_API}/b1/convertTxtFile`
       const res = await axios.post(url, postData, {
         headers: {
           'Content-Type': 'multipart/form-data'
