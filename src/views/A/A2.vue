@@ -173,6 +173,7 @@
                     <th scope="col">帳單描述</th>
                     <th scope="col">回應碼</th>
                     <th scope="col">授權碼</th>
+                    <th scope="col">交易請款結果</th>
                     <th scope="col">交易取消結果</th>
                   </tr>
                 </thead>
@@ -190,8 +191,13 @@
                     <td>{{item.codeH}}</td>
                     <td>{{item.authCode}}</td>
                     <td>
+                      <span v-if="(item.statusCode==='0000')">請款成功</span>
+                      <span v-if="(item.statusCode!='0000')">請款失敗</span>
+                    </td>
+                    <td>
                       <span v-if="(item.authVoidStatus==='00'&&item.settleVoidStatus==='0000')">取消成功</span>
-                      <span v-if="(item.authVoidStatus!='00'&&item.settleVoidStatus!='0000')"></span>
+                      <span v-if="(item.authVoidStatus==null&&item.settleVoidStatus==null)"></span>
+                      <span v-if="(item.authVoidStatus&&(item.authVoidStatus!='00'||item.settleVoidStatus!='0000'))">取消失敗</span>
                     </td>
                   </tr>
                 </tbody>

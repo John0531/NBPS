@@ -10,8 +10,8 @@
               <div class="card-header bg-secondary text-light">
                 <h2 class="fw-bold mb-3">更改密碼</h2>
                 <h6>使用者帳號修改自身密碼，僅適用非AD帳號人員</h6>
-                <h6>*密碼請輸入８～１２碼，大小寫需相符</h6>
-                <h6>*新密碼需含有大小寫英文，數字，及特殊字元 (四種都要有)</h6>
+                <h6>*密碼請輸入<span class="text-info">８～１２碼</span>，大小寫需相符</h6>
+                <h6>*新密碼需含有<span class="text-info">大小寫英文、數字</span>及<span class="text-info">特殊字元</span> <span class="text-warning">(四種都要有)</span></h6>
               </div>
               <div class="card-body">
                 <div v-if="isDefault" class="alert alert-info" role="alert">
