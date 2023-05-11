@@ -20,7 +20,7 @@
             <tbody>
               <tr v-for="item in EventMailList.gridData" :key="item.id">
                 <th scope="row">{{item.eventName}}</th>
-                <td>{{item.emails}}</td>
+                <td>{{item.emails.join()}}</td>
                 <td>
                   <button @click="openEditModal(item)" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('modify')">修改信箱</button>
                 </td>
@@ -37,12 +37,12 @@
         <div class="modal-content">
           <div class="modal-header bg-success">
             <h5 class="modal-title text-white">修改信箱</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button @click.prevent="closeEditModel" type="button" class="btn-close btn-close-white" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <Form
+              ref="form"
               v-slot="{ errors }"
-              @submit="editEmail"
             >
               <div class="row mb-3">
                 <label for="event" class="col-sm-2 col-form-label">事件</label>
@@ -64,26 +64,62 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <label for="email" class="col-sm-2 col-form-label">信箱</label>
-                <div class="col-sm-10">
+                <label for="email" class="col-sm-2 col-form-label">新增信箱</label>
+                <div class="col-sm-8">
                   <Field
-                    name="信箱"
-                    as="textarea"
+                    name="新增信箱"
                     class="form-control"
-                    :rules="{CheckEmailsArea:[this.editForm.emails],required:true}"
-                    :class="{ 'is-invalid': errors['信箱'] }"
+                    rules="required|email"
+                    :class="{ 'is-invalid': errors['新增信箱'] }"
                     id="email"
-                    v-model="editForm.emails"
+                    v-model="editForm.addEmail"
                   />
-                  <div class="mt-2 text-primary fw-bold">需以逗號分隔，如: a01@utic.com,a02@utic.com</div>
                   <ErrorMessage
-                    name="信箱"
+                    name="新增信箱"
                     class="invalid-feedback"
                   />
                 </div>
+                <div class="col-sm-2">
+                  <button @click.prevent="addEmail" class="btn btn-primary px-4">新增</button>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-12">
+                  <div class="tbl-container table-responsive">
+                    <table class="table table-striped table-bordered table-hover">
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">信箱</th>
+                          <th scope="col"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="(item,index) in editForm.emailList" :key="`A${index}`">
+                          <th scope="row">{{index+1}}</th>
+                          <td>
+                            <Field
+                              :name="`信箱${index+1}`"
+                              class="form-control"
+                              rules="required|email"
+                              :class="{ 'is-invalid': errors[`信箱${index+1}`] }"
+                              v-model="item.email"
+                            />
+                            <span class="text-danger">
+                              {{errors[`信箱${index+1}`]}}
+                            </span>
+                          </td>
+                          <td>
+                            <button @click.prevent="removeEmail(index)" class="btn btn-danger btn-sm">刪除</button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
               <div class="d-flex justify-content-end">
-                <button class="btn btn-success px-4">儲存</button>
+                <button @click.prevent="editEmail" class="btn btn-success px-4">儲存</button>
               </div>
             </Form>
           </div>
@@ -138,7 +174,6 @@ export default {
         this.EventMailList.originData = result.eventMailList
         // ? 資料格式處理
         this.EventMailList.originData.forEach((item) => {
-          item.emails = item.emails.join()
           if (item.event === 'CB_NOTIFY') {
             item.eventName = 'CALL BANK通知'
           } else if (item.event === 'ABE_VALIDATOR') {
@@ -154,16 +189,68 @@ export default {
     },
     openEditModal (item) {
       this.editForm = JSON.parse(JSON.stringify(item))
+      this.editForm.emailList = this.editForm.emails.map((item) => {
+        return { email: item }
+      })
       this.editModal.show()
     },
+    async addEmail () {
+      const result = await this.$refs.form.validateField('新增信箱')
+      if (result.valid) {
+        this.editForm.emailList.push({
+          email: this.editForm.addEmail
+        })
+      }
+    },
+    async removeEmail (index) {
+      this.$swal.fire({
+        title: '確認是否刪除?',
+        showCancelButton: true,
+        confirmButtonColor: '#0d6efd',
+        cancelButtonColor: '#4D4D4D',
+        confirmButtonText: '確認',
+        cancelButtonText: '取消',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.editForm.emailList.splice(index, 1)
+        }
+      })
+    },
+    closeEditModel () {
+      this.$swal.fire({
+        title: '關閉後不會儲存修改資料，確認是否關閉?',
+        showCancelButton: true,
+        confirmButtonColor: '#0d6efd',
+        cancelButtonColor: '#4D4D4D',
+        confirmButtonText: '確認',
+        cancelButtonText: '取消',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.editModal.hide()
+        }
+      })
+    },
     async editEmail () {
-      this.editForm.eventType = this.editForm.event
-      this.$store.commit('changeLoading', true)
-      const result = await service.editEventMail(this.editForm)
-      this.$store.commit('changeLoading', false)
-      if (result) {
-        this.editModal.hide()
-        this.getData()
+      this.$refs.form.setErrors({})
+      this.$refs.form.setFieldError('新增信箱', '')
+      for (let i = 0; i < this.editForm.emailList.length; i++) {
+        await this.$refs.form.validateField(`信箱${i + 1}`)
+      }
+      const errors = this.$refs.form.getErrors()
+      if (Object.keys(errors).length === 0) {
+        this.editForm.emails = this.editForm.emailList.map(item => {
+          return item.email
+        })
+        this.editForm.eventType = this.editForm.event
+        this.$store.commit('changeLoading', true)
+        const result = await service.editEventMail(this.editForm)
+        this.$store.commit('changeLoading', false)
+        if (result) {
+          this.editModal.hide()
+          this.getData()
+        }
       }
     }
   },
