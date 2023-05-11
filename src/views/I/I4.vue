@@ -77,16 +77,16 @@
                 <div class="card">
                   <div class="card-header">
                     <h2 class="fw-bold mb-3">E5:分析報表下載作業批次</h2>
-                    <h6>依年、月份產製分析報表</h6>
+                    <h6 >產製<span class="fw-bold text-primary">選擇月份的上個月</span>之月結報表 (範例: 選取月份為5月，則產製4月份的報表)</h6>
                   </div>
                   <div class="card-body">
                     <div class="row py-3">
                       <div class="col-xxl-8 d-flex mb-4">
-                        <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">日期:</h5>
+                        <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">月份:</h5>
                         <Datepicker class="w-xxl-50 w-100" v-model="reExeDate" month-picker auto-apply format="yyyy年MM月"></Datepicker>
                       </div>
                     </div>
-                    <button @click="reExecureE5(this.detailE5Modal)" :disabled="!$store.state.pageBtnPermission.includes('execute')" class="btn btn-primary me-3 px-4">執行批次</button>
+                    <button @click="reExecuteE5(this.detailE5Modal)" :disabled="!$store.state.pageBtnPermission.includes('execute')" class="btn btn-primary me-3 px-4">執行批次</button>
                   </div>
                 </div>
               </div>
@@ -106,26 +106,24 @@
         <div class="modal-content">
           <div class="modal-header bg-success">
             <h5 class="modal-title text-white">重新執行E3批次</h5>
-            <button type="button" @click="getData" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <!-- <h5>msgId: {{sendData.msgId}}</h5>
-            <h5 v-html="sendData.input"></h5> -->
             <div class="row justify-content-center">
               <div class="col-12">
                 <div class="card">
                   <div class="card-header">
-                    <h2 class="fw-bold mb-3">E3:款結果查詢及對帳單產製批次</h2>
-                    <h6>對帳單產製批次(*後端未完成)</h6>
+                    <h2 class="fw-bold mb-3">E3:特店月結報表產製作業批次</h2>
+                    <h6 >產製<span class="fw-bold text-primary">選擇月份的上個月</span>之月結報表 (範例: 選取月份為5月，則產製4月份的報表)</h6>
                   </div>
                   <div class="card-body">
                     <div class="row py-3">
                       <div class="col-xxl-8 d-flex mb-4">
-                        <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">日期:</h5>
+                        <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">月份:</h5>
                         <Datepicker class="w-xxl-50 w-100" v-model="reExeDate" month-picker auto-apply format="yyyy年MM月"></Datepicker>
                       </div>
                     </div>
-                    <button @click="reExecureE3(this.detailE5Modal)" :disabled="!$store.state.pageBtnPermission.includes('execute')" class="btn btn-primary me-3 px-4">執行批次</button>
+                    <button @click="reExecuteE3(this.detailE3Modal)" :disabled="!$store.state.pageBtnPermission.includes('execute')" class="btn btn-primary me-3 px-4">執行批次</button>
                   </div>
                 </div>
               </div>
@@ -137,6 +135,44 @@
       </div>
     </div>
   </div>
+
+   <!-- 重新執行E3批次 Modal -->
+   <div class="modal fade" ref="detailE3DailyModal" tabindex="-1" aria-labelledby="detailE3DailyModal" aria-hidden="true">
+      <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-success">
+            <h5 class="modal-title text-white">重新執行E3批次</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row justify-content-center">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h2 class="fw-bold mb-3">E3:特店日結報表下載作業批次</h2>
+                    <h6 >產製<span class="fw-bold text-primary">選擇日期的前一天</span>之單日報表 (範例: 選取日期4/2，則產製4/1的報表)</h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="row py-3">
+                      <div class="col-xxl-8 d-flex mb-4">
+                        <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">日期:</h5>
+                        <Datepicker auto-apply enable-seconds v-model="reExeDate" model-type="yyyy-MM-dd" format="yyyy/MM/dd"></Datepicker>
+                        <!-- <Datepicker class="w-xxl-50 w-100" v-model="reExeDate" month-picker auto-apply model-type="yyyy-MM-dd" format="yyyy/MM/dd"></Datepicker> -->
+                      </div>
+                    </div>
+                    <button @click="reExeDailyE3(this.detailE3Modal)" :disabled="!$store.state.pageBtnPermission.includes('execute')" class="btn btn-primary me-3 px-4">執行批次</button>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </template>
 
 <script>
@@ -157,7 +193,6 @@ export default {
         // batchCode: '',
       },
       gridData: [],
-      detailE3Modal: '',
       detailDataPost: {
         msgId: '',
         page: 1,
@@ -169,13 +204,21 @@ export default {
       },
       detailPageData: {}, // ?詳細分頁資訊
       detailE5Modal: '',
+      detailE3Modal: '',
       sendData: {}
     }
   },
   methods: {
     getDetail (item) {
       switch (item.name) {
-        case 'E3請款結果查詢及對帳單產製批次':
+        case 'E3特店日結報表下載作業批次':
+          this.detailE3DailyModal = new this.$custom.bootstrap.Modal(this.$refs.detailE3DailyModal, { backdrop: 'static' })
+          // this.detailE3Modal.msgId = item.msgId
+          this.detailE3DailyModal.batchHistoryId = item.id
+          this.detailE3DailyModal.batchCode = 'E3'
+          this.detailE3DailyModal.show()
+          break
+        case 'E3特店月結報表產製作業批次':
           this.detailE3Modal = new this.$custom.bootstrap.Modal(this.$refs.detailE3Modal, { backdrop: 'static' })
           // this.detailE3Modal.msgId = item.msgId
           this.detailE3Modal.batchHistoryId = item.id
@@ -212,7 +255,7 @@ export default {
       this.pageData = result.pageInfo // ? 傳送分頁資訊
       this.gridData = result.batchHistoryList // ? 依照日期搜尋後的結果
     },
-    async reExecureE5 (item) { // ? 重新執行E5批次
+    async reExecuteE5 (item) { // ? 重新執行E5批次
       console.log('item.id=' + item.batchHistoryId)
       if (item) {
         // this.detailDataPost.msgId = item.msgId
@@ -220,7 +263,7 @@ export default {
         this.detailDataPost.pageSize = 10
         this.detailDataPost.batchCode = 'E5'
         this.detailDataPost.batchHistoryId = item.batchHistoryId
-        this.detailDataPost.datetimeE5 = this.reExeDate // 傳送產製批次指定的日期
+        this.detailDataPost.datetime = this.reExeDate // 傳送產製批次指定的日期
       }
       this.$store.commit('changeLoading', true)
       const result = await service.batchExecute(this.detailDataPost)
@@ -243,14 +286,14 @@ export default {
       }
       this.detailE5Modal.show()
     },
-    async reExecureE3 (item) {
+    async reExecuteE3 (item) { // ? 重新執行E3批次
       if (item) {
-        this.detailDataPost.msgId = item.msgId
+        // this.detailDataPost.msgId = item.msgId
         this.detailDataPost.page = 1
         this.detailDataPost.pageSize = 10
         this.detailDataPost.batchCode = 'E3'
-        this.detailDataPost.batchHistoryId = item.id
-        this.detailDataPost.datetimeE5 = this.reExeDate // 傳送產製批次指定的日期
+        this.detailDataPost.batchHistoryId = item.batchHistoryId
+        this.detailDataPost.datetime = this.reExeDate // 傳送產製批次指定的日期
       }
       this.$store.commit('changeLoading', true)
       const result = await service.batchExecute(this.detailDataPost)
@@ -274,9 +317,41 @@ export default {
       this.detailE3Modal.show()
       this.getData()
     },
+    async reExeDailyE3 (item) { // ? 重新執行E3批次
+      if (item) {
+        // this.detailDataPost.msgId = item.msgId
+        this.detailDataPost.page = 1
+        this.detailDataPost.pageSize = 10
+        this.detailDataPost.batchCode = 'E3'
+        this.detailDataPost.batchHistoryId = item.batchHistoryId
+        this.detailDataPost.datetime = this.reExeDate // 傳送產製批次指定的日期
+      }
+      this.$store.commit('changeLoading', true)
+      const result = await service.batchDailyExecute(this.detailDataPost)
+      this.$store.commit('changeLoading', false)
+      if (result) {
+        this.$swal.fire({
+          toast: true,
+          position: 'center',
+          icon: 'success',
+          title: '批次已重新執行',
+          showConfirmButton: false,
+          timer: 1500,
+          width: 500,
+          background: '#F0F0F2',
+          padding: 25,
+          customClass: {
+            container: 'z-10000'
+          }
+        })
+      }
+      this.detailE3DailyModal.show()
+      this.getData()
+    },
     mounted () {
       this.getData()
       this.detailE3Modal = new this.$custom.bootstrap.Modal(this.$refs.detailE3Modal, { backdrop: 'static' })
+      this.detailE3DailyModal = new this.$custom.bootstrap.Modal(this.$refs.detailE3DailyModal, { backdrop: 'static' })
       this.detailE5Modal = new this.$custom.bootstrap.Modal(this.$refs.detailE5Modal, { backdrop: 'static' })
     }
   }
