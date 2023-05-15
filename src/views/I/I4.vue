@@ -83,7 +83,7 @@
                     <div class="row py-3">
                       <div class="col-xxl-8 d-flex mb-4">
                         <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">月份:</h5>
-                        <Datepicker class="w-xxl-50 w-100" v-model="reExeDate" month-picker auto-apply format="yyyy年MM月"></Datepicker>
+                        <Datepicker class="w-xxl-50 w-100" v-model="date" month-picker auto-apply format="yyyy年MM月"></Datepicker>
                       </div>
                     </div>
                     <button @click="reExecuteE5(this.detailE5Modal)" :disabled="!$store.state.pageBtnPermission.includes('execute')" class="btn btn-primary me-3 px-4">執行批次</button>
@@ -120,7 +120,7 @@
                     <div class="row py-3">
                       <div class="col-xxl-8 d-flex mb-4">
                         <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">月份:</h5>
-                        <Datepicker class="w-xxl-50 w-100" v-model="reExeDate" month-picker auto-apply format="yyyy年MM月"></Datepicker>
+                        <Datepicker class="w-xxl-50 w-100" v-model="date" month-picker auto-apply format="yyyy年MM月"></Datepicker>
                       </div>
                     </div>
                     <button @click="reExecuteE3(this.detailE3Modal)" :disabled="!$store.state.pageBtnPermission.includes('execute')" class="btn btn-primary me-3 px-4">執行批次</button>
@@ -160,7 +160,7 @@
                         <!-- <Datepicker class="w-xxl-50 w-100" v-model="reExeDate" month-picker auto-apply model-type="yyyy-MM-dd" format="yyyy/MM/dd"></Datepicker> -->
                       </div>
                     </div>
-                    <button @click="reExeDailyE3(this.detailE3Modal)" :disabled="!$store.state.pageBtnPermission.includes('execute')" class="btn btn-primary me-3 px-4">執行批次</button>
+                    <button @click="reExeDailyE3(this.detailE3DailyModal)" :disabled="!$store.state.pageBtnPermission.includes('execute')" class="btn btn-primary me-3 px-4">執行批次</button>
                   </div>
                 </div>
               </div>
@@ -185,6 +185,7 @@ export default {
   },
   data () {
     return {
+      date: null,
       reExeDate: `${this.$custom.moment().format('YYYY-MM-DD')}`,
       pageData: {}, // ?分頁資訊
       searchForm: {
@@ -205,6 +206,7 @@ export default {
       detailPageData: {}, // ?詳細分頁資訊
       detailE5Modal: '',
       detailE3Modal: '',
+      detailE3DailyModal: '',
       sendData: {}
     }
   },
@@ -263,7 +265,8 @@ export default {
         this.detailDataPost.pageSize = 10
         this.detailDataPost.batchCode = 'E5'
         this.detailDataPost.batchHistoryId = item.batchHistoryId
-        this.detailDataPost.datetime = this.reExeDate // 傳送產製批次指定的日期
+        this.detailDataPost.year = this.date.year
+        this.detailDataPost.month = `${this.date.month + 1}`.padStart(2, '0')
       }
       this.$store.commit('changeLoading', true)
       const result = await service.batchExecute(this.detailDataPost)
@@ -293,7 +296,8 @@ export default {
         this.detailDataPost.pageSize = 10
         this.detailDataPost.batchCode = 'E3'
         this.detailDataPost.batchHistoryId = item.batchHistoryId
-        this.detailDataPost.datetime = this.reExeDate // 傳送產製批次指定的日期
+        this.detailDataPost.year = this.date.year
+        this.detailDataPost.month = `${this.date.month + 1}`.padStart(2, '0')
       }
       this.$store.commit('changeLoading', true)
       const result = await service.batchExecute(this.detailDataPost)
