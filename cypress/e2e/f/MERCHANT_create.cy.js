@@ -1,6 +1,7 @@
 describe('template spec', () => {
   it('登入權限管理人員', () => {
-    cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/login')
+    cy.visit(Cypress.env('CYPRESS_BASE_URL'))
+    // cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/login')
     cy.get('input[name="帳號"]').type('testCypressUser')
     cy.get('input[name="密碼"]').type('UBot123456!')
     cy.get('button').contains("登入").click({force: true})

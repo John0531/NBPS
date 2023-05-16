@@ -1,17 +1,21 @@
 describe('template spec', () => {
   it('登入權限管理人員', () => {
-    // 初次登入後要修改密碼
-    // cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/login')
-    // cy.get('input[name="帳號"]').type('testCypress')
-    // cy.get('input[name="密碼"]').type('UBot123456!')
-    // cy.get('button').contains("登入").click({force: true})
 
-    // cy.get('input[name="修改密碼"]').type('Ubot12346!')
-    // cy.get('input[name="確認密碼"]').type('Ubot12346!')
-    // cy.get('button').contains('更改密碼').click()
+    // 設定瀏覽器的視窗大小
+    cy.viewport(1500, 1000);
+
+    // 初次登入後要修改密碼
+    cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/login')
+    cy.get('input[name="帳號"]').type('testCypress')
+    cy.get('input[name="密碼"]').type('UBot123456!')
+    cy.get('button').contains("登入").click({force: true})
+
+    cy.get('input[name="修改密碼"]').type('Ubot123456!')
+    cy.get('input[name="確認密碼"]').type('Ubot123456!')
+    cy.get('button').contains('更改密碼').click()
 
     // 如果修改過密碼
-    cy.loginViaUi({ pwd: 'Ubot12346!', userName: 'testCypress' })
+    cy.loginViaUi({ pwd: 'Ubot123456!', userName: 'testCypress' })
 
      // 測試 F2 - 創建"使用者"群組 (User Level)
      cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/nbps-system/F2')
