@@ -24,6 +24,7 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... }
 
+// 登入帳號
 Cypress.Commands.add('loginViaUi', (user) => {
     cy.session(
         user,
@@ -39,4 +40,11 @@ Cypress.Commands.add('loginViaUi', (user) => {
                }
          }
         )
+  })
+
+//   登出帳號
+  Cypress.Commands.add('logOut', () => {
+    cy.get(".btn-light").click()
+    cy.wait(3000)
+    cy.get(".swal2-confirm").contains("登出").click()
   })

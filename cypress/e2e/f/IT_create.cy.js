@@ -1,5 +1,9 @@
 describe('template spec', () => {
   it ('登入admin', () => {
+
+    // 設定瀏覽器的視窗大小
+    cy.viewport(1500, 1000);
+
     // 登入帳號
     cy.loginViaUi({ pwd: 'P@ssw0rd', userName: 'admin' })
 
@@ -26,8 +30,9 @@ describe('template spec', () => {
       cy.get('select[name="群組"]').select('testCY_IT_GP - testCY_IT')
       cy.get('button').contains('新增').click()
     })
-    // cy.get('button').contains('登出').click()
-    // cy.get('button').contains('登出').click()
+
+    // 登出帳號
+    cy.logOut()
 
   })
 })
