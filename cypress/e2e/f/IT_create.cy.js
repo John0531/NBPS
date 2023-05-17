@@ -9,7 +9,12 @@ describe('template spec', () => {
 
     // 測試 F2 - 創建"權限管理人員"群組
     cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/nbps-system/F2')
+
+    cy.wait(1000)
+
+    cy.get('#F > .accordion-body > .list-unstyled > :nth-child(2) > .fs-6').click()
     cy.get('button').contains('新增群組').click()
+    cy.wait(2000)
     cy.get('.modal-content:contains("新增群組權限")').within(() => {
       cy.get('input[name="群組代號"]').type('testCY_IT')
       cy.get('input[name="群組名稱"]').type('testCY_IT_GP')
@@ -26,6 +31,7 @@ describe('template spec', () => {
     // 測試 F1 - 創建"權限管理人員"帳號 (IT Level)
     cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/nbps-system/F1')
     cy.get('button').contains('新增帳號').click()
+    cy.wait(2000)
     // 彈窗後的動作
     cy.get('.modal-content:contains("新增帳號")').within(() => {
       cy.get('input[name="帳號"]').type('testCypress')
