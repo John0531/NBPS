@@ -143,7 +143,7 @@
                 <td>{{item.refundCnt}}</td>
                 <td>
                   <span v-if="item.refundAmt===0">{{$custom.currency(item.refundAmt)}}</span>
-                  <span v-if="item.refundAmt!=0">-{{$custom.currency(item.refundAmt)}}</span>
+                  <span v-if="item.refundAmt!==0">-{{$custom.currency(item.refundAmt)}}</span>
                 </td>
                 <td>
                   <button v-if="item.batchStatus==='VALIDATE_FAIL'" @click="getError(item)" class="btn btn-danger me-2 btn-sm">檢視錯誤</button>
