@@ -1,29 +1,40 @@
 describe('template spec', () => {
-  it('登入權限管理人員', () => {
+  it('登入權限管理人員帳號,創建使用者帳號與群組', () => {
 
     // 設定瀏覽器的視窗大小
-    cy.viewport(1500, 1000);
+    cy.viewport(1500, 1000)
 
+    // cy.loginViaUi({ pwd: 'Ubot123456!', userName: 'testCypress' })
+
+    cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/login')
+    cy.get('input[name="帳號"]').type('testCypress')
+    cy.get('input[name="密碼"]').type('Ubot123456!')
+    cy.get('button').contains("登入").click({force: true})
+
+    cy.get('.swal2-popup').should('exist').then(($e) => {
+      const title = $e.find('.swal2-title').text()
+        // 初次登入後要修改密碼
+        if (title === '帳號或密碼錯誤'){
+          cy.get('.swal2-confirm').click()
+          cy.get('input[name="密碼"]').clear()
+          cy.get('input[name="密碼"]').type('UBot123456!')
+          cy.get('button').contains("登入").click({force: true})
+          cy.wait(2000)
+          cy.get('input[name="修改密碼"]').type('Ubot123456!')
+          cy.get('input[name="確認密碼"]').type('Ubot123456!')
+          cy.get('button').contains('更改密碼').click()    
+
+          // 登出帳號
+          cy.logOut()
+          cy.reload()
+
+          // 再次登入
+          cy.loginViaUi({ pwd: 'Ubot123456!', userName: 'testCypress' })
+        }
+    })
     
-    // 初次登入後要修改密碼
-    // cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/login')
-    // cy.wait(1000)
-    // cy.get('input[name="帳號"]').type('testCypress')
-    // cy.get('input[name="密碼"]').type('UBot123456!')
-    // cy.get('button').contains("登入").click({force: true})
-
-    
-
-    // cy.get('input[name="修改密碼"]').type('Ubot123456!')
-    // cy.get('input[name="確認密碼"]').type('Ubot123456!')
-    // cy.get('button').contains('更改密碼').click()
-
-    // cy.wait(1000)
-    // cy.reload()
-
-
-    // 如果修改過密碼
-    cy.loginViaUi({ pwd: 'Ubot123456!', userName: 'testCypress' })
+    cy.wait(2000)
+    cy.reload()
 
      // 測試 F2 - 創建"使用者"群組 (User Level)
      cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/nbps-system/F2')

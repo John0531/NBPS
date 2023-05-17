@@ -29,7 +29,6 @@ Cypress.Commands.add('loginViaUi', (user) => {
     cy.session(
       user,
         () => {
-            // cy.visit(Cypress.env('CYPRESS_BASE_URL'))
             cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/login')
             cy.get('input[name="帳號"]').type(user.userName)
             cy.get('input[name="密碼"]').type(user.pwd)

@@ -1,5 +1,5 @@
 describe('template spec', () => {
-  it ('登入admin', () => {
+  it ('登入admin,創建權限管理者帳號與群組', () => {
 
     // 設定瀏覽器的視窗大小
     cy.viewport(1500, 1000);
