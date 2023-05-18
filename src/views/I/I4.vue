@@ -258,7 +258,6 @@ export default {
       this.gridData = result.batchHistoryList // ? 依照日期搜尋後的結果
     },
     async reExecuteE5 (item) { // ? 重新執行E5批次
-      console.log('item.id=' + item.batchHistoryId)
       if (item) {
         // this.detailDataPost.msgId = item.msgId
         this.detailDataPost.page = 1

@@ -239,7 +239,6 @@ export default {
           item1.modifyCodeH = '00'
           item1.modifyAuthCode = ''
           this.keepDetailData.forEach((item2) => {
-            console.log(item1.txnId === item2.txnId)
             if (item1.txnId === item2.txnId) {
               item1.modifyCodeH = item2.modifyCodeH
               item1.modifyAuthCode = item2.modifyAuthCode
@@ -302,7 +301,6 @@ export default {
         batchId: this.detailData.batchId,
         updateData: this.keepDetailData
       }
-      console.log(postData.updateData)
       for (let i = 0; i < postData.updateData.length; i++) {
         if (postData.updateData[i].modifyCodeH === '00' && postData.updateData[i].modifyAuthCode && postData.updateData[i].modifyAuthCode.length !== 6) {
           this.$swal.fire({

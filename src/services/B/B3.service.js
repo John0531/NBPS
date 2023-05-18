@@ -32,7 +32,6 @@ const service = {
   async getBatchDetailByPan (batchId, pan, page, pageSize) {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/b3/findTxnDetail`
-      console.log(pan)
       const res = await axios({
         url: url,
         method: 'POST',
