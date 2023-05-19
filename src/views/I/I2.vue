@@ -17,6 +17,7 @@
                 <th scope="col">設定名稱</th>
                 <th scope="col">限流閥</th>
                 <th scope="col">交易間隔(ms)</th>
+                <th scope="col">交易平均時間標準</th>
                 <th scope="col"></th>
               </tr>
             </thead>
@@ -25,6 +26,7 @@
                 <th scope="row">{{item.name}}</th>
                 <td>{{item.valve}}</td>
                 <td>{{item.valveTime}}</td>
+                <td>{{item.valveStanderd}}</td>
                 <td>
                   <button @click="openEditModal(item)" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('modify')">修改</button>
                 </td>
@@ -103,6 +105,24 @@
                   />
                 </div>
               </div>
+              <div class="row mb-3">
+                <label for="valveStanderd" class="col-sm-2 col-form-label">交易平均時間標準</label>
+                <div class="col-sm-10">
+                  <Field
+                    name="交易平均時間標準"
+                    type="number"
+                    class="form-control"
+                    rules="required"
+                    :class="{ 'is-invalid': errors['交易平均時間標準'] }"
+                    id="valveStanderd"
+                    v-model="editForm.valveStanderd"
+                  />
+                  <ErrorMessage
+                    name="交易平均時間標準"
+                    class="invalid-feedback"
+                  />
+                </div>
+              </div>
               <div class="d-flex justify-content-end">
                 <button class="btn btn-success px-4">儲存</button>
               </div>
@@ -167,7 +187,8 @@ export default {
       this.editForm = {
         name: JSON.parse(JSON.stringify(item.name)),
         valve: JSON.parse(JSON.stringify(item.valve)),
-        valvetime: JSON.parse(JSON.stringify(item.valveTime))
+        valvetime: JSON.parse(JSON.stringify(item.valveTime)),
+        valveStanderd: JSON.parse(JSON.stringify(item.valveStanderd))
       }
       this.editModal.show()
     },

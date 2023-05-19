@@ -232,6 +232,46 @@
                   />
                 </div>
               </fieldset>
+              <fieldset class="row mb-3">
+                <legend class="col-form-label col-sm-2 pt-0">ID 驗證</legend>
+                <div class="col-sm-10 d-flex align-items-center">
+                  <div class="form-check me-3">
+                    <Field
+                      rules="radioRequired"
+                      :class="{ 'is-invalid': errors['idNo'] }"
+                      v-model="addForm.idNo"
+                      :value="true"
+                      class="form-check-input"
+                      type="radio"
+                      name="idNo"
+                      id="idNo1"
+                    />
+                    <label class="form-check-label" for="idNo1">
+                      是
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <Field
+                      rules="radioRequired"
+                      :class="{ 'is-invalid': errors['idNo'] }"
+                      v-model="addForm.idNo"
+                      :value="false"
+                      class="form-check-input"
+                      type="radio"
+                      name="idNo"
+                      id="idNo2"
+                    />
+                    <label class="form-check-label" for="idNo2">
+                      否
+                    </label>
+                  </div>
+                  <ErrorMessage
+                    name="idNo"
+                    class="text-danger ms-3"
+                    style="font-size:0.875em"
+                  />
+                </div>
+              </fieldset>
               <div class="row mb-3">
                 <label for="transTime" class="col-sm-2 col-form-label">作業時間:<small class="text-danger">(僅影響自行上傳作業類型)</small></label>
                 <div class="col-sm-10">
@@ -527,6 +567,46 @@
                   />
                 </div>
               </fieldset>
+              <fieldset class="row mb-3">
+                <legend class="col-form-label col-sm-2 pt-0">ID 驗證</legend>
+                <div class="col-sm-10 d-flex align-items-center">
+                  <div class="form-check me-3">
+                    <Field
+                      rules="radioRequired"
+                      :class="{ 'is-invalid': errors['idNo'] }"
+                      v-model="editForm.idNo"
+                      :value="true"
+                      class="form-check-input"
+                      type="radio"
+                      name="idNo"
+                      id="idNo1_2"
+                    />
+                    <label class="form-check-label" for="idNo1_2">
+                      是
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <Field
+                      rules="radioRequired"
+                      :class="{ 'is-invalid': errors['idNo'] }"
+                      v-model="editForm.idNo"
+                      :value="false"
+                      class="form-check-input"
+                      type="radio"
+                      name="idNo"
+                      id="idNo2_2"
+                    />
+                    <label class="form-check-label" for="idNo2_2">
+                      否
+                    </label>
+                  </div>
+                  <ErrorMessage
+                    name="idNo"
+                    class="text-danger ms-3"
+                    style="font-size:0.875em"
+                  />
+                </div>
+             </fieldset>
               <div class="row mb-3">
                 <label for="transTime2" class="col-sm-2 col-form-label">作業時間:<small class="text-danger">(僅影響自行上傳作業類型)</small></label>
                 <div class="col-sm-10">
@@ -656,7 +736,9 @@ export default {
       pageData: {}, // ?分頁資訊
       gridData: [],
       addModal: '',
-      addForm: {},
+      addForm: {
+        idNo: false
+      },
       editModal: '',
       editForm: {}
     }

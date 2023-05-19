@@ -85,7 +85,7 @@
 
     <!-- 檢視明細 Modal -->
     <div class="modal fade" ref="detailModal" tabindex="-1" aria-labelledby="detailModal" aria-hidden="true">
-      <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-dialog modal-xxl modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header bg-primary">
             <h5 class="modal-title text-white">檢視明細</h5>
@@ -108,7 +108,8 @@
                     <th scope="col">金額</th>
                     <th scope="col">帳單描述</th>
                     <th scope="col">授權碼</th>
-                    <th scope="col">交易結果</th>
+                    <th scope="col">交易授權結果</th>
+                    <th scope="col">交易請款結果</th>
                     <th scope="col">交易取消結果</th>
                     <th scope="col" v-if="!(detailData.gridData.filter(item => item.voidCodeH).length === detailData.gridData.length)"></th>
                   </tr>
@@ -126,15 +127,19 @@
                     <td>{{item.desc}}</td>
                     <td>{{item.authCode}}</td>
                     <td>
-                      <span v-if="item.codeH==='00'">成功</span>
-                      <span v-else>失敗</span>
+                      <span v-if="item.codeH==='00'">授權成功</span>
+                      <span v-else>授權失敗</span>
+                    </td>
+                    <td>
+                      <span v-if="(item.statusCode==='0000')">請款成功</span>
+                      <span v-if="(item.statusCode!='0000')">請款失敗</span>
                     </td>
                     <td>
                       <span v-if="item.voidCodeH==='00'">取消成功</span>
                       <span v-if="item.voidCodeH&&item.voidCodeH!=='00'">取消失敗</span>
                     </td>
                     <td v-if="!(detailData.gridData.filter(item => item.voidCodeH).length === detailData.gridData.length)">
-                      <button v-if="item.codeH==='00'&&(item.voidCodeH!=='00'||!item.voidCodeH)" @click="singleCancel(item)" class="btn btn-danger me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">單筆取消</button>
+                      <button v-if="item.codeH==='00'&&item.statusCode==='0000'&&!item.voidCodeH" @click="singleCancel(item)" class="btn btn-danger me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">單筆取消</button>
                     </td>
                   </tr>
                 </tbody>
@@ -284,3 +289,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .modal-xxl{
+    --bs-modal-width: 1200px;
+  }
+</style>

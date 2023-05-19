@@ -112,7 +112,6 @@ export default {
       this.batchGridData = result.jobLogList
     },
     async switchStatus (item) {
-      console.log(item)
       this.$store.commit('changeLoading', true)
       const result = await service.switchHostStatus({
         hostname: item.hostName,
