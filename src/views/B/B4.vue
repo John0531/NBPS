@@ -280,7 +280,11 @@ export default {
       const url = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
       a.href = url
       a.style.display = 'none'
-      a.download = `${item.date}日報.xlsx`
+      if (type === 'B4SUCCESS') {
+        a.download = `${item.date}.成功日報.xlsx`
+      } else {
+        a.download = `${item.date}.失敗日報.xlsx`
+      }
       a.click()
       // 清除暫存
       a.href = ''
