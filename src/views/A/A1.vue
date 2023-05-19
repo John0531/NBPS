@@ -337,6 +337,7 @@
 <script>
 import service from '@/services/A/A1.service.js'
 import MainData from '@/components/MainData.vue'
+// import Model from '@/model/Public.model.js'
 
 export default {
   components: {
@@ -344,6 +345,8 @@ export default {
   },
   data () {
     return {
+      // test: new Model.Address(),
+      // test2: new Model.Address(),
       GroupDataPost: {
         page: 1,
         pageSize: 10
@@ -606,6 +609,9 @@ export default {
     }
   },
   mounted () {
+    this.test.plus()
+    console.log(this.test)
+    console.log(this.test2)
     this.getDefaultData()
     this.detailModal = new this.$custom.bootstrap.Modal(this.$refs.detailModal, { backdrop: 'static' })
     this.errorModal = new this.$custom.bootstrap.Modal(this.$refs.errorModal, { backdrop: 'static' })
