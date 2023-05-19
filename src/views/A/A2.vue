@@ -451,7 +451,7 @@ export default {
       const url = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
       a.href = url
       a.style.display = 'none'
-      a.download = item.batchFileName
+      a.download = `${item.batchStoreId}${item.batchFileName.substr(9)}`
       a.click()
       // 清除暫存
       a.href = ''

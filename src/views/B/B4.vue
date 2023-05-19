@@ -208,7 +208,9 @@ export default {
         month: (this.searchMonth.month + 1).toString().padStart(2, '0')
       })
       this.$store.commit('changeLoading', false)
-      this.monthGridData = result
+      if (result) {
+        this.monthGridData = result
+      }
     },
     async downloadMonthReport () {
       this.$store.commit('changeLoading', true)
