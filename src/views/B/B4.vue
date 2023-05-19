@@ -72,7 +72,7 @@
                 <th scope="col">請款成功總金額</th>
                 <th scope="col">請款失敗總筆數</th>
                 <th scope="col">請款失敗總金額</th>
-                <th scope="col">檢視失敗明細</th>
+                <th scope="col">下載成功明細</th>
                 <th scope="col">下載失敗明細</th>
               </tr>
             </thead>
@@ -86,10 +86,10 @@
                 <td>{{item.totalFailSettleCount}}</td>
                 <td>{{$custom.currency(item.totalFailSettleAmt)}}</td>
                 <td>
-                  <button v-if="item.totalFailSettleCount!==0" @click="getDetail(item)" class="btn btn-danger me-2 btn-sm">檢視失敗明細</button>
+                  <button v-if="item.totalSuccessSettleCount!==0&&item.totalSuccessSettleAmt!==0" @click.prevent="downloadDateReport(item,'B4SUCCESS')" class="btn btn-danger me-2 btn-sm">下載成功明細</button>
                 </td>
                 <td>
-                  <button v-if="item.totalFailSettleCount!==0" @click.prevent="downloadDateReport(item)" class="btn btn-success me-2 btn-sm">下載失敗明細</button>
+                  <button v-if="item.totalFailSettleCount!==0&&item.totalFailSettleAmt!==0" @click.prevent="downloadDateReport(item,'B4FAIL')" class="btn btn-success me-2 btn-sm">下載失敗明細</button>
                 </td>
               </tr>
             </tbody>
@@ -267,12 +267,13 @@ export default {
       }
       this.detailModal.show()
     },
-    async downloadDateReport (item) {
+    async downloadDateReport (item, type) {
       this.$store.commit('changeLoading', true)
       const result = await service.downloadDateReport({
         year: item.date.substr(0, 4),
         month: item.date.substr(4, 2),
-        day: item.date.substr(6, 2)
+        day: item.date.substr(6, 2),
+        dailyReportType: type
       })
       this.$store.commit('changeLoading', false)
       const a = document.createElement('a')
