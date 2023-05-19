@@ -6,7 +6,7 @@ describe("template spec", () => {
     //拜訪A1
     cy.visit("https://upay-beta.ubpg.com.tw/nbps-dev/nbps-system/A1");
 
-    const fileName = "150100147.20230518.O.zip";
+    const fileName = "150100147.20230519.A.zip";
 
     goA1AndUpload(fileName);
 
@@ -45,6 +45,8 @@ function goA1AndUpload(fileName) {
 
   cy.wait(80000);
 
+
+  cy.reload();
   // 選擇最後一頁
   cy.get(".next-item").prev().click();
 
@@ -72,10 +74,13 @@ function goA2AndSelect() {
   //選取特店代號:000100150100147 (交易驗證特店(四))
   cy.get(":nth-child(5) > .form-select").select("000100150100147");
 
+  cy.wait(3000);
+
   //按下查詢
   cy.get(".card-body > .btn").click();
 
-  cy.wait(60000);
+  cy.wait(3000);
+
   //查詢最後一筆的明細
   cy.get(".col-12 > .mt-5 > .justify-content-end > .pagination > .next-item")
     .prev()
@@ -118,7 +123,11 @@ function goA2AndSelect() {
   //按下 "close"
   cy.get(".modal-footer > .btn").click();
 
+  cy.reload();
+
   cy.wait(35000);
+
+  cy.reload();
 
   cy.get(".col-12 > .mt-5 > .justify-content-end > .pagination > .next-item")
     .prev()
@@ -141,7 +150,7 @@ function goA2AndSelect() {
 
   let filePath = "cypress/downloads/總計excel.xlsx";
 
-  cy.wait(5000);
+  cy.wait(10000);
 
   //用require('xlsx')讀取filePath excel的檔案  轉成 string 並且用'/n'分開 並且存成array
   const XLSX = require("xlsx");
@@ -168,9 +177,9 @@ function goA3AndDelete(fileName) {
     .click();
   cy.wait(2000);
 
-   //選取特店代號:000100150100147 (交易驗證特店(四))
+  //選取特店代號:000100150100147 (交易驗證特店(四))
   cy.get("select[data-v-3102c76f]").select("000100150100147");
-  
+
   cy.wait(2000);
 
   //按下搜尋
@@ -183,17 +192,17 @@ function goA3AndDelete(fileName) {
 
   //按下檢視明細
   cy.contains("td", fileName)
-    .next()
-    .next()
-    .next()
-    .next()
-    .next()
-    .next()
-    .next()
-    .next()
-    .next()
-    .contains("檢視明細")
-    .click();
+  .next()
+  .next()
+  .next()
+  .next()
+  .next()
+  .next()
+  .next()
+  .next()
+  .next()
+  .contains("檢視明細")
+  .click();
 
   //按下單筆取消
   cy.get(
@@ -223,12 +232,15 @@ function goA3AndDelete(fileName) {
 
   cy.wait(3000);
 
+  cy.reload();
+
   //選擇最後一頁
   cy.get(".col-12 > .mt-5 > .justify-content-end > .pagination > .next-item")
     .prev()
     .click({ multiple: true });
 
-  cy.wait(2000);
+  cy.wait(3000);
+
   //按下整批取消
   cy.get(
     ".col-12 > .mt-5 > .tbl-container > .table > tbody >  tr:last > :nth-child(12)"
@@ -239,9 +251,11 @@ function goA3AndDelete(fileName) {
   //彈出視窗 確認整批取消
   cy.get(".swal2-confirm").click();
 
-  cy.wait(40000);
+  cy.reload();
 
-  
+  cy.wait(35000);
+
+  cy.reload();
 
   //選取特店代號:000100150100147 (交易驗證特店(四)
   cy.get("select[data-v-3102c76f]").select("000100150100147");
@@ -250,10 +264,13 @@ function goA3AndDelete(fileName) {
   //按下搜尋
   cy.get(".card-body > .btn").contains("搜尋").click();
 
+
   //選擇最後一頁
   cy.get(".col-12 > .mt-5 > .justify-content-end > .pagination > .next-item")
     .prev()
     .click({ multiple: true });
+
+  cy.reload();
 
   //按下檢視明細
   cy.contains("td", fileName)
@@ -285,15 +302,15 @@ function goA3AndDelete(fileName) {
 
   //close
   cy.get(".modal-footer > .btn").click();
-
 }
 
-function goA4AndDownload(){
-  
+function goA4AndDownload() {
   //got to A4
-  cy.get('#A > .accordion-body > .list-unstyled > :nth-child(4) > .fs-6').contains("分析報表下載作業").click();
+  cy.get("#A > .accordion-body > .list-unstyled > :nth-child(4) > .fs-6")
+    .contains("分析報表下載作業")
+    .click();
 
-  cy.get('.dp__pointer').click();
+  cy.get(".dp__pointer").click();
 
   //用 new Date 找尋當月月份 轉成英文
   const month = new Date().toLocaleString("en-us", { month: "long" });
@@ -302,7 +319,5 @@ function goA4AndDownload(){
   cy.contains(month).click();
 
   //下載當月的報表
-  cy.get('.card-body > .btn').contains('下載').click();
-
+  cy.get(".card-body > .btn").contains("下載").click();
 }
-

@@ -6,7 +6,7 @@ describe("template spec", () => {
     //拜訪A1
     cy.visit("https://upay-beta.ubpg.com.tw/nbps-dev/nbps-system/B1");
 
-    const fileName = "092301568.20230518.F.zip";
+    const fileName = "092301568.20230519.B.zip";
 
     cy.get("#B > .accordion-body > .list-unstyled > :nth-child(1) > .fs-6")
       .contains("批次交易檔上傳作業")
@@ -44,6 +44,7 @@ function goB1AndUpload(fileName) {
   cy.get(".btn-primary").contains("上傳").click();
 
   cy.wait(80000);
+  cy.reload();
 
   // 選擇最後一頁
   cy.get(".next-item").prev().click();
@@ -116,12 +117,20 @@ function goB2AndSelect() {
   //按下 "close"
   cy.get(".modal-footer > .btn").click();
 
-  cy.wait(35000);
+  cy.reload();
+
+  cy.wait(40000);
+
+  cy.reload();
 
   //按下 "下載回覆檔"
   cy.get("tbody > tr:last-child > td:nth-child(9)")
     .contains("下載回覆檔")
     .click();
+
+  cy.wait(3000);
+
+  cy.reload();
 
   //檢查狀態是不是"已下傳回覆檔"
   cy.get("tbody > tr:last-child > td:nth-child(5)")
@@ -135,7 +144,7 @@ function goB2AndSelect() {
 
   let filePath = "cypress/downloads/總計excel.xlsx";
 
-  cy.wait(10000);
+  cy.wait(15000);
 
   //用require('xlsx')讀取filePath excel的檔案  轉成 string 並且用'/n'分開 並且存成array
   const XLSX = require("xlsx");
@@ -153,8 +162,6 @@ function goB2AndSelect() {
     cy.wrap(dataArray[1][1]).should("eq", "2");
     cy.wrap(dataArray[2][1]).should("eq", "3,240");
   });
-
-  cy.wait(2000);
 }
 
 function goB3AnDelete(fileName) {
@@ -164,6 +171,8 @@ function goB3AnDelete(fileName) {
     .click();
 
   cy.wait(2000);
+
+  cy.reload();
   //查詢最後一頁
   cy.get(".next-item").prev().click({ multiple: true });
 
@@ -207,6 +216,7 @@ function goB3AnDelete(fileName) {
   //close
   cy.get(".modal-footer > .btn").click();
 
+  cy.reload();
   cy.wait(3000);
 
   //選擇最後一頁
@@ -242,7 +252,7 @@ function goB3AnDelete(fileName) {
     .prev()
     .click({ multiple: true });
 
-   cy.reload();
+  cy.reload();
 
   //按下檢視明細
   cy.contains("th", fileName)
@@ -280,20 +290,20 @@ function goB4AndDownload() {
     .contains("月結請款對帳單")
     .click();
 
-    //依月份查詢
-    cy.get(".form-select").select("month");
+  //依月份查詢
+  cy.get(".form-select").select("month");
 
-    cy.get(".dp__pointer").click();
+  cy.get(".dp__pointer").click();
 
-    //用 new Date 找尋當月月份 轉成英文
-    const month = new Date().toLocaleString("en-us", { month: "long" });
-    console.log(month);
-    //找到month 含有的 的元素 並且點擊
-    cy.contains(month).click();
+  //用 new Date 找尋當月月份 轉成英文
+  const month = new Date().toLocaleString("en-us", { month: "long" });
+ 
+  //找到month 含有的 的元素 並且點擊
+  cy.contains(month).click();
 
-    //搜尋
-    cy.get(".card-body > .btn").contains("搜尋").click();
+  //搜尋
+  cy.get(".card-body > .btn").contains("搜尋").click();
 
-    //按下下載
-    cy.get("tbody > tr > :nth-child(8)").contains("下載").click();
+  //按下下載
+  cy.get("tbody > tr > :nth-child(8)").contains("下載").click();
 }

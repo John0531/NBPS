@@ -49,7 +49,7 @@ const initFile = '092301568.txt'
 oriFile = initFile
 
 // 65 = A , 90 = Z
-for (let i = 65; i <= 70; i++) {
+for (let i = 65; i <= 67; i++) {
 
 inputFile = '092301568.'+`${year}${month}${day}.` + String.fromCharCode(i) + '.txt'
 
