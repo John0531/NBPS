@@ -612,9 +612,6 @@ export default {
     }
   },
   mounted () {
-    this.test.plus()
-    console.log(this.test)
-    console.log(this.test2)
     this.getDefaultData()
     this.detailModal = new this.$custom.bootstrap.Modal(this.$refs.detailModal, { backdrop: 'static' })
     this.errorModal = new this.$custom.bootstrap.Modal(this.$refs.errorModal, { backdrop: 'static' })
