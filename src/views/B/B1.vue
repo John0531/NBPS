@@ -6,7 +6,7 @@
           <div class="card-header">
             <h2 class="fw-bold mb-3">批次交易檔上傳作業</h2>
             <h6>供特店端上傳批次交易資料檔，上傳功能僅於營業日之作業時間開放(例:營業日上午九點至下午三點半開放)，批次交易資料檔上傳且格式檢核成功後，按下確認並送出，系統隨開始發動交易。</h6>
-            <h6 class="text-danger fw-bold">*檔名為: 商店代碼後九碼 + "." + YYYYMMDD(自動帶出今日日期) + "." + A(第一次上傳為A，第二次為B，以此類推)+"."txt(大、小寫皆可)。例如：XXXXXXXXX.20230317.A.txt(TXT)。</h6>
+            <h6 class="text-danger fw-bold">*檔名為: 商店代碼後九碼 + "." + YYYYMMDD(今天日期) + "." + A(第一次上傳為A，第二次為B，以此類推)+"."txt(大、小寫皆可)。例如：XXXXXXXXX.20230317.A.txt(TXT)。</h6>
             <h6 class="text-danger fw-bold">*上傳檔案均需依約定之密碼規則(約定之加解密密碼+兩碼當月月份)，以ZIP加密，若檔名或解密錯誤或總筆數及總金額不對，此檔直接剔退。</h6>
           </div>
           <div class="card-body">
@@ -68,6 +68,7 @@
                     class="invalid-feedback ms-2"
                   />
                 </div>
+                <h6 class="text-danger fw-bold" style="padding-left:380px;">*若計算總金額為負數，則需加上負號「-」(半形)，例如：-123。</h6>
               </div>
               <button type="submit" :disabled="!isBusinessDay||!$store.state.pageBtnPermission.includes('insert')" class="btn btn-primary me-3 px-4">上傳</button>
               <button class="btn btn-warning me-3 px-4" @click.prevent="downloadExcel" :disabled="!$store.state.pageBtnPermission.includes('download')">下載範例EXCEL</button>
