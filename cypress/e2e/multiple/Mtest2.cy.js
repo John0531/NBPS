@@ -30,27 +30,27 @@ function goA2AndSelect() {
   //選取特店代號:000100150100147 (交易驗證特店(四))
   cy.get(":nth-child(5) > .form-select").select("000100150100147");
 
-  cy.wait(3000);
+
 
   //按下查詢
-  cy.get(".card-body > .btn").click();
+  cy.get(".card-body > .btn",{ timeout: 5000 }).click();
 
-  cy.wait(3000);
 
   //查詢最後一筆的明細
   cy.get(".col-12 > .mt-5 > .justify-content-end > .pagination > .next-item")
     .prev()
-    .click({ multiple: true });
+    .click({ multiple: true },{ timeout: 5000 });
 
   // cy.wait(3000);
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 1000; i++) {
     cy.get("tbody > tr:last-child > td:nth-child(9)")
       .contains("檢視明細")
-      .click({ multiple: true });
+      .click({ multiple: true },{ timeout: 5000 });
+     
 
     //按下 "close"
-    cy.get(".modal-footer > .btn").click();
+    cy.get(".modal-footer > .btn",{ timeout: 5000 }).click();
 
-    cy.wait(2000);
+
   }
 }
