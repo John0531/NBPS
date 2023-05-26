@@ -179,9 +179,9 @@
                        <span v-if="(item.statusCode==='0000'&&item.replyCode!='00'&&item.replyCode!='')">請款失敗</span>
                     </td>
                     <td v-if="(isVoidSettle||isVoidAuth)">
-                      <span v-if="(item.authVoidStatus==='00'&&item.settleVoidStatus==='0000')">取消成功</span>
+                      <span v-if="((item.errCode!=null&&item.authVoidStatus==='00')||(item.authVoidStatus==='00'&&item.settleVoidStatus==='0000'))">取消成功</span>
                       <span v-if="(item.authVoidStatus==null&&item.settleVoidStatus==null)"></span>
-                      <span v-if="(item.authVoidStatus!='00'&&item.settleVoidStatus!='0000'&&item.authVoidStatus!=null&&item.settleVoidStatus!=null)">取消失敗</span>
+                      <span v-if="((item.errCode!=null&&item.authVoidStatus!='00')||(item.errCode===null&&(item.authVoidStatus!='00'||item.settleVoidStatus!='0000')))">取消失敗</span>
                     </td>
                   </tr>
                 </tbody>
