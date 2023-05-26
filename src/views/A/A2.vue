@@ -192,8 +192,9 @@
                     <td>{{item.authCode}}</td>
                     <td>
                       <span v-if="(item.replyCode==='00'&&item.statusCode==='0000')">請款成功</span>
-                       <span v-if="(item.replyCode===''&&item.statusCode==='0000')">請款中</span>
-                       <span v-if="(item.statusCode==='0000'&&item.replyCode!='00'&&item.replyCode!='')">請款失敗</span>
+                      <span v-if="(item.replyCode===''&&item.statusCode==='0000')">請款中</span>
+                      <span v-if="(item.replyCode==null&&item.statusCode==='0000')">未成功請款</span>
+                      <span v-if="(item.statusCode==='0000'&&item.replyCode!='00'&&item.replyCode!=''&&item.replyCode!=null)">請款失敗</span>
                     </td>
                     <td v-if="(isVoidSettle||isVoidAuth)">
                       <span v-if="((item.errCode!=null&&item.authVoidStatus==='00')||(item.authVoidStatus==='00'&&item.settleVoidStatus==='0000'))">取消成功</span>
