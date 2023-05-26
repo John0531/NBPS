@@ -13,13 +13,13 @@
                 <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">查詢方式:</h5>
                 <select class="form-select" v-model="searchType">
                   <option value="" selected>請選擇</option>
-                  <option value="month">依月分</option>
+                  <option value="month">依月份</option>
                   <option value="date">依日期</option>
                 </select>
               </div>
               <div class="col-xxl-6"></div>
               <div class="col-xxl-6 d-flex mb-4" v-if="searchType==='month'">
-                <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">依月分:</h5>
+                <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">依月份:</h5>
                 <Datepicker class="w-xxl-50 w-100" v-model="searchMonth" month-picker auto-apply format="yyyy年MM月"></Datepicker>
               </div>
               <div class="col-xxl-6 d-flex mb-4" v-if="searchType==='date'">

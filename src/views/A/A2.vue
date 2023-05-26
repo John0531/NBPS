@@ -174,7 +174,7 @@
                     <th scope="col">回應碼</th>
                     <th scope="col">授權碼</th>
                     <th scope="col">交易請款結果</th>
-                    <th scope="col">交易取消結果</th>
+                    <th v-if="(isVoidSettle||isVoidAuth)" scope="col">交易取消結果</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -195,7 +195,7 @@
                        <span v-if="(item.replyCode===''&&item.statusCode==='0000')">請款中</span>
                        <span v-if="(item.statusCode==='0000'&&item.replyCode!='00'&&item.replyCode!='')">請款失敗</span>
                     </td>
-                    <td>
+                    <td v-if="(isVoidSettle||isVoidAuth)">
                       <span v-if="(item.authVoidStatus==='00'&&item.settleVoidStatus==='0000')">取消成功</span>
                       <span v-if="(item.authVoidStatus==null&&item.settleVoidStatus==null)"></span>
                       <span v-if="(item.authVoidStatus&&(item.authVoidStatus!='00'||item.settleVoidStatus!='0000'))">取消失敗</span>
@@ -333,6 +333,7 @@ export default {
   },
   data () {
     return {
+      batchList: [],
       OffLineSale: false,
       pageData: {}, // ?分頁資訊
       defaultData: [],
@@ -355,6 +356,14 @@ export default {
         gridData: []
       },
       detailPageData: {} // ?詳細分頁資訊
+    }
+  },
+  computed: {
+    isVoidSettle () {
+      return this.batchList.some(item => 'settleVoidStatus' in item)
+    },
+    isVoidAuth () {
+      return this.batchList.some(item => 'authVoidStatus' in item)
     }
   },
   methods: {
@@ -443,6 +452,7 @@ export default {
           this.detailData.batchFileName = item.batchFileName
           this.detailData.batchStoreName = item.batchStoreName
           this.detailData.dtSummary = result.dtSummary
+          this.batchList = result.batchList
           // * 將每頁資料數初始化
           this.$refs.detailMainData.PageInfo.pageSize = 10
         }

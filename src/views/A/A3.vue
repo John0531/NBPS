@@ -110,7 +110,7 @@
                     <th scope="col">授權碼</th>
                     <th scope="col">交易授權結果</th>
                     <th scope="col">交易請款結果</th>
-                    <th scope="col">交易取消結果</th>
+                    <th scope="col" v-if="isVoidCodeH">交易取消結果</th>
                     <th scope="col" v-if="!(detailData.gridData.filter(item => item.voidCodeH).length === detailData.gridData.length)"></th>
                   </tr>
                 </thead>
@@ -134,7 +134,7 @@
                       <span v-if="(item.statusCode==='0000')">請款成功</span>
                       <span v-if="(item.statusCode!='0000')">請款失敗</span>
                     </td>
-                    <td>
+                    <td v-if="isVoidCodeH">
                       <span v-if="item.voidCodeH==='00'">取消成功</span>
                       <span v-if="item.voidCodeH&&item.voidCodeH!=='00'">取消失敗</span>
                     </td>
@@ -165,6 +165,7 @@ export default {
   },
   data () {
     return {
+      batchList: [],
       defaultDetailPage: { // ?檢視詳細資料第一次的分頁資訊
         page: 1,
         pageSize: 10
@@ -189,6 +190,11 @@ export default {
         gridData: []
       },
       detailPageData: {} // ?詳細分頁資訊
+    }
+  },
+  computed: {
+    isVoidCodeH () {
+      return this.batchList.some(item => 'voidCodeH' in item)
     }
   },
   methods: {
@@ -237,6 +243,7 @@ export default {
           this.detailData.batchStoreName = item.batchStoreName
         }
         this.detailData.gridData = result.batchList
+        this.batchList = result.batchList
       }
       this.detailModal.show()
     },

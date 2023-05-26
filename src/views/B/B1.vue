@@ -384,7 +384,6 @@ export default {
       const result = await service.getBusinessDay()
       this.isBusinessDay = result.isBusinessDay
       this.transTime = result.transTime
-      console.log('getBusinessDay' + this.transTime)
       // this.transTime =
       this.$store.commit('changeLoading', false)
     },
