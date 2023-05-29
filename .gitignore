@@ -23,3 +23,9 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
+cypress/screenshots/MERCHANT_create.cy.js/template spec -- 登入使用者帳號,創建特店資料與帳號 (failed).png
+cypress/screenshots/testZipFile.cy.js/template spec -- passes (failed).png
+cypress/screenshots/testZipFileA.cy.js/template spec -- passes (failed).png
+cypress/screenshots/testZipFileB.cy.js/template spec -- passes (failed).png
+package-lock.json
+*.mp4

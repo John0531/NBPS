@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">使用者操作紀錄查詢</h2>
-            <h6>供經辦查詢使用者操紀錄</h6>
+            <h6>供經辦查詢使用者操作紀錄</h6>
           </div>
           <div class="card-body">
             <div class="row py-3">

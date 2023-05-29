@@ -6,7 +6,7 @@ describe("template spec", () => {
     //拜訪A1
     cy.visit("https://upay-beta.ubpg.com.tw/nbps-dev/nbps-system/B1");
 
-    const fileName = "092301568.20230519.B.zip";
+    const fileName = "092301568.20230524.A.zip";
 
     cy.get("#B > .accordion-body > .list-unstyled > :nth-child(1) > .fs-6")
       .contains("批次交易檔上傳作業")
