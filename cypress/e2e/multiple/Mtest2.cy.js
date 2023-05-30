@@ -41,15 +41,16 @@ function goA2AndSelect() {
     .prev()
     .click({ multiple: true },{ timeout: 5000 });
 
-  // cy.wait(3000);
+
   for (let i = 0; i < 1000; i++) {
     cy.get("tbody > tr:last-child > td:nth-child(9)")
       .contains("檢視明細")
-      .click({ multiple: true },{ timeout: 5000 });
+      .click({ multiple: true },{ timeout: 10000 });
      
 
     //按下 "close"
-    cy.get(".modal-footer > .btn",{ timeout: 5000 }).click();
+    cy.get('.modal-footer > .btn',{ timeout: 20000 }).contains("Close").click({ multiple: true },{ timeout: 20000 });
+   
 
 
   }

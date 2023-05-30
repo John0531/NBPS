@@ -23,7 +23,7 @@ function goA2AndSelect() {
     '[data-test="Mon May 01 2023 00:00:00 GMT+0800 (台北標準時間)"] > .dp__cell_inner'
   ).click();
 
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 800; i++) {
     //選擇交易處理狀態:全部
     cy.get(":nth-child(3) > .form-select", { timeout: 5000 }).select("全部");
 
