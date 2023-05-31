@@ -6,7 +6,7 @@
           <div class="card-header">
             <h2 class="fw-bold mb-3">批次交易檔上傳作業</h2>
             <h6>供發卡科經辦上傳批次交易資料檔，批次交易資料檔上傳且格式檢核成功後，按下確認並送出，系統隨開始發動交易。</h6>
-            <!-- <h6 class="text-danger fw-bold">*需驗證檔名</h6> -->
+            <h6 class="text-danger fw-bold">*檔名不檢核</h6>
           </div>
           <div class="card-body">
             <Form
@@ -34,6 +34,53 @@
                     class="invalid-feedback ms-2"
                   />
                 </div>
+                <!-- <div class="col-xxl-6"></div> -->
+                <!-- <div class="col-xxl-6 d-flex mb-4 align-items-center">
+                  <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">作業類型:</h5>
+                  <Field
+                    v-model="storeType"
+                    style="width:300px;"
+                    id="batchStoreType"
+                    class="form-select"
+                    as="select"
+                    rules="required"
+                    :class="{ 'is-invalid': errors['作業類型'] }"
+                    name="作業類型"
+                    @change="getDefaultData"
+                  >
+                    <option value="" selected>請選擇</option>
+                    <option value="ACQUIRING">收單</option>
+                    <option value="PUBLIC_UTILITIES">公共事業</option>
+                    <option value="MAIL_ORDER">郵購</option>
+                    <option value="ISSUE_CARD">發卡新消貸</option>
+                  </Field>
+                  <ErrorMessage
+                    name="作業類型"
+                    class="invalid-feedback ms-2"
+                  />
+                </div> -->
+                <div class="col-xxl-6"></div>
+                <div class="col-xxl-6 d-flex mb-4 align-items-center">
+                  <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店代碼:</h5>
+                  <Field
+                    v-model="uploadPost.storeId"
+                    style="width:300px;"
+                    id="batchStoreId"
+                    class="form-select"
+                    as="select"
+                    rules="required"
+                    :class="{ 'is-invalid': errors['特店代碼'] }"
+                    name="特店代碼"
+                  >
+                    <option value="" selected>請選擇</option>
+                    <option v-for="item in defaultData" :key="item.id" :value="item.storeId">{{item.storeId}} ({{item.storeName}})</option>
+                  </Field>
+                  <ErrorMessage
+                    name="特店代碼"
+                    class="invalid-feedback ms-2"
+                  />
+                </div>
+                <div class="col-xxl-6"></div>
               </div>
               <button type="submit" class="btn btn-primary me-3 px-4" :disabled="!$store.state.pageBtnPermission.includes('execute')">上傳</button>
             </Form>
