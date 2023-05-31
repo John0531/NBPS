@@ -98,7 +98,7 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <label for="storeName" class="col-sm-2 col-form-label">特店統一編號</label>
+                <label for="compilation" class="col-sm-2 col-form-label">特店統一編號</label>
                 <div class="col-sm-10">
                   <Field
                     name="特店統一編號"
@@ -107,7 +107,7 @@
                     rules="required"
                     maxlength="8"
                     :class="{ 'is-invalid': errors['特店統一編號'] }"
-                    id="storeName"
+                    id="compilation"
                     v-model="addForm.compilation"
                   />
                   <ErrorMessage
@@ -451,7 +451,7 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <label for="storeName2" class="col-sm-2 col-form-label">特店統一編號</label>
+                <label for="compilation2" class="col-sm-2 col-form-label">特店統一編號</label>
                 <div class="col-sm-10">
                   <Field
                     name="特店統一編號"
@@ -459,7 +459,7 @@
                     class="form-control"
                     rules="required"
                     :class="{ 'is-invalid': errors['特店統一編號'] }"
-                    id="storeName2"
+                    id="compilation2"
                     v-model="editForm.compilation"
                   />
                   <ErrorMessage
@@ -820,6 +820,9 @@ export default {
       this.editModal.show()
     },
     async editStore () {
+      if (this.editForm.storeType !== 'ACQUIRING') {
+        this.editForm.transTime = '00:00-23:59'
+      }
       this.$store.commit('changeLoading', true)
       const result = await service.editStore(this.editForm)
       this.$store.commit('changeLoading', false)
