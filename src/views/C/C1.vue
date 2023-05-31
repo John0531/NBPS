@@ -98,6 +98,25 @@
                 </div>
               </div>
               <div class="row mb-3">
+                <label for="storeName" class="col-sm-2 col-form-label">特店統一編號</label>
+                <div class="col-sm-10">
+                  <Field
+                    name="特店統一編號"
+                    type="text"
+                    class="form-control"
+                    rules="required"
+                    maxlength="8"
+                    :class="{ 'is-invalid': errors['特店統一編號'] }"
+                    id="storeName"
+                    v-model="addForm.compilation"
+                  />
+                  <ErrorMessage
+                    name="特店統一編號"
+                    class="invalid-feedback"
+                  />
+                </div>
+              </div>
+              <div class="row mb-3">
                 <label for="storeType" class="col-sm-2 col-form-label">特店作業類型</label>
                 <div class="col-sm-10">
                   <Field
@@ -272,7 +291,7 @@
                   />
                 </div>
               </fieldset>
-              <div class="row mb-3">
+              <div class="row mb-3" v-if="addForm.storeType=='ACQUIRING'">
                 <label for="transTime" class="col-sm-2 col-form-label">作業時間:<small class="text-danger">(僅影響自行上傳作業類型)</small></label>
                 <div class="col-sm-10">
                   <Field
@@ -427,6 +446,24 @@
                   />
                   <ErrorMessage
                     name="特店名稱"
+                    class="invalid-feedback"
+                  />
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="storeName2" class="col-sm-2 col-form-label">特店統一編號</label>
+                <div class="col-sm-10">
+                  <Field
+                    name="特店統一編號"
+                    type="text"
+                    class="form-control"
+                    rules="required"
+                    :class="{ 'is-invalid': errors['特店統一編號'] }"
+                    id="storeName2"
+                    v-model="editForm.compilation"
+                  />
+                  <ErrorMessage
+                    name="特店統一編號"
                     class="invalid-feedback"
                   />
                 </div>
@@ -607,7 +644,7 @@
                   />
                 </div>
              </fieldset>
-              <div class="row mb-3">
+              <div class="row mb-3" v-if="editForm.storeType=='ACQUIRING'">
                 <label for="transTime2" class="col-sm-2 col-form-label">作業時間:<small class="text-danger">(僅影響自行上傳作業類型)</small></label>
                 <div class="col-sm-10">
                   <Field
@@ -737,7 +774,8 @@ export default {
       gridData: [],
       addModal: '',
       addForm: {
-        idNo: false
+        idNo: false,
+        transTime: '00:00-23:59'
       },
       editModal: '',
       editForm: {}
