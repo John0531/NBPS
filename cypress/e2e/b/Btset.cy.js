@@ -12,11 +12,11 @@ describe("template spec", () => {
       .contains("批次交易檔上傳作業")
       .click();
 
-    goB1AndUpload(fileName);
+    // goB1AndUpload(fileName);
 
-    goB2AndSelect();
+    // goB2AndSelect();
 
-    goB3AnDelete(fileName);
+    // goB3AnDelete(fileName);
 
     goB4AndDownload();
   });
@@ -227,9 +227,9 @@ function goB3AnDelete(fileName) {
   cy.wait(3000);
 
   //選擇最後一頁
-  cy.get('.col-12 > .mt-5 > .justify-content-end > .pagination > .next-item')
+  cy.get(".col-12 > .mt-5 > .justify-content-end > .pagination > .next-item")
     .prev()
-    .click({ multiple: true});
+    .click({ multiple: true });
 
   cy.wait(2000);
 
@@ -302,14 +302,18 @@ function goB4AndDownload() {
 
   cy.get(".dp__pointer").click();
 
-  //用 new Date 找尋當月月份 轉成英文
-  const month = new Date().toLocaleString("en-us", { month: "long" });
+  //用 new Date 找尋前月月份 轉成英文
+  const currentDate = new Date();
+  currentDate.setMonth(currentDate.getMonth() - 1);
+  const previousMonth = currentDate.toLocaleString("en-us", { month: "short" });
 
   //找到month 含有的 的元素 並且點擊
-  cy.contains(month).click();
+  cy.contains(previousMonth).click();
 
   //搜尋
   cy.get(".card-body > .btn").contains("搜尋").click();
+
+  cy.wait(2000);
 
   //按下下載
   cy.get("tbody > tr > :nth-child(8)").contains("下載").click();

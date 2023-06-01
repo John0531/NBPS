@@ -37,9 +37,9 @@ function goA2AndSelect() {
 
     cy.get(":nth-child(3) > .form-select", { timeout: 5000 }).select("全部");
 
-    //選取特店代號:000100150100147 (交易驗證特店(四))
+    //選取特店代號:000100092301568 (ｍｗｌｉｔｅ測試)
     cy.get(":nth-child(5) > .form-select", { timeout: 5000 }).select(
-      "000101010101101"
+      "000100092301568"
     );
 
     //按下查詢

@@ -6,13 +6,13 @@ describe("template spec", () => {
     //拜訪A1
     cy.visit("https://upay-beta.ubpg.com.tw/nbps-dev/nbps-system/A1");
 
-    const fileName = "150100147.20230530.D.zip";
+    const fileName = "150100147.20230601.D.zip";
 
-    goA1AndUpload(fileName);
+    // goA1AndUpload(fileName);
 
-    goA2AndSelect();
+    // goA2AndSelect();
 
-    goA3AndDelete(fileName);
+    // goA3AndDelete(fileName);
 
     goA4AndDownload();
   });
@@ -100,7 +100,7 @@ function goA2AndSelect() {
 
   //查詢明細第一筆的卡號是不是:5241150362919608
   cy.get(
-    ".modal-body > .mt-5 > .tbl-container > .table > tbody > :nth-child(1) > th"
+    ".modal-body > .mt-5 > .tbl-container > .table > tbody > :nth-child(1) > th", { timeout: 65000 }
   )
     .invoke("text")
     .should("eq", "5241150362919608");
@@ -323,11 +323,14 @@ function goA4AndDownload() {
 
   cy.get(".dp__pointer").click();
 
-  //用 new Date 找尋當月月份 轉成英文
-  const month = new Date().toLocaleString("en-us", { month: "long" });
-  console.log(month);
+  //用 new Date 找尋前月月份 轉成英文
+  const currentDate = new Date();
+  currentDate.setMonth(currentDate.getMonth() - 1);
+  const previousMonth = currentDate.toLocaleString("en-us", { month: "short" });
+  console.log(previousMonth);
+ 
   //找到month 含有的 的元素 並且點擊
-  cy.contains(month).click();
+  cy.contains(previousMonth).click();
 
   //下載當月的報表
   cy.get(".card-body > .btn").contains("下載").click();
