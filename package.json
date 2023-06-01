@@ -9,7 +9,8 @@
     "build-prod": "vue-cli-service build --mode production",
     "build-uat": "vue-cli-service build --mode uat",
     "serve-pro": "vue-cli-service serve --mode production",
-    "serve-uat": "vue-cli-service serve --mode uat"
+    "serve-uat": "vue-cli-service serve --mode uat",
+    "cypress":"npx cypress open"
   },
   "dependencies": {
     "@vee-validate/i18n": "^4.5.2",
