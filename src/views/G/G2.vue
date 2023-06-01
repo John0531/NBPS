@@ -5,8 +5,8 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">批次交易檔上傳作業</h2>
-            <h6>供發卡科經辦上傳批次交易資料檔，上傳功能僅於營業日上午九點至下午五點半開放，批次交易資料檔上傳且格式檢核成功後，按下確認並送出，系統隨開始發動交易。</h6>
-            <h6>*檔名不檢核</h6>
+            <h6>供發卡科經辦上傳批次交易資料檔，批次交易資料檔上傳且格式檢核成功後，按下確認並送出，系統隨開始發動交易。</h6>
+            <!-- <h6 class="text-danger fw-bold">*檔名不檢核</h6> -->
           </div>
           <div class="card-body">
             <Form
@@ -34,8 +34,8 @@
                     class="invalid-feedback ms-2"
                   />
                 </div>
-                <div class="col-xxl-6"></div>
-                <div class="col-xxl-6 d-flex mb-4 align-items-center">
+                <!-- <div class="col-xxl-6"></div> -->
+                <!-- <div class="col-xxl-6 d-flex mb-4 align-items-center">
                   <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">作業類型:</h5>
                   <Field
                     v-model="storeType"
@@ -58,9 +58,9 @@
                     name="作業類型"
                     class="invalid-feedback ms-2"
                   />
-                </div>
+                </div> -->
                 <div class="col-xxl-6"></div>
-                <div v-if="storeType" class="col-xxl-6 d-flex mb-4 align-items-center">
+                <div class="col-xxl-6 d-flex mb-4 align-items-center">
                   <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店代碼:</h5>
                   <Field
                     v-model="uploadPost.storeId"
@@ -230,11 +230,8 @@ export default {
       this.getError()
     },
     async getDefaultData () {
-      if (!this.storeType) {
-        return
-      }
       this.$store.commit('changeLoading', true)
-      const result = await service.getBatchDefault(this.storeType)
+      const result = await service.getBatchDefault()
       this.defaultData = result.storeList
       this.$store.commit('changeLoading', false)
     },
@@ -319,6 +316,7 @@ export default {
     }
   },
   mounted () {
+    this.getDefaultData()
     this.errorModal = new this.$custom.bootstrap.Modal(this.$refs.errorModal, { backdrop: 'static' })
   }
 }

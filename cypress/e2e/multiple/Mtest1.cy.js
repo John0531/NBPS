@@ -18,7 +18,7 @@ function goA2AndSelect() {
 
 
 //選取特店代號:000100150100147 (交易驗證特店(四))
-cy.get("select[data-v-3102c76f]").select("000100150100147");
+cy.get('.col-xxl-5 > .form-select',{ timeout: 5000 }).select("000100150100147");
 
 
 for (let i = 0; i < 1000; i++) {

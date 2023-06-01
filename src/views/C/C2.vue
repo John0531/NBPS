@@ -5,23 +5,32 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">特店帳號維護</h2>
-            <h6>供經辦新增、修改、刪除特店帳號</h6>
+            <h6>供經辦查詢、新增、修改、刪除特店帳號</h6>
           </div>
           <div class="card-body">
-            <!-- <div class="row py-3">
-              <div class="col-xxl-5 d-flex mb-4">
-                <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店代碼:</h5>
-                <input type="text" class="form-control" placeholder="">
-              </div>
-            </div> -->
-            <!-- <button class="btn btn-primary me-3 px-4">搜尋</button> -->
+            <div class="row py-3">
+                <div class="col-xxl-5 d-flex mb-4">
+                  <div class="input-group">
+                  <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">請選擇查詢條件:</h5>
+                   <select class="form-select" v-model="searchForm.type">
+                    <option selected value="">全部資料</option>
+                    <option value="storeId">商店代號</option>
+                    <option value="storeName">商店名稱</option>
+                  </select>
+                  <input type="text" class="form-contorl" v-model.trim="searchForm.data">
+                  <button class="btn btn-primary me-3 px-4" @click="getDataByCond(searchForm)">搜尋</button>
+                  </div>
+                </div>
+            </div>
             <button class="btn btn-warning me-3 px-4" @click="openAddModal" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增帳號</button>
-          </div>
+            </div>
         </div>
         <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
           <template #default>
             <thead>
               <tr>
+                <th scope="col">商店代號</th>
+                <th scope="col">商店名稱</th>
                 <th scope="col">帳號</th>
                 <th scope="col">類別</th>
                 <th scope="col">名稱</th>
@@ -32,7 +41,9 @@
             </thead>
             <tbody>
               <tr v-for="item in gridData" :key="item.userName">
-                <th scope="row">{{item.userName}}</th>
+                <th scope="row">{{item.storeId}}</th>
+                <td>{{item.storeName}}</td>
+                <td>{{item.userName}}</td>
                 <td>{{item.userTypeStr}}</td>
                 <td>{{item.name}}</td>
                 <td>{{item.groupName}}</td>
@@ -369,6 +380,11 @@ export default {
         page: 1,
         pageSize: 10
       },
+      searchForm: {},
+      searchData: {
+        page: 1,
+        pageSize: 10
+      }, // 搜尋資料
       pageData: {}, // ?分頁資訊
       gridData: [],
       addModal: '',
@@ -395,6 +411,27 @@ export default {
       this.$store.commit('changeLoading', false)
       this.pageData = result.pageInfo // ? 傳送分頁資訊
       this.gridData = result.users
+    },
+    async getDataByCond (formData) { // ? 指定條件查詢使用者帳號資料
+      switch (formData.type) {
+        case 'storeId':
+          this.searchData.storeId = formData.data
+          break
+        case 'storeName':
+          this.searchData.storeName = formData.data
+          break
+        default:
+          break
+      }
+      console.log(this.searchData)
+      this.$store.commit('changeLoading', true)
+      const result = await service.getDataByCond(this.searchData)
+      this.$store.commit('changeLoading', false)
+      this.pageData = result.pageInfo // ? 傳送分頁資訊
+      this.gridData = result.users
+      this.searchData = {}
+      this.searchData.page = 1
+      this.searchData.pageSize = 10
     },
     async openAddModal () {
       this.addForm = this.defaultUserInfo

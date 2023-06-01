@@ -272,7 +272,7 @@
                   />
                 </div>
               </fieldset>
-              <div class="row mb-3">
+              <div class="row mb-3" v-if="addForm.storeType=='ACQUIRING'">
                 <label for="transTime" class="col-sm-2 col-form-label">作業時間:<small class="text-danger">(僅影響自行上傳作業類型)</small></label>
                 <div class="col-sm-10">
                   <Field
@@ -296,7 +296,7 @@
               </div>
               <div class="row mb-3">
                 <label for="uploadPd" class="col-sm-2 col-form-label">上傳ZIP檔密碼:<small class="text-danger">(僅影響自行上傳作業類型)</small></label>
-                <div class="col-sm-10">
+                <div class="col-sm-9">
                   <Field
                     name="上傳ZIP檔密碼"
                     type="text"
@@ -311,8 +311,12 @@
                     name="上傳ZIP檔密碼"
                     class="invalid-feedback"
                   />
-                </div>
               </div>
+              <div class="col-sm-1">
+                <img v-if="uploadPdEyeOpen" @click.prevent="uploadPdEyeOpen=!uploadPdEyeOpen" class="me-3 eye-open" src="@/assets/img/open_eye.svg" alt="">
+                <img v-else @click.prevent="uploadPdEyeOpen=!uploadPdEyeOpen" class="me-3 eye-close" src="@/assets/img/close_eye.svg" alt="">
+              </div>
+            </div>
               <div class="row mb-3">
                 <label for="tidCnt" class="col-sm-2 col-form-label">TID數目:</label>
                 <div class="col-sm-10">
@@ -607,7 +611,7 @@
                   />
                 </div>
              </fieldset>
-              <div class="row mb-3">
+              <div class="row mb-3" v-if="editForm.storeType=='ACQUIRING'">
                 <label for="transTime2" class="col-sm-2 col-form-label">作業時間:<small class="text-danger">(僅影響自行上傳作業類型)</small></label>
                 <div class="col-sm-10">
                   <Field
@@ -631,7 +635,7 @@
               </div>
               <div class="row mb-3">
                 <label for="uploadPd2" class="col-sm-2 col-form-label">上傳ZIP檔密碼:<small class="text-danger">(僅影響自行上傳作業類型)</small></label>
-                <div class="col-sm-10">
+                <div class="col-sm-9">
                   <Field
                     name="上傳ZIP檔密碼"
                     type="text"
@@ -647,6 +651,10 @@
                     class="invalid-feedback"
                   />
                 </div>
+                <div class="col-sm-1">
+                <img v-if="uploadPdEyeOpen2" @click.prevent="uploadPdEyeOpen2=!uploadPdEyeOpen2" class="me-3 eye-open" src="@/assets/img/open_eye.svg" alt="">
+                <img v-else @click.prevent="uploadPdEyeOpen2=!uploadPdEyeOpen2" class="me-3 eye-close" src="@/assets/img/close_eye.svg" alt="">
+              </div>
               </div>
               <div class="row mb-3">
                 <label for="tidCnt2" class="col-sm-2 col-form-label">TID數目:</label>
@@ -728,6 +736,8 @@ export default {
   },
   data () {
     return {
+      uploadPdEyeOpen: false,
+      uploadPdEyeOpen2: false,
       GroupDataPost: {
         storeId: '',
         page: 1,
@@ -737,10 +747,19 @@ export default {
       gridData: [],
       addModal: '',
       addForm: {
-        idNo: false
+        idNo: false,
+        transTime: '00:00-23:59'
       },
       editModal: '',
       editForm: {}
+    }
+  },
+  watch: {
+    uploadPdEyeOpen (n, o) {
+      n ? document.querySelector('#uploadPd').type = 'text' : document.querySelector('#uploadPd').type = 'password'
+    },
+    uploadPdEyeOpen2 (n, o) {
+      n ? document.querySelector('#uploadPd2').type = 'text' : document.querySelector('#uploadPd2').type = 'password'
     }
   },
   methods: {
@@ -782,6 +801,9 @@ export default {
       this.editModal.show()
     },
     async editStore () {
+      if (this.editForm.storeType !== 'ACQUIRING') {
+        this.editForm.transTime = '00:00-23:59'
+      }
       this.$store.commit('changeLoading', true)
       const result = await service.editStore(this.editForm)
       this.$store.commit('changeLoading', false)

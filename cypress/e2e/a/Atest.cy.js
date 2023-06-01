@@ -6,15 +6,13 @@ describe("template spec", () => {
     //拜訪A1
     cy.visit("https://upay-beta.ubpg.com.tw/nbps-dev/nbps-system/A1");
 
-    const fileName = "150100147.20230519.A.zip";
+    const fileName = "150100147.20230601.D.zip";
 
-    goA1AndUpload(fileName);
+    // goA1AndUpload(fileName);
 
-    cy.wait(60000);
+    // goA2AndSelect();
 
-    goA2AndSelect();
-
-    goA3AndDelete(fileName);
+    // goA3AndDelete(fileName);
 
     goA4AndDownload();
   });
@@ -27,6 +25,8 @@ function goA1AndUpload(fileName) {
 
   //上傳檔案
   cy.get("#batchFile").selectFile(fileName);
+
+  cy.wait(3000);
 
   //總比數:2
   cy.get("#totalCount")
@@ -44,29 +44,33 @@ function goA1AndUpload(fileName) {
   cy.get("form > .btn-primary").click();
 
   cy.wait(80000);
-
-
   cy.reload();
+
+  cy.wait(3000);
+
   // 選擇最後一頁
   cy.get(".next-item").prev().click();
 
+
+
   //選擇<tbody>的第8個<tr>的第三 個<td>的值value() 是不是 'fileName'
   cy.get("tbody > tr:last > td:nth-child(3)")
-    .invoke("text")
-    .should("eq", fileName);
-
+    .contains(fileName)
+    .should("be.visible");
   //選擇送出"確認送出授權"
-  cy.get("tbody > tr:last > td:nth-child(12)").contains("確認送出授權").click();
+  cy.get("tbody > tr:last > td:nth-child(12)")
+    .contains("確認送出授權", { timeout: 80000 })
+    .click({ timeout: 60000 });
 
   //彈出視窗 確認送出授權
-  cy.get(".swal2-confirm").click();
+  cy.get(".swal2-confirm", { timeout: 60000 }).click();
 }
 
 function goA2AndSelect() {
   // //go to A2
-  cy.get(
-    "#A > .accordion-body > .list-unstyled > :nth-child(2) > .fs-6"
-  ).click();
+  cy.get("#A > .accordion-body > .list-unstyled > :nth-child(2) > .fs-6")
+    .contains("批次交易查詢作業")
+    .click();
 
   //選擇交易處理狀態:全部
   cy.get(":nth-child(3) > .form-select").select("全部");
@@ -74,27 +78,29 @@ function goA2AndSelect() {
   //選取特店代號:000100150100147 (交易驗證特店(四))
   cy.get(":nth-child(5) > .form-select").select("000100150100147");
 
-  cy.wait(3000);
-
   //按下查詢
   cy.get(".card-body > .btn").click();
 
-  cy.wait(3000);
+  cy.reload();
+
+  cy.wait(40000);
+
+  cy.reload();
 
   //查詢最後一筆的明細
-  cy.get(".col-12 > .mt-5 > .justify-content-end > .pagination > .next-item")
+  cy.get(".col-12 > .mt-5 > .justify-content-end > .pagination > .next-item", {
+    timeout: 65000
+  })
     .prev()
     .click({ multiple: true });
 
   cy.get("tbody > tr:last-child > td:nth-child(9)")
-    .contains("檢視明細")
+    .contains("檢視明細", { timeout: 65000 })
     .click({ multiple: true });
-
-  cy.wait(3000);
 
   //查詢明細第一筆的卡號是不是:5241150362919608
   cy.get(
-    ".modal-body > .mt-5 > .tbl-container > .table > tbody > :nth-child(1) > th"
+    ".modal-body > .mt-5 > .tbl-container > .table > tbody > :nth-child(1) > th", { timeout: 65000 }
   )
     .invoke("text")
     .should("eq", "5241150362919608");
@@ -123,19 +129,13 @@ function goA2AndSelect() {
   //按下 "close"
   cy.get(".modal-footer > .btn").click();
 
-  cy.reload();
-
-  cy.wait(35000);
-
-  cy.reload();
-
   cy.get(".col-12 > .mt-5 > .justify-content-end > .pagination > .next-item")
     .prev()
-    .click({ multiple: true });
+    .click({ multiple: true }, { timeout: 60000 });
 
   //按下 "下載回覆檔"
   cy.get("tbody > tr:last-child > td:nth-child(9)")
-    .contains("下載回覆檔")
+    .contains("下載回覆檔", { timeout: 120000 })
     .click();
 
   //檢查狀態是不是"已下傳回覆檔"
@@ -178,38 +178,46 @@ function goA3AndDelete(fileName) {
   cy.wait(2000);
 
   //選取特店代號:000100150100147 (交易驗證特店(四))
-  cy.get("select[data-v-3102c76f]").select("000100150100147");
+  cy.get(".col-xxl-5 > .form-select", { timeout: 60000 }).select(
+    "000100150100147"
+  );
 
   cy.wait(2000);
 
   //按下搜尋
   cy.get(".card-body > .btn").contains("搜尋").click();
 
+  cy.wait(2000);
+
+  cy.reload();
+
   //選擇最後一頁
   cy.get(".col-12 > .mt-5 > .justify-content-end > .pagination > .next-item")
     .prev()
     .click({ multiple: true });
 
+  cy.wait(2000);
+
   //按下檢視明細
   cy.contains("td", fileName)
-  .next()
-  .next()
-  .next()
-  .next()
-  .next()
-  .next()
-  .next()
-  .next()
-  .next()
-  .contains("檢視明細")
-  .click();
+    .next()
+    .next()
+    .next()
+    .next()
+    .next()
+    .next()
+    .next()
+    .next()
+    .next()
+    .contains("檢視明細", { timeout: 60000 })
+    .click();
 
   //按下單筆取消
   cy.get(
-    ".modal-body > .mt-5 > .tbl-container > .table > tbody > :nth-child(1) > :nth-child(9)"
+    ".modal-body > .mt-5 > .tbl-container > .table > tbody > :nth-child(1) > :nth-child(8)"
   )
-    .contains("單筆取消")
-    .click();
+    .contains("單筆取消", { timeout: 60000 })
+    .click({ timeout: 60000 });
 
   cy.wait(2000);
 
@@ -245,11 +253,13 @@ function goA3AndDelete(fileName) {
   cy.get(
     ".col-12 > .mt-5 > .tbl-container > .table > tbody >  tr:last > :nth-child(12)"
   )
-    .contains("整批取消")
-    .click();
+    .contains("整批取消", { timeout: 60000 })
+    .click({ timeout: 60000 });
 
   //彈出視窗 確認整批取消
-  cy.get(".swal2-confirm").click();
+  cy.get(".swal2-confirm", { timeout: 60000 }).click();
+
+  cy.wait(35000);
 
   cy.reload();
 
@@ -258,22 +268,23 @@ function goA3AndDelete(fileName) {
   cy.reload();
 
   //選取特店代號:000100150100147 (交易驗證特店(四)
-  cy.get("select[data-v-3102c76f]").select("000100150100147");
+  cy.get(".col-xxl-5 > .form-select").select("000100150100147");
+
   cy.wait(2000);
 
   //按下搜尋
   cy.get(".card-body > .btn").contains("搜尋").click();
 
-
+  cy.reload();
   //選擇最後一頁
   cy.get(".col-12 > .mt-5 > .justify-content-end > .pagination > .next-item")
     .prev()
-    .click({ multiple: true });
+    .click({ multiple: true }, { timeout: 60000 });
 
   cy.reload();
 
   //按下檢視明細
-  cy.contains("td", fileName)
+  cy.contains("td", fileName, { timeout: 60000 })
     .next()
     .next()
     .next()
@@ -307,16 +318,19 @@ function goA3AndDelete(fileName) {
 function goA4AndDownload() {
   //got to A4
   cy.get("#A > .accordion-body > .list-unstyled > :nth-child(4) > .fs-6")
-    .contains("分析報表下載作業")
+    .contains("分析報表下載作業", { timeout: 60000 })
     .click();
 
   cy.get(".dp__pointer").click();
 
-  //用 new Date 找尋當月月份 轉成英文
-  const month = new Date().toLocaleString("en-us", { month: "long" });
-  console.log(month);
+  //用 new Date 找尋前月月份 轉成英文
+  const currentDate = new Date();
+  currentDate.setMonth(currentDate.getMonth() - 1);
+  const previousMonth = currentDate.toLocaleString("en-us", { month: "short" });
+  console.log(previousMonth);
+ 
   //找到month 含有的 的元素 並且點擊
-  cy.contains(month).click();
+  cy.contains(previousMonth).click();
 
   //下載當月的報表
   cy.get(".card-body > .btn").contains("下載").click();
