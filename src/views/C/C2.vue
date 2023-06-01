@@ -16,7 +16,6 @@
                     <option selected value="">全部資料</option>
                     <option value="storeId">商店代號</option>
                     <option value="storeName">商店名稱</option>
-                    <option value="compilation">統一編號</option>
                   </select>
                   <input type="text" class="form-contorl" v-model.trim="searchForm.data">
                   <button class="btn btn-primary me-3 px-4" @click="getDataByCond(searchForm)">搜尋</button>
@@ -32,7 +31,6 @@
               <tr>
                 <th scope="col">商店代號</th>
                 <th scope="col">商店名稱</th>
-                <th scope="col">統一編號</th>
                 <th scope="col">帳號</th>
                 <th scope="col">類別</th>
                 <th scope="col">名稱</th>
@@ -45,7 +43,6 @@
               <tr v-for="item in gridData" :key="item.userName">
                 <th scope="row">{{item.storeId}}</th>
                 <td>{{item.storeName}}</td>
-                <td>{{item.compilation}}</td>
                 <td>{{item.userName}}</td>
                 <td>{{item.userTypeStr}}</td>
                 <td>{{item.name}}</td>
@@ -422,9 +419,6 @@ export default {
           break
         case 'storeName':
           this.searchData.storeName = formData.data
-          break
-        case 'compilation':
-          this.searchData.compilation = formData.data
           break
         default:
           break

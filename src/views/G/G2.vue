@@ -6,7 +6,7 @@
           <div class="card-header">
             <h2 class="fw-bold mb-3">批次交易檔上傳作業</h2>
             <h6>供發卡科經辦上傳批次交易資料檔，批次交易資料檔上傳且格式檢核成功後，按下確認並送出，系統隨開始發動交易。</h6>
-            <h6 class="text-danger fw-bold">*檔名不檢核</h6>
+            <!-- <h6 class="text-danger fw-bold">*檔名不檢核</h6> -->
           </div>
           <div class="card-body">
             <Form
@@ -230,11 +230,8 @@ export default {
       this.getError()
     },
     async getDefaultData () {
-      if (!this.storeType) {
-        return
-      }
       this.$store.commit('changeLoading', true)
-      const result = await service.getBatchDefault(this.storeType)
+      const result = await service.getBatchDefault()
       this.defaultData = result.storeList
       this.$store.commit('changeLoading', false)
     },
@@ -319,6 +316,7 @@ export default {
     }
   },
   mounted () {
+    this.getDefaultData()
     this.errorModal = new this.$custom.bootstrap.Modal(this.$refs.errorModal, { backdrop: 'static' })
   }
 }
