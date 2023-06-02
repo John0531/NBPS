@@ -13,13 +13,15 @@
             <thead>
               <tr>
                 <th scope="col">事件</th>
+                <th scope="col">事件類型</th>
                 <th scope="col">信箱(以逗號分隔)</th>
-                <th scope="col"></th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="item in EventMailList.gridData" :key="item.id">
                 <th scope="row">{{item.eventName}}</th>
+                <th scope="row">{{item.eventType}}</th>
                 <td>{{item.emails.join()}}</td>
                 <td>
                   <button @click="openEditModal(item)" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('modify')">修改信箱</button>
@@ -64,6 +66,61 @@
                 </div>
               </div>
               <div class="row mb-3">
+                <label for="event" class="col-sm-2 col-form-label">類型</label>
+                <div class="col-sm-10">
+                  <Field
+                    name="事件類型"
+                    type="text"
+                    class="form-control"
+                    rules="required"
+                    :class="{ 'is-invalid': errors['事件類型'] }"
+                    id="eventType"
+                    v-model="editForm.eventType"
+                    disabled
+                  />
+                  <ErrorMessage
+                    name="事件"
+                    class="invalid-feedback"
+                  />
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="row mb-3">
+                <label for="event" class="col-sm-2 col-form-label">通知信標題</label>
+                <div class="col-sm-10">
+                  <Field
+                    name="通知信標題"
+                    type="text"
+                    class="form-control"
+                    :class="{ 'is-invalid': errors['通知信標題'] }"
+                    id="title"
+                    v-model="editForm.title"
+                  />
+                  <ErrorMessage
+                    name="通知信標題"
+                    class="invalid-feedback"
+                  />
+                </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="row mb-3">
+                <label for="event" class="col-sm-2 col-form-label">通知信內容</label>
+                <div class="col-sm-10">
+                  <Field
+                    name="通知信內容"
+                    as="textarea"
+                    class="form-control"
+                    :class="{ 'is-invalid': errors['通知信內容'] }"
+                    id="title"
+                    v-model="editForm.contents"
+                  />
+                  <ErrorMessage
+                    name="通知信內容"
+                    class="invalid-feedback"
+                  />
+                </div>
+              </div>
                 <label for="email" class="col-sm-2 col-form-label">新增信箱</label>
                 <div class="col-sm-8">
                   <Field
@@ -177,7 +234,23 @@ export default {
           if (item.event === 'CB_NOTIFY') {
             item.eventName = 'CALL BANK通知'
           } else if (item.event === 'ABE_VALIDATOR') {
-            item.eventName = '收單批次交易檔檢核錯誤'
+            item.eventName = '批次交易檔檢核錯誤'
+          }
+          switch (item.storeType) {
+            case 'ACQUIRING':
+              item.eventType = '收單作業'
+              break
+            case 'PUBLIC_UTILITIES':
+              item.eventType = '公共事業'
+              break
+            case 'MAIL_ORDER':
+              item.eventType = '郵購'
+              break
+            case 'ISSUE_CARD':
+              item.eventType = '新消貸'
+              break
+            default:
+              break
           }
         })
         // ? 資料格式處理 end
