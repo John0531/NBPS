@@ -95,8 +95,8 @@
             <h5>檔名: {{detailData.batchFileName}}</h5>
             <h5>特店名稱: {{detailData.batchStoreName}}</h5>
             <div class="d-flex">
-              <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">卡號:</h5>
-              <input v-model="detailDataPost.pan" type="text" class="form-contorl" style="margin-right: 1em;border-radius: 10px;">
+              <h5 class="text-nowrap me-3 pt-2">卡號:</h5>
+              <input v-model="detailDataPost.pan" type="text" class="form-control w-25 me-2">
               <button @click="getDetail()" class="btn btn-primary me-2 btn-sm"> 查詢</button>
             </div>
             <MainData ref="detailMainData" :Page="detailPageData" @ChangePageInfo="getDetailPageInfo">

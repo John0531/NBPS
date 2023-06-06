@@ -9,18 +9,18 @@
           </div>
           <div class="card-body">
             <div class="row py-3">
-                <div class="col-xxl-5 d-flex mb-4">
-                  <div class="input-group">
-                  <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">請選擇查詢條件:</h5>
-                   <select class="form-select" v-model="searchForm.type">
-                    <option selected value="">全部資料</option>
-                    <option value="storeId">商店代號</option>
-                    <option value="storeName">商店名稱</option>
-                  </select>
-                  <input type="text" class="form-contorl" v-model.trim="searchForm.data">
-                  <button class="btn btn-primary me-3 px-4" @click="getDataByCond(searchForm)">搜尋</button>
-                  </div>
+              <div class="col-xxl-6 d-flex mb-4">
+                <div class="input-group">
+                <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">請選擇查詢條件:</h5>
+                <select class="form-select" v-model="searchForm.type">
+                  <option selected value="">全部資料</option>
+                  <option value="storeId">商店代號</option>
+                  <option value="storeName">商店名稱</option>
+                </select>
+                <input type="text" class="form-control" v-model.trim="searchForm.data">
+                <button class="btn btn-primary me-3 px-4" @click="getDataByCond(searchForm)">搜尋</button>
                 </div>
+              </div>
             </div>
             <button class="btn btn-warning me-3 px-4" @click="openAddModal" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增帳號</button>
             </div>
