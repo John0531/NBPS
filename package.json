@@ -10,7 +10,7 @@
     "build-uat": "vue-cli-service build --mode uat",
     "serve-pro": "vue-cli-service serve --mode production",
     "serve-uat": "vue-cli-service serve --mode uat",
-    "cypress":"npx cypress open"
+    "cypress": "npx cypress open"
   },
   "dependencies": {
     "@vee-validate/i18n": "^4.5.2",
@@ -29,7 +29,7 @@
     "gridjs": "^5.1.0",
     "moment": "^2.29.4",
     "node-forge": "^1.3.1",
-    "sweetalert2": "^11.7.10",
+    "sweetalert2": "^11.1.9",
     "uuid": "^9.0.0",
     "vee-validate": "^4.5.2",
     "vue": "^3.0.0",

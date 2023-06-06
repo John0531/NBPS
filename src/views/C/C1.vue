@@ -299,7 +299,7 @@
                 <div class="col-sm-9">
                   <Field
                     name="上傳ZIP檔密碼"
-                    type="text"
+                    type="password"
                     class="form-control"
                     rules="required"
                     :class="{ 'is-invalid': errors['上傳ZIP檔密碼'] }"
@@ -362,6 +362,7 @@
                 <div class="col-sm-10">
                   <Field
                     as="textarea"
+                    id="desc"
                     :rules="{required:addForm.transType&&addForm.transType.includes('SALE')?true:false}"
                     v-model="addForm.storeDesc"
                     class="form-control"
@@ -638,7 +639,7 @@
                 <div class="col-sm-9">
                   <Field
                     name="上傳ZIP檔密碼"
-                    type="text"
+                    type="password"
                     class="form-control"
                     rules="required"
                     :class="{ 'is-invalid': errors['上傳ZIP檔密碼'] }"
@@ -797,7 +798,7 @@ export default {
     },
     openEditModal (item) {
       this.editForm = JSON.parse(JSON.stringify(item))
-      this.editForm.uploadPd = '********'
+      this.editForm.uploadPd = item.uploadPd
       this.editModal.show()
     },
     async editStore () {
