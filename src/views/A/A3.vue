@@ -92,12 +92,12 @@
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <h5>檔名: {{detailData.batchFileName}}</h5>
-            <h5>特店名稱: {{detailData.batchStoreName}}</h5>
-            <div class="d-flex">
-              <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">卡號:</h5>
-              <input v-model="detailDataPost.pan" type="text" class="form-contorl" style="margin-right: 1em;border-radius: 10px;">
-              <button @click="getDetail()" class="btn btn-primary me-2 btn-sm"> 查詢</button>
+              <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">檔名: {{detailData.batchFileName}}</h5>
+              <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店名稱: {{detailData.batchStoreName}}</h5>
+              <div class="col-xxl-4 me-3 d-flex align-items-center">
+                <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">卡號:</h5>
+                <input v-model="detailDataPost.pan" type="text" class="form-contorl me-3" style="padding-top:0.375rem;">
+                <button @click="getDetail()" class="btn btn-primary me-3"> 查詢</button>
             </div>
             <MainData ref="detailMainData" :Page="detailPageData" @ChangePageInfo="getDetailPageInfo">
               <template #default>
