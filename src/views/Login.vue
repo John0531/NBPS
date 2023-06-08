@@ -1,12 +1,14 @@
 <template>
-  <div class="login">
+    <div class="login">
     <div class="container">
       <div class="row justify-content-center align-items-center" style="height:100vh;">
         <div class="col-md-8">
           <div class="d-flex shadow rounded">
             <img class="d-block loginbanner img-fluid rounded-start" src="~@/assets/img/loginbanner.jpg" alt="">
+            <!-- <img class="d-block loginbanner img-fluid rounded-start" src="~@/assets/img/p08.jpg" alt=""> -->
             <Form class="px-5 w-50 pt-5" v-slot="{ errors }" @submit="login">
-              <h3 class="mb-5">聯邦銀行信用卡批次授權</h3>
+              <h2 class="mb-4 d-flex justify-content-center" style="letter-spacing:0.33em;">聯邦銀行</h2>
+              <h3 class="mb-4">信用卡批次授權-BPS系統</h3>
               <div class="mb-4">
                 <Field name="帳號" :class="{ 'is-invalid': errors['帳號'] }" class="form-control form-control-lg" type="text" placeholder="帳號" rules="required" v-model="user.userName"></Field>
                 <ErrorMessage name="帳號" class="invalid-feedback"></ErrorMessage>
@@ -44,6 +46,9 @@ export default {
   },
   data () {
     return {
+      textColr1: 'blue',
+      textColr2: 'teal',
+      textColr3: 'red',
       CaptchaCode: '',
       user: {
         userName: '',
@@ -128,5 +133,22 @@ export default {
   cursor: pointer;
   width: 20px;
   height: 20px;
+}
+.image-container {
+  display: flex;
+  align-items: flex-end; /* 將右側圖片置底對齊 */
+}
+.left-align {
+  margin-right: 10px; /* 調整左側圖片與右側圖片之間的間距 */
+}
+
+.right-align {
+  margin-left: auto; /* 讓右側圖片靠右對齊 */
+  margin-bottom: 20px;
+}
+.image-container2 {
+  /* display: flex; */
+  align-items: right; /* 垂直居中對齊圖片 */
+  margin-left: 35px;
 }
 </style>

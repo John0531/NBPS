@@ -11,7 +11,6 @@
           <div class="card-body">
             <Form
               ref="form"
-              v-slot="{ errors }"
               @submit="uploadFile"
             >
               <div class="row py-3">
@@ -26,7 +25,6 @@
                     placeholder=""
                     rules="required"
                     name="批次交易檔"
-                    :class="{ 'is-invalid': errors['批次交易檔'] }"
                     @change="getFile($event)"
                   />
                   <ErrorMessage
@@ -69,7 +67,6 @@
                     class="form-select"
                     as="select"
                     rules="required"
-                    :class="{ 'is-invalid': errors['特店代碼'] }"
                     name="特店代碼"
                   >
                     <option value="" selected>請選擇</option>
