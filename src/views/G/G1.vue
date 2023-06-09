@@ -102,6 +102,7 @@
                 <td>{{$custom.currency(item.totalAmt)}}</td>
                 <td>
                   <button v-if="item.trxStatus==='TRX_FINISH'" @click="getDetail(item,defaultDetailPage.page,defaultDetailPage.pageSize)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
+                  <button v-if="showDLbtn(item.batchStatus)&&showDLbtn(item.trxStatus)" @click="downloadReply(item)" class="btn btn-success me-2 btn-sm" :disabled="!($store.state.pageBtnPermission.includes('download'))">下載回覆檔</button>
                   <!-- <button v-if="item.batchStatus==='VALIDATE_FAIL'" @click="getError(item)" class="btn btn-danger me-2 btn-sm">檢視錯誤</button> -->
                 </td>
               </tr>
@@ -411,6 +412,39 @@ export default {
         this.$refs.detailMainData.PageInfo.pageSize = pageSize
       }
       this.detailModal.show()
+    },
+    async downloadReply (item) {
+      this.$store.commit('changeLoading', true)
+      const result = await service.downloadReply(item.batchId)
+      this.$store.commit('changeLoading', false)
+      const a = document.createElement('a')
+      const url = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
+      a.href = url
+      a.style.display = 'none'
+      // a.download = '發卡科回覆檔.zip'
+      a.download = `${item.batchFileNameTxt.substr(0, 24)}.zip`
+      a.click()
+      // 清除暫存
+      a.href = ''
+      window.URL.revokeObjectURL(url)
+    },
+    showDLbtn (status) { // ? 判斷是否顯示下載回覆檔按鈕
+      switch (status) {
+        case 'TRX_FINISH':
+          return true
+        case 'REPLY_PROCESS':
+          return true
+        case 'REPLY_SUCCESS':
+          return true
+        case 'REPLY_FAIL':
+          return true
+        case 'REPLY_UPLOAD_SUCCESS':
+          return true
+        case 'REPLY_DOWNLOAD_SUCCESS':
+          return true
+        default:
+          return false
+      }
     },
     async getError (item) {
       if (item) {
