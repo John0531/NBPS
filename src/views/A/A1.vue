@@ -238,7 +238,7 @@
     </div>
   </div>
 
-     <!-- 重新執行E5批次 Modal -->
+     <!-- 轉檔程式 Modal -->
      <div class="modal fade" ref="convertModal" tabindex="-1" aria-labelledby="convertModal" aria-hidden="true">
       <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">

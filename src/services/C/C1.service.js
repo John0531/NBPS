@@ -2,6 +2,20 @@ import axios from 'axios'
 import forge from '@/utilities/forge'
 
 const service = {
+  async getStoreDataByCond (postData) {
+    try {
+      const url = `${process.env.VUE_APP_BASE_API}/c1/searchStoreByCondi`
+      const res = await axios.post(url, postData)
+      return res.data
+    } catch (error) {
+      if (error.response.status === 401) {
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
+        if (user) {
+          return service.getStoreData(postData)
+        }
+      }
+    }
+  },
   async getStoreData (postData) {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/c1/searchStore`
