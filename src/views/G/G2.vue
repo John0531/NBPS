@@ -11,7 +11,6 @@
           <div class="card-body">
             <Form
               ref="form"
-              v-slot="{ errors }"
               @submit="uploadFile"
             >
               <div class="row py-3">
@@ -26,7 +25,6 @@
                     placeholder=""
                     rules="required"
                     name="批次交易檔"
-                    :class="{ 'is-invalid': errors['批次交易檔'] }"
                     @change="getFile($event)"
                     :validateOnChange="false"
                     :validateOnBlur="false"
@@ -71,7 +69,6 @@
                     class="form-select"
                     as="select"
                     rules="required"
-                    :class="{ 'is-invalid': errors['特店代碼'] }"
                     name="特店代碼"
                     :validateOnChange="false"
                     :validateOnBlur="false"
@@ -128,6 +125,8 @@
                   <span class="fw-bold" v-if="item.batchStatus==='REPLY_PROCESS'">回覆檔產製中</span>
                   <span class="fw-bold" v-if="item.batchStatus==='REPLY_SUCCESS'">已下傳回覆檔</span>
                   <span class="fw-bold" v-if="item.batchStatus==='REPLY_FAIL'">下傳回覆檔失敗</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='REPLY_UPLOAD_SUCCESS'">回覆檔上傳FTP成功</span>
+                  <span class="fw-bold" v-if="item.batchStatus==='REPLY_UPLOAD_FAIL'">回覆檔上傳FTP失敗</span>
                   <span class="fw-bold" v-if="item.batchStatus==='DOWLOAD_REPLY'">特店已下載回覆檔</span>
                 </td>
                 <td>

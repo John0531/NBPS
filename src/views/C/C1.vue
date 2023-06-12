@@ -11,10 +11,10 @@
             <div class="row py-3">
               <div class="col-xxl-5 d-flex mb-4">
                 <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店代碼:</h5>
-                <input v-model="GroupDataPost.storeId" type="text" class="form-control" placeholder="可不指定[特店代碼須為15碼]">
+                <input v-model="storeId" type="text" class="form-control" placeholder="可不指定[特店代碼須為15碼]">
               </div>
             </div>
-            <button class="btn btn-primary me-3 px-4" @click="getData" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button>
+            <button class="btn btn-primary me-3 px-4" @click="getStoreDataByCond(storeId)" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button>
             <button class="btn btn-warning me-3 px-4" @click="addModal.show()" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增</button>
           </div>
         </div>
@@ -737,6 +737,7 @@ export default {
   },
   data () {
     return {
+      storeId: '',
       uploadPdEyeOpen: false,
       uploadPdEyeOpen2: false,
       GroupDataPost: {
@@ -761,6 +762,11 @@ export default {
     },
     uploadPdEyeOpen2 (n, o) {
       n ? document.querySelector('#uploadPd2').type = 'text' : document.querySelector('#uploadPd2').type = 'password'
+    },
+    storeId (n, o) {
+      this.pageData.page = 1
+      this.pageData.pageSize = 10
+      n ? this.getStoreDataByCond(this.storeId) : this.getData()
     }
   },
   methods: {
@@ -768,10 +774,15 @@ export default {
     getPageInfo (PageInfo) {
       this.GroupDataPost.page = PageInfo.page
       this.GroupDataPost.pageSize = PageInfo.pageSize
-      this.getData()
+      if (this.storeId.length === 0) {
+        this.getData()
+      } else {
+        this.getStoreDataByCond()
+      }
     },
     async getData () {
-      if (this.GroupDataPost.storeId) {
+      if (this.storeId.length === 0) {
+        this.GroupDataPost.storeId = this.storeId
         this.GroupDataPost.page = 1
         this.GroupDataPost.pageSize = 10
       }
@@ -795,6 +806,34 @@ export default {
         })
         item1.transTypeUI = item1.transTypeUI.join()
       })
+    },
+    async getStoreDataByCond (storeId) {
+      if (storeId) {
+        this.GroupDataPost.storeId = storeId
+        this.GroupDataPost.page = 1
+        this.GroupDataPost.pageSize = 10
+      }
+      this.$store.commit('changeLoading', true)
+      const result = await service.getStoreDataByCond(this.GroupDataPost)
+      this.$store.commit('changeLoading', false)
+      this.pageData = result.pageInfo // ? 傳送分頁資訊
+      this.gridData = result.storeList
+      this.gridData.forEach((item1) => {
+        item1.transTypeUI = []
+        item1.transType.forEach((item2) => {
+          if (item2 === 'SALE') {
+            item1.transTypeUI.push('授權與請款(S)')
+          } else if (item2 === 'AUTH') {
+            item1.transTypeUI.push('授權(A)')
+          } else if (item2 === 'OFF_LINE_SALE') {
+            item1.transTypeUI.push('離線請款(O)')
+          } else if (item2 === 'REFUND') {
+            item1.transTypeUI.push('退貨(R)')
+          }
+        })
+        item1.transTypeUI = item1.transTypeUI.join()
+      })
+      this.getPageInfo()
     },
     openEditModal (item) {
       this.editForm = JSON.parse(JSON.stringify(item))
