@@ -28,6 +28,8 @@
                     name="批次交易檔"
                     :class="{ 'is-invalid': errors['批次交易檔'] }"
                     @change="getFile($event)"
+                    :validateOnChange="false"
+                    :validateOnBlur="false"
                   />
                   <ErrorMessage
                     name="批次交易檔"
@@ -71,6 +73,9 @@
                     rules="required"
                     :class="{ 'is-invalid': errors['特店代碼'] }"
                     name="特店代碼"
+                    :validateOnChange="false"
+                    :validateOnBlur="false"
+                    :validateOnModelUpdate="false"
                   >
                     <option value="" selected>請選擇</option>
                     <option v-for="item in defaultData" :key="item.id" :value="item.storeId">{{item.storeId}} ({{item.storeName}})</option>
