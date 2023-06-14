@@ -11,14 +11,20 @@
             <div class="row py-3">
               <div class="col-xxl-5 d-flex mb-4">
                 <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店代碼:</h5>
-                <input v-model="storeId" type="text" class="form-control" placeholder="可不指定[特店代碼須為15碼]">
+                <input @input="GroupDataPost.page = 1;
+                GroupDataPost.pageSize = 10;
+                $refs.mainData.PageInfo.pageSize = 10;
+                getStoreDataByCond()" v-model="GroupDataPost.storeId" type="text" class="form-control" placeholder="可不指定[特店代碼須為15碼]">
               </div>
             </div>
-            <button class="btn btn-primary me-3 px-4" @click="getStoreDataByCond(storeId)" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button>
+            <button class="btn btn-primary me-3 px-4" @click="GroupDataPost.page = 1;
+              GroupDataPost.pageSize = 10;
+              $refs.mainData.PageInfo.pageSize = 10;
+              getStoreDataByCond()" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button>
             <button class="btn btn-warning me-3 px-4" @click="addModal.show()" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增</button>
           </div>
         </div>
-        <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
+        <MainData ref="mainData" :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
           <template #default>
             <thead>
               <tr>
@@ -305,7 +311,6 @@
                     :class="{ 'is-invalid': errors['上傳ZIP檔密碼'] }"
                     id="uploadPd"
                     v-model="addForm.uploadPd"
-                    placeholder="密碼後需加當月月份"
                   />
                   <ErrorMessage
                     name="上傳ZIP檔密碼"
@@ -737,7 +742,6 @@ export default {
   },
   data () {
     return {
-      storeId: '',
       uploadPdEyeOpen: false,
       uploadPdEyeOpen2: false,
       GroupDataPost: {
@@ -762,11 +766,6 @@ export default {
     },
     uploadPdEyeOpen2 (n, o) {
       n ? document.querySelector('#uploadPd2').type = 'text' : document.querySelector('#uploadPd2').type = 'password'
-    },
-    storeId (n, o) {
-      this.pageData.page = 1
-      this.pageData.pageSize = 10
-      n ? this.getStoreDataByCond(this.storeId) : this.getData()
     }
   },
   methods: {
@@ -774,45 +773,9 @@ export default {
     getPageInfo (PageInfo) {
       this.GroupDataPost.page = PageInfo.page
       this.GroupDataPost.pageSize = PageInfo.pageSize
-      if (this.storeId.length === 0) {
-        this.getData()
-      } else {
-        this.getStoreDataByCond()
-      }
+      this.getStoreDataByCond()
     },
-    async getData () {
-      if (this.storeId.length === 0) {
-        this.GroupDataPost.storeId = this.storeId
-        this.GroupDataPost.page = 1
-        this.GroupDataPost.pageSize = 10
-      }
-      this.$store.commit('changeLoading', true)
-      const result = await service.getStoreData(this.GroupDataPost)
-      this.$store.commit('changeLoading', false)
-      this.pageData = result.pageInfo // ? 傳送分頁資訊
-      this.gridData = result.storeList
-      this.gridData.forEach((item1) => {
-        item1.transTypeUI = []
-        item1.transType.forEach((item2) => {
-          if (item2 === 'SALE') {
-            item1.transTypeUI.push('授權與請款(S)')
-          } else if (item2 === 'AUTH') {
-            item1.transTypeUI.push('授權(A)')
-          } else if (item2 === 'OFF_LINE_SALE') {
-            item1.transTypeUI.push('離線請款(O)')
-          } else if (item2 === 'REFUND') {
-            item1.transTypeUI.push('退貨(R)')
-          }
-        })
-        item1.transTypeUI = item1.transTypeUI.join()
-      })
-    },
-    async getStoreDataByCond (storeId) {
-      if (storeId) {
-        this.GroupDataPost.storeId = storeId
-        this.GroupDataPost.page = 1
-        this.GroupDataPost.pageSize = 10
-      }
+    async getStoreDataByCond () {
       this.$store.commit('changeLoading', true)
       const result = await service.getStoreDataByCond(this.GroupDataPost)
       this.$store.commit('changeLoading', false)
@@ -849,7 +812,7 @@ export default {
       this.$store.commit('changeLoading', false)
       if (result) {
         this.editModal.hide()
-        this.getData()
+        this.getStoreDataByCond()
       }
     },
     removeStore (item) {
@@ -867,7 +830,7 @@ export default {
           const result = await service.removeStore(item)
           this.$store.commit('changeLoading', false)
           if (result) {
-            this.getData()
+            this.getStoreDataByCond()
           }
         }
       })
@@ -885,12 +848,11 @@ export default {
         }
         this.addForm = {}
         this.$refs.addForm.resetForm()
-        this.getData()
+        this.getStoreDataByCond()
       }
     }
   },
   mounted () {
-    this.getData()
     this.addModal = new this.$custom.bootstrap.Modal(this.$refs.addModal, { backdrop: 'static' })
     this.editModal = new this.$custom.bootstrap.Modal(this.$refs.editModal, { backdrop: 'static' })
   }
