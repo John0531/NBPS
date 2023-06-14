@@ -112,7 +112,10 @@ export default {
       this.$store.commit('changeLoading', true)
       const result = await service.getDefault()
       this.$store.commit('changeLoading', false)
-      this.defaultEntity = result.f5DefaultEntity
+      this.defaultData = result.storeList
+      if (result) {
+        this.defaultEntity = result.i7DefaultEntity
+      }
     },
     async getData () {
       this.$store.commit('changeLoading', true)
