@@ -5,10 +5,10 @@ describe('template spec', () => {
     cy.viewport(1500, 1000);
 
     // 登入帳號
-    cy.loginViaUi({ pwd: 'P@ssw0rd', userName: 'admin' })
+    cy.loginViaUi({ pwd: 'P@ssw0rd!', userName: 'admin' })
 
     // 測試 F2 - 創建"權限管理人員"群組
-    cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/nbps-system/F2')
+    cy.visit('https://nbps.ubpg.com.tw/nbps/nbps-system/F2')
 
     cy.wait(1000)
 
@@ -29,7 +29,7 @@ describe('template spec', () => {
     cy.reload()
 
     // 測試 F1 - 創建"權限管理人員"帳號 (IT Level)
-    cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/nbps-system/F1')
+    cy.visit('https://nbps.ubpg.com.tw/nbps/nbps-system/F1')
     cy.get('button').contains('新增帳號').click()
     cy.wait(2000)
     // 彈窗後的動作

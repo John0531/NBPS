@@ -4,7 +4,7 @@ describe('template spec', () => {
     // 設定瀏覽器的視窗大小
     cy.viewport(1500, 1000);
 
-    cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/login')
+    cy.visit('https://nbps.ubpg.com.tw/nbps/login')
     cy.get('input[name="帳號"]').type('testCypressUser')
     cy.get('input[name="密碼"]').type('Ubot123456!')
     cy.get('button').contains("登入").click({force: true})
@@ -35,7 +35,7 @@ describe('template spec', () => {
     cy.reload()
 
     // 測試 C1 - 創建"特店" 
-    cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/nbps-system/C1')
+    cy.visit('https://nbps.ubpg.com.tw/nbps/nbps-system/C1')
     cy.get('button').contains('新增').click()
     cy.wait(2000)
     cy.get('.modal-content:contains("新增特店資料")').within(() => {
@@ -59,7 +59,7 @@ describe('template spec', () => {
     cy.reload()
 
     // 測試 C3 - 創建"特店"群組 (Merchant Level)
-    cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/nbps-system/C3')
+    cy.visit('https://nbps.ubpg.com.tw/nbps/nbps-system/C3')
     cy.get('button').contains('新增群組').click()
     cy.wait(2000)
     cy.get('.modal-content:contains("新增群組權限")').within(() => {
@@ -77,7 +77,7 @@ describe('template spec', () => {
     cy.reload()
 
      // 測試 C2 - 創建"特店"帳號 (User Level)
-     cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/nbps-system/C2')
+     cy.visit('https://nbps.ubpg.com.tw/nbps/nbps-system/C2')
      cy.get('button').contains('新增帳號').click()
      cy.wait(2000)
      cy.get('.modal-content:contains("新增特店資料")').within(() => {
@@ -97,7 +97,7 @@ describe('template spec', () => {
     cy.logOut()
 
     // 登入創建的特店帳號 & 初次登入改密碼
-    cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/login')
+    cy.visit('https://nbps.ubpg.com.tw/nbps/login')
     cy.get('input[name="帳號"]').type('testCypressMerchant')
     cy.get('input[name="密碼"]').type('UBot123456!')
     cy.get('button').contains("登入").click({force: true})

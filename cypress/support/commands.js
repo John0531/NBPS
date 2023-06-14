@@ -29,7 +29,7 @@ Cypress.Commands.add('loginViaUi', (user) => {
     cy.session(
       user,
         () => {
-            cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/login')
+            cy.visit('https://nbps.ubpg.com.tw/nbps/login')
             cy.get('input[name="帳號"]').type(user.userName)
             cy.get('input[name="密碼"]').type(user.pwd)
             cy.get('button').contains("登入").click({force: true})

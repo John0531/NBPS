@@ -6,7 +6,7 @@ describe('template spec', () => {
 
     // cy.loginViaUi({ pwd: 'Ubot123456!', userName: 'testCypress' })
 
-    cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/login')
+    cy.visit('https://nbps.ubpg.com.tw/nbps/login')
     cy.get('input[name="帳號"]').type('testCypress')
     cy.get('input[name="密碼"]').type('Ubot123456!')
     cy.get('button').contains("登入").click({force: true})
@@ -37,7 +37,7 @@ describe('template spec', () => {
     cy.reload()
 
      // 測試 F2 - 創建"使用者"群組 (User Level)
-     cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/nbps-system/F2')
+     cy.visit('https://nbps.ubpg.com.tw/nbps/nbps-system/F2')
      cy.get('button').contains('新增群組').click()
      cy.wait(2000)
      cy.get('.modal-content:contains("新增群組權限")').within(() => {
@@ -56,7 +56,7 @@ describe('template spec', () => {
      cy.reload()
      
      // 測試 F1 - 創建"使用者"帳號 (User Level)
-     cy.visit('https://upay-beta.ubpg.com.tw/nbps-dev/nbps-system/F1')
+     cy.visit('https://nbps.ubpg.com.tw/nbps/nbps-system/F1')
      cy.get('button').contains('新增帳號').click()
      cy.wait(2000)
      // 彈窗後的動作
