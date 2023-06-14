@@ -1,5 +1,4 @@
 import axios from 'axios'
-import forge from '@/utilities/forge'
 
 const service = {
   async getStoreDataByCond (postData) {
@@ -19,7 +18,6 @@ const service = {
   async addStore (formData) {
     try {
       const postData = JSON.parse(JSON.stringify(formData))
-      postData.uploadPd = await forge.encrypt(postData.uploadPd)
       const url = `${process.env.VUE_APP_BASE_API}/c1/createStore`
       const res = await axios.post(url, postData)
       if (res.data) {
@@ -40,8 +38,6 @@ const service = {
       const postData = JSON.parse(JSON.stringify(formData))
       if (postData.uploadPd === '********') {
         postData.uploadPd = ''
-      } else {
-        postData.uploadPd = await forge.encrypt(postData.uploadPd)
       }
       const url = `${process.env.VUE_APP_BASE_API}/c1/updateStore`
       const res = await axios.post(url, postData)
