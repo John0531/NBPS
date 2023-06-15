@@ -21,7 +21,9 @@
               GroupDataPost.pageSize = 10;
               $refs.mainData.PageInfo.pageSize = 10;
               getStoreDataByCond()" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button>
-            <button class="btn btn-warning me-3 px-4" @click="addModal.show()" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增</button>
+            <button class="btn btn-warning me-3 px-4" @click="
+            $refs.addForm.resetForm({values:{idNo: false}});
+            addModal.show()" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增</button>
           </div>
         </div>
         <MainData ref="mainData" :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
@@ -753,8 +755,7 @@ export default {
       gridData: [],
       addModal: '',
       addForm: {
-        idNo: false,
-        transTime: '00:00-23:59'
+        idNo: false
       },
       editModal: '',
       editForm: {}
@@ -796,7 +797,7 @@ export default {
         })
         item1.transTypeUI = item1.transTypeUI.join()
       })
-      this.getPageInfo()
+      // this.getPageInfo()
     },
     openEditModal (item) {
       this.editForm = JSON.parse(JSON.stringify(item))
@@ -836,6 +837,9 @@ export default {
       })
     },
     async addStore () {
+      if (this.addForm.storeType !== 'ACQUIRING') {
+        this.addForm.transTime = '00:00-23:59'
+      }
       this.$store.commit('changeLoading', true)
       const result = await service.addStore(this.addForm)
       this.$store.commit('changeLoading', false)

@@ -9,20 +9,17 @@
           </div>
           <div class="card-body">
             <div class="row py-3">
-              <div class="col-xxl-6 d-flex mb-4">
+              <div class="col-xxl-4 d-flex mb-4">
                 <div class="input-group">
-                <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">請選擇查詢條件:</h5>
-                <select class="form-select" v-model="searchForm.type">
-                  <option selected value="">全部資料</option>
-                  <option value="storeId">商店代號</option>
-                  <option value="storeName">商店名稱</option>
-                </select>
-                <input type="text" class="form-control" v-model.trim="searchForm.data">
-                <button class="btn btn-primary me-3 px-4" @click="getDataByCond(searchForm)">搜尋</button>
+                <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店代碼:</h5>
+                <input type="text" class="form-control" v-model.trim="searchData.storeId">
+                <button class="btn btn-primary me-3 px-4" @click="getDataByCond()">搜尋</button>
                 </div>
               </div>
             </div>
-            <button class="btn btn-warning me-3 px-4" @click="openAddModal" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增帳號</button>
+            <button class="btn btn-warning me-3 px-4" @click="
+            $refs.addForm.resetForm();
+            openAddModal()" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增帳號</button>
             </div>
         </div>
         <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
@@ -71,6 +68,7 @@
             <Form
               v-slot="{ errors }"
               @submit="addAccount"
+              ref="addForm"
             >
               <div class="row mb-3">
                 <label for="account" class="col-sm-2 col-form-label">帳號</label>
@@ -83,7 +81,6 @@
                     :class="{ 'is-invalid': errors['帳號'] }"
                     id="account"
                     v-model="addForm.userName"
-                    ref="addForm"
                   />
                   <ErrorMessage
                     name="帳號"
@@ -199,7 +196,7 @@
               <div class="row mb-3">
                 <label for="desc" class="col-sm-2 col-form-label">簡述<span class="text-danger">(非必填)</span></label>
                 <div class="col-sm-10">
-                  <textarea v-model="addForm.description" class="form-control" id="desc" rows="3"></textarea>
+                  <Field name="簡述" as="textarea" v-model="addForm.description" class="form-control" id="desc" rows="3"></Field>
                 </div>
               </div>
               <div class="d-flex justify-content-end">
@@ -380,8 +377,8 @@ export default {
         page: 1,
         pageSize: 10
       },
-      searchForm: {},
       searchData: {
+        storeId: '',
         page: 1,
         pageSize: 10
       }, // 搜尋資料
@@ -412,18 +409,7 @@ export default {
       this.pageData = result.pageInfo // ? 傳送分頁資訊
       this.gridData = result.users
     },
-    async getDataByCond (formData) { // ? 指定條件查詢使用者帳號資料
-      switch (formData.type) {
-        case 'storeId':
-          this.searchData.storeId = formData.data
-          break
-        case 'storeName':
-          this.searchData.storeName = formData.data
-          break
-        default:
-          break
-      }
-      console.log(this.searchData)
+    async getDataByCond () { // ? 指定條件查詢使用者帳號資料
       this.$store.commit('changeLoading', true)
       const result = await service.getDataByCond(this.searchData)
       this.$store.commit('changeLoading', false)

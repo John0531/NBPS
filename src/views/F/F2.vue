@@ -15,7 +15,9 @@
               </div>
             </div> -->
             <!-- <button class="btn btn-primary me-3 px-4">搜尋</button> -->
-            <button class="btn btn-warning me-3 px-4" @click="openAddModal" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增群組</button>
+            <button class="btn btn-warning me-3 px-4" @click="
+            $refs.addForm.resetForm()
+            ;openAddModal()" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增群組</button>
             <button class="btn btn-primary me-3 px-4" @click="downloadExcel" :disabled="!$store.state.pageBtnPermission.includes('download')">匯出群組Excel</button>
           </div>
         </div>
@@ -60,6 +62,7 @@
             <Form
               v-slot="{ errors }"
               @submit="addGroup"
+              ref="addForm"
             >
               <div class="row mb-3">
                 <label for="account" class="col-sm-2 col-form-label">群組代號</label>
@@ -100,7 +103,8 @@
               <div class="row mb-3">
                 <label for="description" class="col-sm-2 col-form-label">簡述</label>
                 <div class="col-sm-10">
-                  <input
+                  <Field
+                    name="簡述"
                     type="text"
                     class="form-control"
                     id="description"

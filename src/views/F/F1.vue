@@ -15,7 +15,9 @@
               </div>
             </div> -->
             <!-- <button class="btn btn-primary me-3 px-4">搜尋</button> -->
-            <button class="btn btn-warning me-3 px-4" @click="openAddModal" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增帳號</button>
+            <button class="btn btn-warning me-3 px-4" @click="
+            $refs.addForm.resetForm();
+            openAddModal()" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增帳號</button>
             <button class="btn btn-primary me-3 px-4" @click="downloadExcel" :disabled="!$store.state.pageBtnPermission.includes('download')">匯出帳號excel</button>
           </div>
         </div>
@@ -66,6 +68,7 @@
             <Form
               v-slot="{ errors }"
               @submit="addAccount"
+              ref="addForm"
             >
               <div class="row mb-3">
                 <label for="account" class="col-sm-2 col-form-label">帳號</label>
@@ -187,7 +190,7 @@
               <div class="row mb-3">
                 <label for="desc" class="col-sm-2 col-form-label">簡述<span class="text-danger">(非必填)</span></label>
                 <div class="col-sm-10">
-                  <textarea v-model="addForm.description" class="form-control" id="desc" rows="3"></textarea>
+                  <Field name="簡述" as="textarea" v-model="addForm.description" class="form-control" id="desc" rows="3"></Field>
                 </div>
               </div>
               <div class="d-flex justify-content-end">
