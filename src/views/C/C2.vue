@@ -18,7 +18,6 @@
               </div>
             </div>
             <button class="btn btn-warning me-3 px-4" @click="
-            $refs.addForm.resetForm();
             openAddModal()" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增帳號</button>
             </div>
         </div>
@@ -420,6 +419,7 @@ export default {
       this.searchData.pageSize = 10
     },
     async openAddModal () {
+      await this.$refs.addForm.resetForm()
       this.addForm = this.defaultUserInfo
       this.addForm.pd = 'UBot123456!'
       this.addModal.show()

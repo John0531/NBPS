@@ -15,8 +15,7 @@
               </div>
             </div> -->
             <!-- <button class="btn btn-primary me-3 px-4">搜尋</button> -->
-            <button class="btn btn-warning me-3 px-4" @click="$refs.addForm.resetForm();
-            openAddModal()" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增群組</button>
+            <button class="btn btn-warning me-3 px-4" @click="openAddModal" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增群組</button>
             <button class="btn btn-primary me-3 px-4" @click="downloadExcel" :disabled="!$store.state.pageBtnPermission.includes('download')">匯出群組Excel</button>
           </div>
         </div>
@@ -458,6 +457,7 @@ export default {
       this.$store.commit('changeLoading', false)
     },
     async openAddModal () {
+      await this.$refs.addForm.resetForm()
       this.$store.commit('changeLoading', true)
       this.defaultPermission = await service.getDefaultPermission()
       this.$store.commit('changeLoading', false)

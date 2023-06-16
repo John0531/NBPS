@@ -21,9 +21,7 @@
               GroupDataPost.pageSize = 10;
               $refs.mainData.PageInfo.pageSize = 10;
               getStoreDataByCond()" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button>
-            <button class="btn btn-warning me-3 px-4" @click="
-            $refs.addForm.resetForm({values:{idNo: false}});
-            addModal.show()" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增</button>
+            <button class="btn btn-warning me-3 px-4" @click="openAddModal" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增</button>
           </div>
         </div>
         <MainData ref="mainData" :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
@@ -798,6 +796,10 @@ export default {
         item1.transTypeUI = item1.transTypeUI.join()
       })
       // this.getPageInfo()
+    },
+    async openAddModal () {
+      await this.$refs.addForm.resetForm({ values: { idNo: false } })
+      this.addModal.show()
     },
     openEditModal (item) {
       this.editForm = JSON.parse(JSON.stringify(item))

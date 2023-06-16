@@ -15,9 +15,7 @@
               </div>
             </div> -->
             <!-- <button class="btn btn-primary me-3 px-4">搜尋</button> -->
-            <button class="btn btn-warning me-3 px-4" @click="
-            $refs.addForm.resetForm();
-            openAddModal()" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增帳號</button>
+            <button class="btn btn-warning me-3 px-4" @click="openAddModal" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增帳號</button>
             <button class="btn btn-primary me-3 px-4" @click="downloadExcel" :disabled="!$store.state.pageBtnPermission.includes('download')">匯出帳號excel</button>
           </div>
         </div>
@@ -394,6 +392,7 @@ export default {
       this.gridData = result.users
     },
     async openAddModal () {
+      await this.$refs.addForm.resetForm()
       this.addForm = this.defaultUserInfo
       this.addForm.pd = 'UBot123456!'
       this.addModal.show()
