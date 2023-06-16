@@ -394,9 +394,9 @@ export default {
   methods: {
     // ? 取得 MainData 元件分頁資訊
     getPageInfo (PageInfo) {
-      // this.GroupDataPost = PageInfo
-      // this.getData()
-      this.searchData = PageInfo
+      this.GroupDataPost = PageInfo
+      this.getData()
+      // this.searchData = PageInfo
       this.getDataByCond()
     },
     async getDefault () {
