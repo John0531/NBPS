@@ -10,11 +10,11 @@
           <div class="card-body">
             <div class="row py-3">
               <div class="col-xxl-4 d-flex mb-4">
-                <div class="input-group">
-                <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店代碼:</h5>
-                <input type="text" class="form-control" v-model.trim="searchData.storeId">
-                <button class="btn btn-primary me-3 px-4" @click="getDataByCond()">搜尋</button>
-                </div>
+                <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">商店代號/商店名稱:</h5>
+                <input @input="searchData.page = 1;
+                searchData.pageSize = 10;
+                $refs.mainData.PageInfo.pageSize = 10;getDataByCond()" type="text" class="form-control" v-model.trim="searchData.storeId">
+                <!-- <button class="btn btn-primary me-3 px-4" @click="getDataByCond()">搜尋</button> -->
               </div>
             </div>
             <button class="btn btn-warning me-3 px-4" @click="
@@ -22,7 +22,7 @@
             openAddModal()" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增帳號</button>
             </div>
         </div>
-        <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
+        <MainData ref="mainData" :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
           <template #default>
             <thead>
               <tr>
@@ -394,8 +394,10 @@ export default {
   methods: {
     // ? 取得 MainData 元件分頁資訊
     getPageInfo (PageInfo) {
-      this.GroupDataPost = PageInfo
-      this.getData()
+      // this.GroupDataPost = PageInfo
+      // this.getData()
+      this.searchData = PageInfo
+      this.getDataByCond()
     },
     async getDefault () {
       const result = await service.getDefaultUserInfo()
@@ -415,7 +417,6 @@ export default {
       this.$store.commit('changeLoading', false)
       this.pageData = result.pageInfo // ? 傳送分頁資訊
       this.gridData = result.users
-      this.searchData = {}
       this.searchData.page = 1
       this.searchData.pageSize = 10
     },

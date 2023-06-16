@@ -14,13 +14,13 @@
                 <input @input="GroupDataPost.page = 1;
                 GroupDataPost.pageSize = 10;
                 $refs.mainData.PageInfo.pageSize = 10;
-                getStoreDataByCond()" v-model="GroupDataPost.storeId" type="text" class="form-control" placeholder="可不指定[特店代碼須為15碼]">
+                getStoreDataByCond()" v-model.trim="GroupDataPost.storeId" type="text" class="form-control" placeholder="">
               </div>
             </div>
-            <button class="btn btn-primary me-3 px-4" @click="GroupDataPost.page = 1;
+            <!-- <button class="btn btn-primary me-3 px-4" @click="GroupDataPost.page = 1;
               GroupDataPost.pageSize = 10;
               $refs.mainData.PageInfo.pageSize = 10;
-              getStoreDataByCond()" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button>
+              getStoreDataByCond()" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button> -->
             <button class="btn btn-warning me-3 px-4" @click="
             $refs.addForm.resetForm({values:{idNo: false}});
             addModal.show()" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增</button>
