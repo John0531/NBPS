@@ -10,7 +10,7 @@
           <div class="card-body">
             <div class="row py-3">
               <div class="col-xxl-5 d-flex mb-4">
-                <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店代碼:</h5>
+                <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店代碼/特店名稱:</h5>
                 <input @input="GroupDataPost.page = 1;
                 GroupDataPost.pageSize = 10;
                 $refs.mainData.PageInfo.pageSize = 10;
@@ -21,7 +21,7 @@
               GroupDataPost.pageSize = 10;
               $refs.mainData.PageInfo.pageSize = 10;
               getStoreDataByCond()" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button> -->
-            <button class="btn btn-warning me-3 px-4" @click="openAddModal" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增</button>
+            <button class="btn btn-warning me-3 px-4" @click="openAddModal" :disabled="!$store.state.pageBtnPermission.includes('insert')">新增特店</button>
           </div>
         </div>
         <MainData ref="mainData" :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
