@@ -86,10 +86,10 @@
                 <td>{{item.totalFailSettleCount}}</td>
                 <td>{{$custom.currency(item.totalFailSettleAmt)}}</td>
                 <td>
-                  <button v-if="item.totalSuccessSettleCount!==0&&item.totalSuccessSettleAmt!==0" @click.prevent="downloadDateReport(item,'B4SUCCESS')" class="btn btn-danger me-2 btn-sm">下載成功明細</button>
+                  <button v-if="item.totalSuccessSettleCount!==0" @click.prevent="downloadDateReport(item,'B4SUCCESS')" class="btn btn-success me-2 btn-sm">下載成功明細</button>
                 </td>
                 <td>
-                  <button v-if="item.totalFailSettleCount!==0&&item.totalFailSettleAmt!==0" @click.prevent="downloadDateReport(item,'B4FAIL')" class="btn btn-success me-2 btn-sm">下載失敗明細</button>
+                  <button v-if="item.totalFailSettleCount!==0" @click.prevent="downloadDateReport(item,'B4FAIL')" class="btn btn-danger me-2 btn-sm">下載失敗明細</button>
                 </td>
               </tr>
             </tbody>

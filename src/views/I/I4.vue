@@ -213,7 +213,14 @@ export default {
   methods: {
     getDetail (item) {
       switch (item.name) {
-        case 'E3特店日結報表下載作業批次':
+        case 'E3特店日結成功報表下載作業批次':
+          this.detailE3DailyModal = new this.$custom.bootstrap.Modal(this.$refs.detailE3DailyModal, { backdrop: 'static' })
+          // this.detailE3Modal.msgId = item.msgId
+          this.detailE3DailyModal.batchHistoryId = item.id
+          this.detailE3DailyModal.batchCode = 'E3'
+          this.detailE3DailyModal.show()
+          break
+        case 'E3特店日結失敗報表下載作業批次':
           this.detailE3DailyModal = new this.$custom.bootstrap.Modal(this.$refs.detailE3DailyModal, { backdrop: 'static' })
           // this.detailE3Modal.msgId = item.msgId
           this.detailE3DailyModal.batchHistoryId = item.id
