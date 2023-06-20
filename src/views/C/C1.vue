@@ -11,7 +11,7 @@
             <div class="row py-3">
               <div class="col-xxl-5 d-flex mb-4">
                 <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店代碼/特店名稱:</h5>
-                <input @input="GroupDataPost.page = 1;
+                <input @keyup="GroupDataPost.page = 1;
                 GroupDataPost.pageSize = 10;
                 $refs.mainData.PageInfo.pageSize = 10;
                 getStoreDataByCond()" v-model.trim="GroupDataPost.storeId" type="text" class="form-control" placeholder="">
