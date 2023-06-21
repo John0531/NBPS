@@ -15,7 +15,7 @@
             <thead>
               <tr>
                 <th scope="col">設定名稱</th>
-                <th scope="col">平均交易時間(分鐘)</th>
+                <th scope="col">交易時間範圍(min)</th>
                 <th scope="col">交易間隔(ms)</th>
                 <th scope="col">交易平均時間標準差</th>
                 <th scope="col"></th>
@@ -70,19 +70,19 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <label for="minutes" class="col-sm-2 col-form-label">平均交易時間(分鐘)</label>
+                <label for="minutes" class="col-sm-2 col-form-label">交易時間範圍(min)</label>
                 <div class="col-sm-10">
                   <Field
-                    name="平均交易時間(分鐘)"
+                    name="交易時間範圍(min)"
                     type="number"
                     class="form-control"
                     rules="required"
-                    :class="{ 'is-invalid': errors['平均交易時間(分鐘)'] }"
+                    :class="{ 'is-invalid': errors['交易時間範圍(min)'] }"
                     id="minutes"
                     v-model="editForm.minutes"
                   />
                   <ErrorMessage
-                    name="平均交易時間(分鐘)"
+                    name="交易時間範圍(min)"
                     class="invalid-feedback"
                   />
                 </div>
@@ -186,7 +186,7 @@ export default {
     openEditModal (item) {
       this.editForm = {
         name: JSON.parse(JSON.stringify(item.name)),
-        valve: JSON.parse(JSON.stringify(item.minutes)),
+        minutes: JSON.parse(JSON.stringify(item.minutes)),
         valvetime: JSON.parse(JSON.stringify(item.valveTime)),
         valveStanderd: JSON.parse(JSON.stringify(item.valveStanderd))
       }
