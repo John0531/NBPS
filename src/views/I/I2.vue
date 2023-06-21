@@ -15,16 +15,16 @@
             <thead>
               <tr>
                 <th scope="col">設定名稱</th>
-                <th scope="col">限流閥</th>
+                <th scope="col">平均交易時間(分鐘)</th>
                 <th scope="col">交易間隔(ms)</th>
-                <th scope="col">交易平均時間標準</th>
+                <th scope="col">交易平均時間標準差</th>
                 <th scope="col"></th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="item in ValveData.gridData" :key="item.id">
                 <th scope="row">{{item.name}}</th>
-                <td>{{item.valve}}</td>
+                <td>{{item.minutes}}</td>
                 <td>{{item.valveTime}}</td>
                 <td>{{item.valveStanderd}}</td>
                 <td>
@@ -70,19 +70,19 @@
                 </div>
               </div>
               <div class="row mb-3">
-                <label for="valve" class="col-sm-2 col-form-label">限流閥</label>
+                <label for="minutes" class="col-sm-2 col-form-label">平均交易時間(分鐘)</label>
                 <div class="col-sm-10">
                   <Field
-                    name="限流閥"
+                    name="平均交易時間(分鐘)"
                     type="number"
                     class="form-control"
                     rules="required"
-                    :class="{ 'is-invalid': errors['限流閥'] }"
-                    id="valve"
-                    v-model="editForm.valve"
+                    :class="{ 'is-invalid': errors['平均交易時間(分鐘)'] }"
+                    id="minutes"
+                    v-model="editForm.minutes"
                   />
                   <ErrorMessage
-                    name="限流閥"
+                    name="平均交易時間(分鐘)"
                     class="invalid-feedback"
                   />
                 </div>
@@ -91,34 +91,34 @@
                 <label for="valvetime" class="col-sm-2 col-form-label">交易間隔(ms)</label>
                 <div class="col-sm-10">
                   <Field
-                    name="交易間隔"
+                    name="交易間隔(ms)"
                     type="number"
                     class="form-control"
                     rules="required"
-                    :class="{ 'is-invalid': errors['交易間隔'] }"
+                    :class="{ 'is-invalid': errors['交易間隔(ms)'] }"
                     id="valvetime"
                     v-model="editForm.valvetime"
                   />
                   <ErrorMessage
-                    name="交易間隔"
+                    name="交易間隔(ms)"
                     class="invalid-feedback"
                   />
                 </div>
               </div>
               <div class="row mb-3">
-                <label for="valveStanderd" class="col-sm-2 col-form-label">交易平均時間標準</label>
+                <label for="valveStanderd" class="col-sm-2 col-form-label">交易平均時間標準差</label>
                 <div class="col-sm-10">
                   <Field
-                    name="交易平均時間標準"
+                    name="交易平均時間標準差"
                     type="number"
                     class="form-control"
                     rules="required"
-                    :class="{ 'is-invalid': errors['交易平均時間標準'] }"
+                    :class="{ 'is-invalid': errors['交易平均時間標準差'] }"
                     id="valveStanderd"
                     v-model="editForm.valveStanderd"
                   />
                   <ErrorMessage
-                    name="交易平均時間標準"
+                    name="交易平均時間標準差"
                     class="invalid-feedback"
                   />
                 </div>
@@ -186,7 +186,7 @@ export default {
     openEditModal (item) {
       this.editForm = {
         name: JSON.parse(JSON.stringify(item.name)),
-        valve: JSON.parse(JSON.stringify(item.valve)),
+        valve: JSON.parse(JSON.stringify(item.minutes)),
         valvetime: JSON.parse(JSON.stringify(item.valveTime)),
         valveStanderd: JSON.parse(JSON.stringify(item.valveStanderd))
       }

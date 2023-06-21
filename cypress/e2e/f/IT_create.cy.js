@@ -16,9 +16,9 @@ describe('template spec', () => {
     cy.get('button').contains('新增群組').click()
     cy.wait(2000)
     cy.get('.modal-content:contains("新增群組權限")').within(() => {
-      cy.get('input[name="群組代號"]').type('Cypress IT')
-      cy.get('input[name="群組名稱"]').type('Cypress IT Group')
-      cy.get('input[id="description"]').type('測試自動建立IT群組2')
+      cy.get('input[name="群組代號"]').type('Cypress IT 001')
+      cy.get('input[name="群組名稱"]').type('Cypress IT Group1')
+      cy.get('input[id="description"]').type('測試自動建立IT群組1')
       cy.get('[id="F"]').check()
       cy.get('[id="I6"]').check()
       cy.get('button').contains('新增').click()
@@ -34,10 +34,10 @@ describe('template spec', () => {
     cy.wait(2000)
     // 彈窗後的動作
     cy.get('.modal-content:contains("新增帳號")').within(() => {
-      cy.get('input[name="帳號"]').type('itCY2')
-      cy.get('input[name="名稱"]').type('CypressIT2')
+      cy.get('input[name="帳號"]').type('cyIT1')
+      cy.get('input[name="名稱"]').type('CypressIT001')
       cy.get('input[type="radio"][name="是否為AD使用者"]#adType1').check()
-      cy.get('select[name="群組"]').select('Cypress IT Group - Cypress IT')
+      cy.get('select[name="群組"]').select('Cypress IT Group1 - Cypress IT 001')
       cy.get('button').contains('新增').click()
     })
 

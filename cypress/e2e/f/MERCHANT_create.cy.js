@@ -5,7 +5,7 @@ describe('template spec', () => {
     cy.viewport(1500, 1000);
 
     cy.visit('https://nbps.ubpg.com.tw/nbps/login')
-    cy.get('input[name="帳號"]').type('testCypressUser')
+    cy.get('input[name="帳號"]').type('cyUser1')
     cy.get('input[name="密碼"]').type('Ubot123456!')
     cy.get('button').contains("登入").click({force: true})
 
@@ -27,7 +27,7 @@ describe('template spec', () => {
           cy.reload()
 
           // 再次登入
-          cy.loginViaUi({ pwd: 'Ubot123456!', userName: 'testCypressUser' })
+          cy.loginViaUi({ pwd: 'Ubot123456!', userName: 'cyUser1' })
         }
     })
     
@@ -39,8 +39,8 @@ describe('template spec', () => {
     cy.get('button').contains('新增').click()
     cy.wait(2000)
     cy.get('.modal-content:contains("新增特店資料")').within(() => {
-      cy.get('input[name="特店代碼"]').type('000101010101101')
-      cy.get('input[name="特店名稱"]').type('Cypress特店')
+      cy.get('input[name="特店代碼"]').type('000101010101102')
+      cy.get('input[name="特店名稱"]').type('Cypress特店001')
       cy.get('select[name="特店作業類型"]').select('自行上傳(收單流程)')
       cy.get('#SALE').check()
       cy.get('#AUTH').check()
@@ -49,9 +49,9 @@ describe('template spec', () => {
       // cy.get('#idNo2').check()
       cy.get('select[name="作業時間"]').select('營業日09:00 - 17:30')
       cy.get('#uploadPd').type('Ubot!')
-      cy.get('#tidCnt').type('2')
+      cy.get('#tidCnt').type('10')
       cy.get('select[name="合作狀態"]').select('合作中')
-      cy.get('textarea').type('Cypress特店測試')
+      cy.get('textarea').type('Cypress特店測試1')
       cy.get('button').contains('新增').click()
     })
      
@@ -63,9 +63,9 @@ describe('template spec', () => {
     cy.get('button').contains('新增群組').click()
     cy.wait(2000)
     cy.get('.modal-content:contains("新增群組權限")').within(() => {
-      cy.get('input[name="群組代號"]').type('testCY_MERCHANT')
-      cy.get('input[name="群組名稱"]').type('testCY_MERCHANT_GP')
-      cy.get('input[id="description"]').type('測試自動建立MERCHANT群組')
+      cy.get('input[name="群組代號"]').type('Cypress MERCHANT 001')
+      cy.get('input[name="群組名稱"]').type('Cypress MERCHANT Group1')
+      cy.get('input[id="description"]').type('測試自動建立MERCHANT群組1')
       cy.get('[id="B1"]').check()
       cy.get('[id="B2"]').check()
       cy.get('[id="B3"]').check()
@@ -81,12 +81,12 @@ describe('template spec', () => {
      cy.get('button').contains('新增帳號').click()
      cy.wait(2000)
      cy.get('.modal-content:contains("新增特店資料")').within(() => {
-       cy.get('input[name="帳號"]').type('testCypressMerchant')
+       cy.get('input[name="帳號"]').type('cyMerchant1')
        cy.get('input[name="名稱"]').type('Cypress測試帳Merchant')
-       cy.get('select[name="所屬特店"]').select('000101010101101(Cypress特店)')
-       cy.get('input[name="Email"]').type('ubotMerchant@utic.com.tw')
+       cy.get('select[name="所屬特店"]').select('000101010101102(Cypress特店001)')
+       cy.get('input[name="Email"]').type('ubotMerchant01@utic.com.tw')
       //  cy.get(':nth-child(7) > .col-sm-10 > #shop').select('testCY_MERCHANT_GP - testCY_MERCHANT')
-       cy.get('select[name="群組"]').select('testCY_MERCHANT_GP - testCY_MERCHANT')
+       cy.get('select[name="群組"]').select('Cypress MERCHANT Group1 - Cypress MERCHANT 001')
        cy.get('button').contains('新增').click()
      })
 
@@ -98,7 +98,7 @@ describe('template spec', () => {
 
     // 登入創建的特店帳號 & 初次登入改密碼
     cy.visit('https://nbps.ubpg.com.tw/nbps/login')
-    cy.get('input[name="帳號"]').type('testCypressMerchant')
+    cy.get('input[name="帳號"]').type('cyMerchant1')
     cy.get('input[name="密碼"]').type('UBot123456!')
     cy.get('button').contains("登入").click({force: true})
     cy.wait(2000)
@@ -108,9 +108,6 @@ describe('template spec', () => {
 
     cy.wait(3000)
     cy.reload()
-
-
-
 
   })
 })
