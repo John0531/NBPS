@@ -74,7 +74,7 @@
                 <td>{{$custom.currency(item.refundAmt)}}</td>
                 <td>
                   <button @click="getDetail(item)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
-                  <button @click="multipleCancel(item)" v-if="item.trxStatus!=='TRX_FINISH_REVERSAL'" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">整批取消</button>
+                  <button @click="multipleCancel(item)" v-if="item.trxStatus!=='TRX_FINISH_REVERSAL'&&item.trxStatus!=='TRX_ALL_VOID_PROCESS'" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">整批取消</button>
                 </td>
               </tr>
             </tbody>
