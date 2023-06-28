@@ -285,6 +285,20 @@ export default {
         const result = await service.singleCancel(postData)
         this.$store.commit('changeLoading', false)
         if (result) {
+          this.$swal.fire({
+            toast: true,
+            position: 'center',
+            icon: 'info',
+            title: result,
+            showConfirmButton: false,
+            timer: 1500,
+            width: 500,
+            background: '#F0F0F2',
+            padding: 25,
+            customClass: {
+              container: 'z-10000'
+            }
+          })
           this.getDetail()
         }
       }
