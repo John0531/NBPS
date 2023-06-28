@@ -10,8 +10,8 @@
           <div class="card-body">
             <div class="row py-3">
               <div class="col-xxl-4 d-flex mb-4">
-                <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">商店代號/商店名稱:</h5>
-                <input @input="searchData.page = 1;
+                <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店代碼/特店名稱:</h5>
+                <input @keyup="searchData.page = 1;
                 searchData.pageSize = 10;
                 $refs.mainData.PageInfo.pageSize = 10;getDataByCond()" type="text" class="form-control" v-model.trim="searchData.storeId">
                 <!-- <button class="btn btn-primary me-3 px-4" @click="getDataByCond()">搜尋</button> -->
@@ -25,12 +25,12 @@
           <template #default>
             <thead>
               <tr>
-                <th scope="col">商店代號</th>
-                <th scope="col">商店名稱</th>
+                <th scope="col">特店代碼</th>
+                <th scope="col">特店名稱</th>
                 <th scope="col">帳號</th>
-                <th scope="col">類別</th>
-                <th scope="col">名稱</th>
-                <th scope="col">群組</th>
+                <th scope="col">帳號類別</th>
+                <th scope="col">帳號名稱</th>
+                <th scope="col">帳號所屬特店群組</th>
                 <th scope="col">簡述</th>
                 <th scope="col"></th>
               </tr>

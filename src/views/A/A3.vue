@@ -49,14 +49,14 @@
                 <td>{{item.batchFileName}}</td>
                 <td>{{item.submitTime}}</td>
                 <td>
-                  <span v-if="item.trxStatus==='TRX_WAITING'">等待交易中*</span>
-                  <span v-if="item.trxStatus==='TRX_PROCESS'">交易處理中*</span>
+                  <span v-if="item.trxStatus==='TRX_WAITING'">等待交易中</span>
+                  <span v-if="item.trxStatus==='TRX_PROCESS'">交易處理中</span>
                   <span v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'">交易處理完成但有異常</span>
-                  <span v-if="item.trxStatus==='TRX_ERROR_PROCESS'">異常交易取消中*</span>
+                  <span v-if="item.trxStatus==='TRX_ERROR_PROCESS'">異常交易取消中</span>
                   <span v-if="item.trxStatus==='TRX_ERROR_REVERSAL'">異常交易已取消</span>
                   <span v-if="item.trxStatus==='TRX_ERROR_FAIL'">異常交易取消錯誤</span>
-                  <span v-if="item.trxStatus==='TRX_ALL_VOID_WAITING'">等待整批交易取消中*</span>
-                  <span v-if="item.trxStatus==='TRX_ALL_VOID_PROCESS'">交易整批取消中*</span>
+                  <span v-if="item.trxStatus==='TRX_ALL_VOID_WAITING'">等待整批交易取消中</span>
+                  <span v-if="item.trxStatus==='TRX_ALL_VOID_PROCESS'">交易整批取消中</span>
                   <span v-if="item.trxStatus==='TRX_ALL_VOID_FAIL'">交易整批取消錯誤</span>
                   <span v-if="item.trxStatus==='TRX_FINISH_REVERSAL'">交易已取消</span>
                   <span v-if="item.trxStatus==='TRX_FINISH'">交易處理完成</span>
@@ -74,7 +74,7 @@
                 <td>{{$custom.currency(item.refundAmt)}}</td>
                 <td>
                   <button @click="getDetail(item)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
-                  <button @click="multipleCancel(item)" v-if="item.trxStatus!=='TRX_FINISH_REVERSAL'" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">整批取消</button>
+                  <button @click="multipleCancel(item)" v-if="item.trxStatus!=='TRX_FINISH_REVERSAL'&&item.trxStatus!=='TRX_ALL_VOID_PROCESS'" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">整批取消</button>
                 </td>
               </tr>
             </tbody>

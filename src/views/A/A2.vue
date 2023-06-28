@@ -131,7 +131,7 @@
                   </button>
                   <button
                     @click="downloadResendTrans(item)"
-                    v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'"
+                    v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'&&currentFormattedDate === item.submitTime.substr(0,10)"
                     class="btn btn-danger btn-sm"
                     :disabled="!$store.state.pageBtnPermission.includes('execute')"
                   >
@@ -335,6 +335,7 @@ export default {
   },
   data () {
     return {
+      currentDate: null,
       batchList: [],
       OffLineSale: false,
       pageData: {}, // ?分頁資訊
@@ -366,6 +367,13 @@ export default {
     },
     isVoidAuth () {
       return this.batchList.some(item => 'authVoidStatus' in item)
+    },
+    currentFormattedDate () {
+      const now = new Date()
+      const year = now.getFullYear()
+      const month = ('0' + (now.getMonth() + 1)).slice(-2)
+      const day = ('0' + now.getDate()).slice(-2)
+      return `${year}-${month}-${day}`
     }
   },
   methods: {
@@ -510,6 +518,7 @@ export default {
   },
   mounted () {
     this.getDefaultData()
+    this.currentDate = new Date()
     this.detailModal = new this.$custom.bootstrap.Modal(this.$refs.detailModal, { backdrop: 'static' })
   }
 }

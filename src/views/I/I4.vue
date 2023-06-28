@@ -77,7 +77,7 @@
                 <div class="card">
                   <div class="card-header">
                     <h2 class="fw-bold mb-3">E5:分析報表下載作業批次</h2>
-                    <h6 >產製<span class="fw-bold text-primary">選擇月份的上個月</span>之月結報表 (範例: 選取月份為5月，則產製4月份的報表)</h6>
+                    <h6 >產製<span class="fw-bold text-primary">選擇月份</span>之月結報表</h6>
                   </div>
                   <div class="card-body">
                     <div class="row py-3">
@@ -114,7 +114,7 @@
                 <div class="card">
                   <div class="card-header">
                     <h2 class="fw-bold mb-3">E3:特店月結報表產製作業批次</h2>
-                    <h6 >產製<span class="fw-bold text-primary">選擇月份的上個月</span>之月結報表 (範例: 選取月份為5月，則產製4月份的報表)</h6>
+                    <h6 >產製<span class="fw-bold text-primary">選擇月份</span>之月結報表</h6>
                   </div>
                   <div class="card-body">
                     <div class="row py-3">
@@ -150,7 +150,7 @@
                 <div class="card">
                   <div class="card-header">
                     <h2 class="fw-bold mb-3">E3:特店日結報表下載作業批次</h2>
-                    <h6 >產製<span class="fw-bold text-primary">選擇日期的前一天</span>之單日報表 (範例: 選取日期4/2，則產製4/1的報表)</h6>
+                    <h6 >產製<span class="fw-bold text-primary">選擇日期</span>之單日報表</h6>
                   </div>
                   <div class="card-body">
                     <div class="row py-3">
@@ -173,6 +173,42 @@
     </div>
   </div>
 
+<!-- 重新執行E3批次並更新請款資料 Modal -->
+<div class="modal fade" ref="detailE3UpdateReplyModal" tabindex="-1" aria-labelledby="detailE3UpdateReplyModal" aria-hidden="true">
+      <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-success">
+            <h5 class="modal-title text-white">重新執行E3批次並更新請款資料</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row justify-content-center">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h2 class="fw-bold mb-3">E3:請款結果更新批次</h2>
+                    <h6 >產製<span class="fw-bold text-primary">選擇日期</span>之單日報表</h6>
+                  </div>
+                  <div class="card-body">
+                    <div class="row py-3">
+                      <div class="col-xxl-8 d-flex mb-4">
+                        <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">日期:</h5>
+                        <Datepicker auto-apply enable-seconds v-model="reExeDate" model-type="yyyy-MM-dd" format="yyyy/MM/dd"></Datepicker>
+                        <!-- <Datepicker class="w-xxl-50 w-100" v-model="reExeDate" month-picker auto-apply model-type="yyyy-MM-dd" format="yyyy/MM/dd"></Datepicker> -->
+                      </div>
+                    </div>
+                    <button @click="UpdateReplyCodeE3(this.detailE3UpdateReplyModal)" :disabled="!$store.state.pageBtnPermission.includes('execute')" class="btn btn-primary me-3 px-4">執行批次</button>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -207,13 +243,28 @@ export default {
       detailE5Modal: '',
       detailE3Modal: '',
       detailE3DailyModal: '',
+      detailE3UpdateReplyModal: '',
       sendData: {}
     }
   },
   methods: {
     getDetail (item) {
       switch (item.name) {
-        case 'E3特店日結報表下載作業批次':
+        case 'E3請款結果更新批次':
+          this.detailE3UpdateReplyModal = new this.$custom.bootstrap.Modal(this.$refs.detailE3UpdateReplyModal, { backdrop: 'static' })
+          // this.detailE3Modal.msgId = item.msgId
+          this.detailE3UpdateReplyModal.batchHistoryId = item.id
+          this.detailE3UpdateReplyModal.batchCode = 'E3'
+          this.detailE3UpdateReplyModal.show()
+          break
+        case 'E3特店日結成功報表下載作業批次':
+          this.detailE3DailyModal = new this.$custom.bootstrap.Modal(this.$refs.detailE3DailyModal, { backdrop: 'static' })
+          // this.detailE3Modal.msgId = item.msgId
+          this.detailE3DailyModal.batchHistoryId = item.id
+          this.detailE3DailyModal.batchCode = 'E3'
+          this.detailE3DailyModal.show()
+          break
+        case 'E3特店日結失敗報表下載作業批次':
           this.detailE3DailyModal = new this.$custom.bootstrap.Modal(this.$refs.detailE3DailyModal, { backdrop: 'static' })
           // this.detailE3Modal.msgId = item.msgId
           this.detailE3DailyModal.batchHistoryId = item.id
@@ -318,6 +369,37 @@ export default {
         })
       }
       this.detailE3Modal.show()
+      this.getData()
+    },
+    async UpdateReplyCodeE3 (item) { // ? 重新執行E3批次
+      if (item) {
+        // this.detailDataPost.msgId = item.msgId
+        this.detailDataPost.page = 1
+        this.detailDataPost.pageSize = 10
+        this.detailDataPost.batchCode = 'E3'
+        this.detailDataPost.batchHistoryId = item.batchHistoryId
+        this.detailDataPost.datetime = this.reExeDate // 傳送產製批次指定的日期
+      }
+      this.$store.commit('changeLoading', true)
+      const result = await service.batchUpdateReplyCode(this.detailDataPost)
+      this.$store.commit('changeLoading', false)
+      if (result) {
+        this.$swal.fire({
+          toast: true,
+          position: 'center',
+          icon: 'success',
+          title: '批次已重新執行',
+          showConfirmButton: false,
+          timer: 1500,
+          width: 500,
+          background: '#F0F0F2',
+          padding: 25,
+          customClass: {
+            container: 'z-10000'
+          }
+        })
+      }
+      this.detailE3UpdateReplyModal.show()
       this.getData()
     },
     async reExeDailyE3 (item) { // ? 重新執行E3批次

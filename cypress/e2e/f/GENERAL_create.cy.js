@@ -7,7 +7,7 @@ describe('template spec', () => {
     // cy.loginViaUi({ pwd: 'Ubot123456!', userName: 'testCypress' })
 
     cy.visit('https://nbps.ubpg.com.tw/nbps/login')
-    cy.get('input[name="帳號"]').type('testCypress')
+    cy.get('input[name="帳號"]').type('cyIT1')
     cy.get('input[name="密碼"]').type('Ubot123456!')
     cy.get('button').contains("登入").click({force: true})
 
@@ -29,7 +29,7 @@ describe('template spec', () => {
           cy.reload()
 
           // 再次登入
-          cy.loginViaUi({ pwd: 'Ubot123456!', userName: 'testCypress' })
+          cy.loginViaUi({ pwd: 'Ubot123456!', userName: 'cyIT1' })
         }
     })
     
@@ -41,9 +41,9 @@ describe('template spec', () => {
      cy.get('button').contains('新增群組').click()
      cy.wait(2000)
      cy.get('.modal-content:contains("新增群組權限")').within(() => {
-       cy.get('input[name="群組代號"]').type('testCY_USER')
-       cy.get('input[name="群組名稱"]').type('testCY_USER_GP')
-       cy.get('input[id="description"]').type('測試自動建立USER群組')
+       cy.get('input[name="群組代號"]').type('Cypress User 001')
+       cy.get('input[name="群組名稱"]').type('Cypress User Group1')
+       cy.get('input[id="description"]').type('測試自動建立USER群組1')
        cy.get('[id="A"]').check()
        cy.get('[id="C"]').check()
        cy.get('[id="G"]').check()
@@ -61,10 +61,10 @@ describe('template spec', () => {
      cy.wait(2000)
      // 彈窗後的動作
      cy.get('.modal-content:contains("新增帳號")').within(() => {
-       cy.get('input[name="帳號"]').type('testCypressUser')
-       cy.get('input[name="名稱"]').type('Cypress測試帳User')
+       cy.get('input[name="帳號"]').type('cyUser1')
+       cy.get('input[name="名稱"]').type('CypressUser001')
        cy.get('input[type="radio"][name="是否為AD使用者"]#adType1').check()
-       cy.get('select[name="群組"]').select('testCY_USER_GP - testCY_USER')
+       cy.get('select[name="群組"]').select('Cypress User Group1 - Cypress User 001')
        cy.get('button').contains('新增').click()
      })
   
