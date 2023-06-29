@@ -64,7 +64,7 @@ const service = {
       const url = `${process.env.VUE_APP_BASE_API}/a3/singleCancel`
       const res = await axios.post(url, postData)
       if (res.data) {
-        return true
+        return res.data
       }
     } catch (error) {
       if (error.response.status === 401) {
