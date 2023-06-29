@@ -101,7 +101,7 @@
                 <td>{{item.totalCnt}}</td>
                 <td>{{$custom.currency(item.totalAmt)}}</td>
                 <td>
-                  <button v-if="item.trxStatus==='TRX_FINISH'" @click="getDetail(item,defaultDetailPage.page,defaultDetailPage.pageSize)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
+                  <button v-if="item.trxStatus==='TRX_FINISH'||item.trxStatus==='TRX_FINISH_WITH_ERROR'||item.trxStatus==='TRX_ERROR_REVERSAL'" @click="getDetail(item,defaultDetailPage.page,defaultDetailPage.pageSize)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
                   <button v-if="showDLbtn(item.batchStatus)&&showDLbtn(item.trxStatus)" @click="downloadReply(item)" class="btn btn-success me-2 btn-sm" :disabled="!($store.state.pageBtnPermission.includes('download'))">下載回覆檔</button>
                   <!-- <button v-if="item.batchStatus==='VALIDATE_FAIL'" @click="getError(item)" class="btn btn-danger me-2 btn-sm">檢視錯誤</button> -->
                 </td>
