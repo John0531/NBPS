@@ -105,7 +105,7 @@ export default {
     }
   },
   mounted () {
-    this.user.validateCode = this.CaptchaCode
+    // this.user.validateCode = this.CaptchaCode
   }
 }
 </script>
