@@ -15,7 +15,7 @@
               </div>
               <div class="mb-4">
                 <div class="position-relative">
-                  <Field id="PwdInput" name="密碼" :class="{ 'is-invalid': errors['密碼'] }" class="form-control form-control-lg" type="password" placeholder="密碼" rules="CheckPwd" v-model="user.pd" style="background-image:none;"></Field>
+                  <Field id="PwdInput" name="密碼" :class="{ 'is-invalid': errors['密碼'] }" class="form-control form-control-lg" type="password" placeholder="密碼" v-model="user.pd" style="background-image:none;"></Field>
                   <img v-if="PwdEyeOpen" @click.prevent="PwdEyeOpen=!PwdEyeOpen" class="position-absolute eye-open" src="@/assets/img/open_eye.svg" alt="">
                   <img v-else @click.prevent="PwdEyeOpen=!PwdEyeOpen" class="position-absolute eye-close" src="@/assets/img/close_eye.svg" alt="">
                   <ErrorMessage name="密碼" class="invalid-feedback"></ErrorMessage>
@@ -23,7 +23,7 @@
               </div>
               <div class="mb-4 input-group">
                 <Field name="驗證碼" :class="{ 'is-invalid': errors['驗證碼'] }" class="form-control form-control-lg" type="text" placeholder="驗證碼" rules="required" v-model="user.validateCode"></Field>
-                <a href="#"><CaptchaCode v-model:captcha="CaptchaCode" style="border-top-right-radius:0.5rem;border-bottom-right-radius:0.5rem;height:100%"></CaptchaCode></a>
+                <a @click.prevent href="#"><CaptchaCode v-model:captcha="CaptchaCode" style="border-top-right-radius:0.5rem;border-bottom-right-radius:0.5rem;height:100%"></CaptchaCode></a>
                 <ErrorMessage name="驗證碼" class="invalid-feedback"></ErrorMessage>
               </div>
               <div class="d-flex justify-content-end">
