@@ -37,10 +37,10 @@
                 <th scope="col">請款日期</th>
                 <th scope="col">特店代號</th>
                 <th scope="col">特店名稱</th>
-                <th scope="col">請款成功總筆數</th>
-                <th scope="col">請款成功總金額</th>
-                <th scope="col">請款失敗總筆數</th>
-                <th scope="col">請款失敗總金額</th>
+                <th scope="col" v-if="monthGridData.totalSuccessSettleCount !=0">請款成功總筆數</th>
+                <th scope="col" v-if="monthGridData.totalSuccessSettleAmt !=0">請款成功總金額</th>
+                <th scope="col" v-if="monthGridData.totalFailSettleCount !=0">請款失敗總筆數</th>
+                <th scope="col" v-if="monthGridData.totalFailSettleAmt !=0">請款失敗總金額</th>
                 <th scope="col"></th>
               </tr>
             </thead>
@@ -49,10 +49,10 @@
                 <th scope="row">{{monthGridData.date}}</th>
                 <td>{{monthGridData.storeId}}</td>
                 <td>{{monthGridData.storeName}}</td>
-                <td>{{monthGridData.totalSuccessSettleCount}}</td>
-                <td>{{$custom.currency(monthGridData.totalSuccessSettleAmt)}}</td>
-                <td>{{monthGridData.totalFailSettleCount}}</td>
-                <td>{{$custom.currency(monthGridData.totalFailSettleAmt)}}</td>
+                <td v-if="monthGridData.totalSuccessSettleCount !=0">{{monthGridData.totalSuccessSettleCount}}</td>
+                <td v-if="monthGridData.totalSuccessSettleAmt !=0">{{$custom.currency(monthGridData.totalSuccessSettleAmt)}}</td>
+                <td v-if="monthGridData.totalFailSettleCount !=0">{{monthGridData.totalFailSettleCount}}</td>
+                <td v-if="monthGridData.totalFailSettleAmt !=0">{{$custom.currency(monthGridData.totalFailSettleAmt)}}</td>
                 <td>
                   <button @click.prevent="downloadMonthReport" class="btn btn-primary me-2 btn-sm">下載</button>
                 </td>
@@ -74,6 +74,7 @@
                 <th scope="col">請款失敗總金額</th>
                 <th scope="col">下載成功明細</th>
                 <th scope="col">下載失敗明細</th>
+                <th scope="col"></th>
               </tr>
             </thead>
             <tbody>
@@ -91,6 +92,7 @@
                 <td>
                   <button v-if="item.totalFailSettleCount!==0" @click.prevent="downloadDateReport(item,'B4FAIL')" class="btn btn-danger me-2 btn-sm">下載失敗明細</button>
                 </td>
+                <td v-if="item.totalSuccessSettleCount ==0 && item.totalFailSettleCount ==0">未完成請款</td>
               </tr>
             </tbody>
           </template>
@@ -103,7 +105,7 @@
       <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header bg-danger">
-            <h5 class="modal-title text-white">檢失敗視明細</h5>
+            <h5 class="modal-title text-white">檢視明細</h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
