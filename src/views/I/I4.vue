@@ -77,7 +77,7 @@
                 <div class="card">
                   <div class="card-header">
                     <h2 class="fw-bold mb-3">E5:分析報表下載作業批次</h2>
-                    <h6 >產製<span class="fw-bold text-primary">選擇月份</span>之月結報表</h6>
+                    <h6 >產製選擇月份的<span class="fw-bold text-primary">前一個月</span>的報表</h6>
                   </div>
                   <div class="card-body">
                     <div class="row py-3">
@@ -242,6 +242,7 @@ export default {
       detailPageData: {}, // ?詳細分頁資訊
       detailE5Modal: '',
       detailE3Modal: '',
+      detailE7Modal: '',
       detailE3DailyModal: '',
       detailE3UpdateReplyModal: '',
       sendData: {}
@@ -284,6 +285,11 @@ export default {
           this.detailE5Modal.batchHistoryId = item.id
           this.detailE5Modal.batchCode = 'E5'
           this.detailE5Modal.show()
+          break
+        case '同步BIN碼批次':
+          // this.detailE7Modal.batchHistoryId = item.id
+          // this.detailE7Modal.batchCode = 'E7'
+          this.reExecuteE7(item.id)
           break
         default:
           break
@@ -338,6 +344,35 @@ export default {
         })
       }
       this.detailE5Modal.show()
+    },
+    async reExecuteE7 (item) { // ? 重新執行E7批次
+      if (item) {
+        // this.detailDataPost.msgId = item.msgId
+        this.detailDataPost.page = 1
+        this.detailDataPost.pageSize = 10
+        this.detailDataPost.batchCode = 'E7'
+        this.detailDataPost.batchHistoryId = item
+        this.detailDataPost.datetime = this.reExeDate // 傳送產製批次指定的日期
+      }
+      this.$store.commit('changeLoading', true)
+      const result = await service.updateBINCode(this.detailDataPost)
+      this.$store.commit('changeLoading', false)
+      if (result) {
+        this.$swal.fire({
+          toast: true,
+          position: 'center',
+          icon: 'success',
+          title: '批次已重新執行',
+          showConfirmButton: false,
+          timer: 1500,
+          width: 500,
+          background: '#F0F0F2',
+          padding: 25,
+          customClass: {
+            container: 'z-10000'
+          }
+        })
+      }
     },
     async reExecuteE3 (item) { // ? 重新執行E3批次
       if (item) {
@@ -437,6 +472,7 @@ export default {
       this.getData()
       this.detailE3Modal = new this.$custom.bootstrap.Modal(this.$refs.detailE3Modal, { backdrop: 'static' })
       this.detailE3DailyModal = new this.$custom.bootstrap.Modal(this.$refs.detailE3DailyModal, { backdrop: 'static' })
+      // this.detailE7Modal = new this.$custom.bootstrap.Modal(this.$refs.detailE7Modal, { backdrop: 'static' })
       this.detailE5Modal = new this.$custom.bootstrap.Modal(this.$refs.detailE5Modal, { backdrop: 'static' })
     }
   }

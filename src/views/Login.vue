@@ -23,7 +23,7 @@
               </div>
               <div class="mb-4 input-group">
                 <Field name="驗證碼" :class="{ 'is-invalid': errors['驗證碼'] }" class="form-control form-control-lg" type="text" placeholder="驗證碼" rules="required" v-model="user.validateCode"></Field>
-                <a @click.prevent href="#"><CaptchaCode v-model:captcha="CaptchaCode" style="border-top-right-radius:0.5rem;border-bottom-right-radius:0.5rem;height:100%"></CaptchaCode></a>
+                <a @click.prevent href="#"><CaptchaCode ref="captchaCode" class="custom-captcha" v-model:captcha="CaptchaCode" style="border-top-right-radius:0.5rem;border-bottom-right-radius:0.5rem;height:100%;"></CaptchaCode></a>
                 <ErrorMessage name="驗證碼" class="invalid-feedback"></ErrorMessage>
               </div>
               <div class="d-flex justify-content-end">
@@ -150,5 +150,9 @@ export default {
   /* display: flex; */
   align-items: right; /* 垂直居中對齊圖片 */
   margin-left: 35px;
+}
+.custom-captcha .captcha-code {
+  /* 調整驗證碼文字顏色為紅色 */
+  color: #FF0000 !important;
 }
 </style>

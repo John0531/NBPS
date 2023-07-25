@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">系統批次停機作業</h2>
-            <h6>供網通經辦查詢系統批次執行與否，與預告停止系統批次(非立即停止而是預告系統不再執行批次)</h6>
+            <h6>供網通經辦查詢系統批次執行與否，與預告停止系統批次(非立即停止而是預告系統不再執行批次)。</h6>
           </div>
         </div>
         <MainData :Page="serverPageData" @ChangePageInfo="getServerPageInfo" @updatePageInfo="getServerPageInfo">

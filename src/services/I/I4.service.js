@@ -47,6 +47,20 @@ const service = {
       }
     }
   },
+  async updateBINCode (postData) {
+    try {
+      const url = `${process.env.VUE_APP_BASE_API}/i4/UpdateBINCode`
+      const res = await axios.post(url, postData)
+      return res.data
+    } catch (error) {
+      if (error.response.status === 401) {
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
+        if (user) {
+          return service.updateBINCode(postData)
+        }
+      }
+    }
+  },
   async batchDailyExecute (postData) {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/i4/batchDailyExecute`

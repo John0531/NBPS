@@ -4,7 +4,7 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header">
-            <h2 class="fw-bold mb-3">批次交易查詢作業</h2>
+            <h2 class="fw-bold mb-3">異常紀錄查詢</h2>
             <h6>供帳務科經辦依起訖日、特店查詢批次交易結果</h6>
           </div>
           <div class="card-body">

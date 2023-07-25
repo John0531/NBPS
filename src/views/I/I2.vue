@@ -5,9 +5,9 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">交易限流閥設定</h2>
-            <h6>供網通經辦查詢、設定往COSES交易限流閥設定，</h6>
-            <h6>(A.) 限流閥: 同時有多少通道往COSES送交易，若設定為2，則同時可往COSES送兩筆交易</h6>
-            <h6>(B.) 交易間隔: 單一通道每打完一筆須等多久才能再打下一筆。</h6>
+            <h6>供網通經辦查詢/設定送往COSES交易之限流閥</h6>
+            <h6><span class="fw-bold">(A.) 限流閥：</span> 同時有多少通道往COSES送交易，若設定為2，則可同時往COSES送兩筆交易。</h6>
+            <h6><span class="fw-bold">(B.) 交易間隔：</span> 單一通道每打完一筆須等多久才能再打下一筆。</h6>
           </div>
         </div>
         <MainData ref="ValveMainData" :Page="PageData" @ChangePageInfo="getPageInfo">

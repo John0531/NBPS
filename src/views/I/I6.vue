@@ -139,7 +139,7 @@ export default {
       const url = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
       a.href = url
       a.style.display = 'none'
-      a.download = '總計excel.xlsx'
+      a.download = '使用者操作紀錄.xlsx'
       a.click()
       // 清除暫存
       a.href = ''
