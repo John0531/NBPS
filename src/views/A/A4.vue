@@ -20,13 +20,17 @@
               <div class="col-xxl-6"></div>
               <div class="col-xxl-6 d-flex mb-4" v-if="searchType==='month'">
                 <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">依月份:</h5>
-                <Datepicker class="w-xxl-50 w-100" v-model="searchMonth" month-picker auto-apply format="yyyy年MM月"></Datepicker>
+                <Datepicker  v-model="date" month-picker auto-apply format="yyyy年MM月"></Datepicker>
               </div>
               <div class="col-xxl-6 d-flex mb-4" v-if="searchType==='date'">
                 <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">依日期:</h5>
-                <Datepicker auto-apply enable-seconds v-model="searchDate" model-type="yyyy-MM-dd" format="yyyy/MM/dd"></Datepicker>
+                <Datepicker class="w-xxl-50 w-100" auto-apply enable-seconds v-model="searchDate" model-type="yyyy-MM-dd" format="yyyy/MM/dd"></Datepicker>
               </div>
             </div>
+            <div class="col-xxl-6 d-flex mb-4" v-if="searchType==='date'">
+                <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">特店代碼/特店名稱:</h5>
+                <input  v-model="searchDatePost.storeId" type="text" class="form-control" placeholder="">
+              </div>
             <button @click="downloadReport" :disabled="!$store.state.pageBtnPermission.includes('download')" class="btn btn-primary me-3 px-4" v-if="searchType==='month'" >下載</button>
             <button class="btn btn-primary me-3 px-4" @click.prevent="searchReport" v-if="searchType==='date'">搜尋</button>
           </div>
