@@ -68,7 +68,7 @@
                 <td>
                   <button v-if="item.totalFailSettleCount!==0" @click.prevent="downloadDateReport(item,'B4FAIL')" class="btn btn-danger me-2 btn-sm">下載失敗明細</button>
                 </td>
-                <td v-if="item.totalSuccessSettleCount ==0 && item.totalFailSettleCount ==0">未完成請款</td>
+                <td v-if="item.totalSuccessSettleCount ==0 && item.totalFailSettleCount ==0">未產生明細</td>
               </tr>
             </tbody>
           </template>
