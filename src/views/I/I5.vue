@@ -235,6 +235,10 @@ export default {
             item.eventName = 'CALL BANK通知'
           } else if (item.event === 'ABE_VALIDATOR') {
             item.eventName = '批次交易檔檢核錯誤'
+          } else if (item.event === 'TXN_GENERATED_FAIL') {
+            item.eventName = '請款結果查詢及對帳單產製失敗'
+          } else if (item.event === 'BIN_UPDATED_FAIL') {
+            item.eventName = 'BIN碼更新失敗'
           }
           switch (item.storeType) {
             case 'ACQUIRING':
