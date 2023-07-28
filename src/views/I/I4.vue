@@ -77,7 +77,7 @@
                 <div class="card">
                   <div class="card-header">
                     <h2 class="fw-bold mb-3">E5:分析報表下載作業批次</h2>
-                    <h6 >產製選擇月份的<span class="fw-bold text-primary">前一個月</span>的報表</h6>
+                    <h6 >產製<span class="fw-bold text-primary">選擇月份</span>之月結報表</h6>
                   </div>
                   <div class="card-body">
                     <div class="row py-3">
