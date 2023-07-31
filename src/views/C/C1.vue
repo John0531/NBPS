@@ -254,7 +254,7 @@
                       id="entryMode1"
                     />
                     <label class="form-check-label" for="entryMode1">
-                      啟用
+                      電商授權(E)
                     </label>
                   </div>
                   <div class="form-check">
@@ -269,7 +269,7 @@
                       id="entryMode2"
                     />
                     <label class="form-check-label" for="entryMode2">
-                      不啟用
+                      人工授權(M)
                     </label>
                   </div>
                   <ErrorMessage
@@ -635,7 +635,7 @@
                       id="entryMode1_2"
                     />
                     <label class="form-check-label" for="entryMode1_2">
-                      電商授權
+                      電商授權(E)
                     </label>
                   </div>
                   <div class="form-check">
@@ -650,7 +650,7 @@
                       id="entryMode2_2"
                     />
                     <label class="form-check-label" for="entryMode2_2">
-                      人工授權
+                      人工授權(M)
                     </label>
                   </div>
                   <ErrorMessage
