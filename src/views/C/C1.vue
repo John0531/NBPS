@@ -238,6 +238,48 @@
                   />
                 </div>
               </fieldset>
+              <div class="row mb-3" v-if="addForm.storeType!='ACQUIRING'">
+                <fieldset class="row mb-3">
+                <legend class="col-form-label col-sm-2 pt-0">信用卡模式</legend>
+                <div class="col-sm-10 d-flex align-items-center">
+                  <div class="form-check me-3">
+                    <Field
+                      rules="required"
+                      :class="{ 'is-invalid': errors['entryMode'] }"
+                      v-model="addForm.entryMode"
+                      :value="'E'"
+                      class="form-check-input"
+                      type="radio"
+                      name="entryMode"
+                      id="entryMode1"
+                    />
+                    <label class="form-check-label" for="entryMode1">
+                      啟用
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <Field
+                      rules="required"
+                      :class="{ 'is-invalid': errors['entryMode'] }"
+                      v-model="addForm.entryMode"
+                      :value="'M'"
+                      class="form-check-input"
+                      type="radio"
+                      name="entryMode"
+                      id="entryMode2"
+                    />
+                    <label class="form-check-label" for="entryMode2">
+                      不啟用
+                    </label>
+                  </div>
+                  <ErrorMessage
+                    name="entryMode"
+                    class="text-danger ms-3"
+                    style="font-size:0.875em"
+                  />
+                </div>
+              </fieldset>
+              </div>
               <fieldset class="row mb-3">
                 <legend class="col-form-label col-sm-2 pt-0">ID 驗證</legend>
                 <div class="col-sm-10 d-flex align-items-center">
@@ -577,6 +619,48 @@
                   />
                 </div>
               </fieldset>
+              <div class="row mb-3" v-if="editForm.storeType!='ACQUIRING'">
+                <fieldset class="row mb-3">
+                <legend class="col-form-label col-sm-2 pt-0">信用卡模式</legend>
+                <div class="col-sm-10 d-flex align-items-center">
+                  <div class="form-check me-3">
+                    <Field
+                      rules="required"
+                      :class="{ 'is-invalid': errors['entryMode'] }"
+                      v-model="editForm.entryMode"
+                      :value="'E'"
+                      class="form-check-input"
+                      type="radio"
+                      name="entryMode"
+                      id="entryMode1_2"
+                    />
+                    <label class="form-check-label" for="entryMode1_2">
+                      電商授權
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <Field
+                      rules="required"
+                      :class="{ 'is-invalid': errors['entryMode'] }"
+                      v-model="editForm.entryMode"
+                      :value="'M'"
+                      class="form-check-input"
+                      type="radio"
+                      name="entryMode"
+                      id="entryMode2_2"
+                    />
+                    <label class="form-check-label" for="entryMode2_2">
+                      人工授權
+                    </label>
+                  </div>
+                  <ErrorMessage
+                    name="entryMode"
+                    class="text-danger ms-3"
+                    style="font-size:0.875em"
+                  />
+                </div>
+              </fieldset>
+              </div>
               <fieldset class="row mb-3">
                 <legend class="col-form-label col-sm-2 pt-0">ID 驗證</legend>
                 <div class="col-sm-10 d-flex align-items-center">
@@ -753,7 +837,8 @@ export default {
       gridData: [],
       addModal: '',
       addForm: {
-        idNo: false
+        idNo: false,
+        entryMode: 'E'
       },
       editModal: '',
       editForm: {}
@@ -798,7 +883,7 @@ export default {
       // this.getPageInfo()
     },
     async openAddModal () {
-      await this.$refs.addForm.resetForm({ values: { idNo: false } })
+      await this.$refs.addForm.resetForm({ values: { idNo: false, entryMode: 'E' } })
       this.addModal.show()
     },
     openEditModal (item) {
@@ -809,6 +894,9 @@ export default {
     async editStore () {
       if (this.editForm.storeType !== 'ACQUIRING') {
         this.editForm.transTime = '00:00-23:59'
+      }
+      if (this.editForm.storeType === 'ACQUIRING') {
+        this.editForm.entryMode = 'E'
       }
       this.$store.commit('changeLoading', true)
       const result = await service.editStore(this.editForm)
@@ -839,8 +927,13 @@ export default {
       })
     },
     async addStore () {
+      // ! 非收單科的營業時間不受限
       if (this.addForm.storeType !== 'ACQUIRING') {
         this.addForm.transTime = '00:00-23:59'
+      }
+      // ! 收單科的 entryMode = E
+      if (this.addForm.storeType === 'ACQUIRING') {
+        this.addForm.entryMode = 'E'
       }
       this.$store.commit('changeLoading', true)
       const result = await service.addStore(this.addForm)
