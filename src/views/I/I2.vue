@@ -38,6 +38,43 @@
       </div>
     </div>
 
+    <div  class="tbl-container table-responsive">
+      <div class="d-flex mb-3 align-items-center" style="width:300px;">
+        <label for="" class="text-nowrap me-3 fs-5">交易類型 :</label>
+        <select
+        v-model="searchData.tradeType"
+        @change="changeTradeType()" class="form-select" aria-label="Default select example">
+          <option selected value="收單交易">收單交易</option>
+          <option value="發卡交易">發卡交易</option>
+          <option value="異常交易">異常交易</option>
+          <option value="取消交易">取消交易</option>
+        </select>
+    </div>
+      <table class="table table-striped table-bordered table-hover">
+      <thead>
+              <tr>
+                <th scope="col">特店代碼</th>
+                <th scope="col">過去<span :style="{'color': 'red'}">{{lastTradeData.minutes}}</span>分鐘所執行的交易Q3</th>
+                <th scope="col">執行交易筆數</th>
+                <th scope="col">最大可執行交易筆數</th>
+                <th scope="col">所用時間(ms)</th>
+                <th scope="col">開始執行交易時間</th>
+                <th scope="col">交易類型</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">{{lastTradeData.storeId}}</th>
+                <th scope="row">{{lastTradeData.q3}}</th>
+                <td>{{lastTradeData.tidCnt}}</td>
+                <td>{{lastTradeData.maxTidCnt}}</td>
+                <td>{{lastTradeData.runTime}}</td>
+                <td>{{lastTradeData.timestamp}}</td>
+                <td>{{lastTradeData.tradeType}}</td>
+              </tr>
+            </tbody>
+      </table>
+    </div>
     <!-- 交易限流閥設定 Modal -->
     <div class="modal fade" ref="editModal" tabindex="-1" aria-labelledby="editModal" aria-hidden="true">
       <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -151,7 +188,20 @@ export default {
         gridData: []
       },
       editModal: '',
-      editForm: {}
+      editForm: {},
+      lastTradeData: {
+        storeId: '',
+        tidCnt: '',
+        runTime: '',
+        timestamp: '',
+        tradeType: '',
+        maxTidCnt: '',
+        minutes: '',
+        q3: ''
+      },
+      searchData: {
+        tradeType: ''
+      }
     }
   },
   methods: {
@@ -184,6 +234,22 @@ export default {
         this.$refs.ValveMainData.PageInfo.pageSize = 10
       }
     },
+    async getLastTradeData (searchData) {
+      this.$store.commit('changeLoading', true)
+      const result = await service.getLastTradeData(searchData)
+      this.$store.commit('changeLoading', false)
+      if (result) {
+        console.log(result)
+        this.lastTradeData.storeId = result.storeId
+        this.lastTradeData.tidCnt = result.tidCnt
+        this.lastTradeData.runTime = result.runTime
+        this.lastTradeData.timestamp = result.timestamp
+        this.lastTradeData.tradeType = result.tradeType
+        this.lastTradeData.maxTidCnt = result.maxTidCnt
+        this.lastTradeData.minutes = result.minutes
+        this.lastTradeData.q3 = result.q3
+      }
+    },
     openEditModal (item) {
       this.editForm = {
         name: JSON.parse(JSON.stringify(item.name)),
@@ -201,10 +267,14 @@ export default {
         this.editModal.hide()
         this.getData()
       }
+    },
+    changeTradeType () {
+      this.getLastTradeData(this.searchData)
     }
   },
   mounted () {
     this.getData()
+    this.getLastTradeData(this.searchData)
     this.editModal = new this.$custom.bootstrap.Modal(this.$refs.editModal, { backdrop: 'static' })
   }
 }

@@ -15,6 +15,20 @@ const service = {
       }
     }
   },
+  async getLastTradeData (data) {
+    try {
+      const url = `${process.env.VUE_APP_BASE_API}/i2/findLastTradeData`
+      const res = await axios.post(url, data)
+      return res.data
+    } catch (error) {
+      if (error.response.status === 401) {
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
+        if (user) {
+          return service.getData()
+        }
+      }
+    }
+  },
   async editValve (postData) {
     try {
       const url = `${process.env.VUE_APP_BASE_API}/i2/executeValve`
