@@ -55,8 +55,10 @@
               <tr>
                 <th scope="col">特店代碼</th>
                 <th scope="col">過去<span :style="{'color': 'red'}">{{lastTradeData.minutes}}</span>分鐘所執行的交易Q3</th>
+                <th scope="col">過去<span :style="{'color': 'red'}">{{lastTradeData.minutes}}</span>分鐘所執行的交易Q1</th>
                 <th scope="col">執行交易筆數</th>
                 <th scope="col">最大可執行交易筆數</th>
+                <th scope="col">所使用的concurrent個數</th>
                 <th scope="col">所用時間(ms)</th>
                 <th scope="col">開始執行交易時間</th>
                 <th scope="col">交易類型</th>
@@ -65,9 +67,11 @@
             <tbody>
               <tr>
                 <th scope="row">{{lastTradeData.storeId}}</th>
-                <th scope="row">{{lastTradeData.q3}}</th>
+                <th>{{lastTradeData.q3}}</th>
+                <th>{{lastTradeData.q1}}</th>
                 <td>{{lastTradeData.tidCnt}}</td>
                 <td>{{lastTradeData.maxTidCnt}}</td>
+                <td>{{lastTradeData.concurrentCnt}}</td>
                 <td>{{lastTradeData.runTime}}</td>
                 <td>{{lastTradeData.timestamp}}</td>
                 <td>{{lastTradeData.tradeType}}</td>
@@ -197,7 +201,9 @@ export default {
         tradeType: '',
         maxTidCnt: '',
         minutes: '',
-        q3: ''
+        q3: '',
+        q1: '',
+        concurrentCnt: ''
       },
       searchData: {
         tradeType: ''
@@ -248,6 +254,8 @@ export default {
         this.lastTradeData.maxTidCnt = result.maxTidCnt
         this.lastTradeData.minutes = result.minutes
         this.lastTradeData.q3 = result.q3
+        this.lastTradeData.q1 = result.q1
+        this.lastTradeData.concurrentCnt = result.concurrentCnt
       }
     },
     openEditModal (item) {
