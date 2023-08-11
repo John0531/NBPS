@@ -54,7 +54,7 @@
                 <td>{{$custom.currency(item.refundAmt)}}</td>
                 <td>
                   <button @click="getDetail(item)" class="btn btn-primary me-2 btn-sm" :disabled="item.trxStatus=='TRX_ALL_VOID_PROCESS'||item.trxStatus=='TRX_ALL_VOID_WAITING'">檢視明細</button>
-                  <button @click="multipleCancel(item)" v-if="item.trxStatus!=='TRX_FINISH_REVERSAL'&&item.trxStatus!=='TRX_ALL_VOID_PROCESS'" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">整批取消</button>
+                  <button @click="multipleCancel(item)" v-if="item.trxStatus!=='TRX_FINISH_REVERSAL'&&item.trxStatus!=='TRX_ALL_VOID_PROCESS'&&item.trxStatus!=='TRX_ALL_VOID_WAITING'" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('execute')">整批取消</button>
                 </td>
               </tr>
             </tbody>
@@ -262,6 +262,20 @@ export default {
         const result = await service.singleCancel(postData)
         this.$store.commit('changeLoading', false)
         if (result) {
+          this.$swal.fire({
+            toast: true,
+            position: 'center',
+            icon: 'info',
+            title: result,
+            showConfirmButton: false,
+            timer: 1500,
+            width: 500,
+            background: '#F0F0F2',
+            padding: 25,
+            customClass: {
+              container: 'z-10000'
+            }
+          })
           this.getDetail()
         }
       }
