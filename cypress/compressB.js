@@ -45,20 +45,20 @@ const today = new Date()
 const year = today.getFullYear()
 const month = String(today.getMonth() + 1).padStart(2, '0')
 const day = String(today.getDate()).padStart(2, '0')
-const initFile = '092301568.txt'
+const initFile = '010100916.txt'
 oriFile = initFile
 
 // 65 = A , 90 = Z
 for (let i = 65; i <= 67; i++) {
 
-inputFile = '092301568.'+`${year}${month}${day}.` + String.fromCharCode(i) + '.txt'
+inputFile = '010100916.'+`${year}${month}${day}.` + String.fromCharCode(i) + '.txt'
 
 fs.rename(oriFile, inputFile, (err) => {
   if (err) throw err
 })
 
 oriFile = inputFile
-zipFilePath = '092301568.'+`${year}${month}${day}.` + String.fromCharCode(i) + '.zip'
+zipFilePath = '010100916.'+`${year}${month}${day}.` + String.fromCharCode(i) + '.zip'
 const pwd = 'Ubot!'+`${month}`
 
 createZipWithPassword(inputFile, zipFilePath, pwd)

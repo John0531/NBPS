@@ -1,42 +1,53 @@
-describe("template spec", () => {
-  it("登入admin", () => {
+describe("Btest", () => {
+
+  const fileName = "010100916.20230815.B.zip";
+
+  const localfileName = "cypress/"+fileName;
+
+
+  beforeEach(() => {
+    // 在所有測試方法執行之前進行登入操作
     cy.viewport(1500, 1000);
-    // 登入帳號
     cy.loginViaUi({ pwd: "P@ssw0rd", userName: "leoleeStore" });
-    //拜訪A1
     cy.visit("https://upay-beta.ubpg.com.tw/nbps-dev/nbps-system/B1");
+  });
 
-    const fileName = "092301568.20230530.B.zip";
+  afterEach(() => {
+    cy.logOut(); 
+  });
 
-    cy.get("#B > .accordion-body > .list-unstyled > :nth-child(1) > .fs-6")
-      .contains("批次交易檔上傳作業")
-      .click();
+  it("批次交易檔上傳作業", () => {
+    goB1AndUpload(fileName,localfileName);
+  });
 
-    // goB1AndUpload(fileName);
+  it("批次交易查詢作業", () => {
+    goB2AndSelect();
+  });
 
-    // goB2AndSelect();
+  it("批次交易取消作業", () => {
+    goB3AnDelete(fileName);
+  });
 
-    // goB3AnDelete(fileName);
-
+  it("分析報表下載作業", () => {
     goB4AndDownload();
   });
 });
 
-function goB1AndUpload(fileName) {
+function goB1AndUpload(fileName,localfileName) {
   //上傳檔案
-  cy.get("#batchFile").selectFile(fileName);
+  cy.get("#batchFile").selectFile(localfileName);
 
-  //總比數:2
+  //總比數:20
   cy.get("#totalCount")
     .clear({ force: true })
-    .type("2", { force: true })
-    .should("have.value", "2");
+    .type("20", { force: true })
+    .should("have.value", "20");
 
-  //總金額:3240
+  //總金額:200
   cy.get("#totalAmt")
     .clear({ force: true })
-    .type("3240", { force: true })
-    .should("have.value", "3240");
+    .type("200", { force: true })
+    .should("have.value", "200");
 
   //上傳檔案
   cy.get(".btn-primary").contains("上傳").click();
@@ -106,12 +117,12 @@ function goB2AndSelect() {
     .invoke("text")
     .should("eq", "(A)授權");
 
-  //查詢明細第一筆的金額是不是:1,620
+  //查詢明細第一筆的金額是不是:10
   cy.get(
     ".modal-body > .mt-5 > .tbl-container > .table > tbody > :nth-child(1) > :nth-child(3)"
   )
     .invoke("text")
-    .should("eq", "1,620");
+    .should("eq", "10");
 
   //查詢明細第一筆的回應碼是不是:00
   cy.get(
@@ -165,8 +176,8 @@ function goB2AndSelect() {
       row.filter((cell) => cell !== 0 && cell !== "(0)" && cell !== "0")
     );
 
-    cy.wrap(dataArray[1][1]).should("eq", "2");
-    cy.wrap(dataArray[2][1]).should("eq", "3,240");
+    cy.wrap(dataArray[1][1]).should("eq", "20");
+    cy.wrap(dataArray[2][1]).should("eq", "200");
   });
 }
 
@@ -175,7 +186,6 @@ function goB3AnDelete(fileName) {
   cy.get("#B > .accordion-body > .list-unstyled > :nth-child(3) > .fs-6")
     .contains("批次交易取消作業")
     .click();
-
   cy.wait(2000);
 
   cy.reload();
@@ -208,7 +218,7 @@ function goB3AnDelete(fileName) {
   //彈出視窗 確認單筆取消
   cy.get(".swal2-confirm").click();
 
-  cy.wait(2000);
+  cy.wait(5000);
 
   //驗證取消成功
   cy.get(
@@ -244,8 +254,8 @@ function goB3AnDelete(fileName) {
     .next()
     .next()
     .next()
-    .contains("整批取消", { timeout: 60000 })
-    .click();
+    .contains("整批取消", { timeout: 80000 })
+    .click({ timeout: 60000 });
 
   //彈出視窗 確認整批取消
   cy.get(".swal2-confirm").click();
@@ -259,7 +269,6 @@ function goB3AnDelete(fileName) {
     .prev()
     .click({ multiple: true });
 
-  cy.reload();
 
   //按下檢視明細
   cy.contains("th", fileName)
@@ -289,6 +298,8 @@ function goB3AnDelete(fileName) {
 
   //close
   cy.get(".modal-footer > .btn").click();
+
+  cy.wait(2000);
 }
 
 function goB4AndDownload() {
@@ -297,24 +308,23 @@ function goB4AndDownload() {
     .contains("月結請款對帳單")
     .click();
 
-  //依月份查詢
-  cy.get(".form-select").select("month");
+    cy.get('.form-select').select("依月份");
 
-  cy.get(".dp__pointer").click();
-
-  //用 new Date 找尋前月月份 轉成英文
-  const currentDate = new Date();
-  currentDate.setMonth(currentDate.getMonth() - 1);
-  const previousMonth = currentDate.toLocaleString("en-us", { month: "short" });
-
-  //找到month 含有的 的元素 並且點擊
-  cy.contains(previousMonth).click();
-
-  //搜尋
-  cy.get(".card-body > .btn").contains("搜尋").click();
+    //用 new Date 找尋前月月份 轉成英文
+    const currentDate = new Date();
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    const previousMonth = currentDate.toLocaleString("en-us", { month: "short" });
+    console.log(previousMonth);
+    cy.get('.dp__pointer').click();
+  
+    //找到month 含有的 的元素 並且點擊
+    cy.contains(previousMonth).click();
+  
+    //下載當月的報表
 
   cy.wait(2000);
+  cy.get('.card-body > .btn').contains("搜尋").click();
 
   //按下下載
-  cy.get("tbody > tr > :nth-child(8)").contains("下載").click();
+  cy.get("tbody > tr > :nth-child(4)").contains("下載").click();
 }
