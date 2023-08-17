@@ -19,6 +19,7 @@
                 <th scope="col">交易時間範圍(min)</th>
                 <th scope="col">交易間隔(ms)</th>
                 <th scope="col">交易平均時間標準差</th>
+                <th scope="col">彈性區間</th>
                 <th scope="col"></th>
               </tr>
             </thead>
@@ -28,6 +29,7 @@
                 <td>{{item.minutes}}</td>
                 <td>{{item.valveTime}}</td>
                 <td>{{item.valveStanderd}}</td>
+                <td>{{item.elasticRange}}</td>
                 <td>
                   <button @click="openEditModal(item)" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('modify')">修改</button>
                 </td>
@@ -60,7 +62,7 @@
                 <th scope="col">平均交易時間</th>
                 <th scope="col">所使用的concurrent個數</th>
                 <th scope="col">執行交易筆數</th>
-                <th scope="col">最大可執行交易筆數</th>              
+                <th scope="col">最大可執行交易筆數</th>
                 <th scope="col">所用時間(ms)</th>
                 <th scope="col">開始執行交易時間</th>
                 <th scope="col">交易類型</th>
@@ -162,6 +164,24 @@
                     :class="{ 'is-invalid': errors['交易平均時間標準差'] }"
                     id="valveStanderd"
                     v-model="editForm.valveStanderd"
+                  />
+                  <ErrorMessage
+                    name="交易平均時間標準差"
+                    class="invalid-feedback"
+                  />
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="valveStanderd" class="col-sm-2 col-form-label">彈性區間</label>
+                <div class="col-sm-10">
+                  <Field
+                    name="彈性區間"
+                    type="number"
+                    class="form-control"
+                    rules="required"
+                    :class="{ 'is-invalid': errors['交易平均時間標準差'] }"
+                    id="elasticRange"
+                    v-model="editForm.elasticRange"
                   />
                   <ErrorMessage
                     name="交易平均時間標準差"
@@ -271,7 +291,8 @@ export default {
         name: JSON.parse(JSON.stringify(item.name)),
         minutes: JSON.parse(JSON.stringify(item.minutes)),
         valvetime: JSON.parse(JSON.stringify(item.valveTime)),
-        valveStanderd: JSON.parse(JSON.stringify(item.valveStanderd))
+        valveStanderd: JSON.parse(JSON.stringify(item.valveStanderd)),
+        elasticRange: JSON.parse(JSON.stringify(item.elasticRange))
       }
       this.editModal.show()
     },
