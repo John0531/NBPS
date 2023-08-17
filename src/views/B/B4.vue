@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">請款對帳單</h2>
-            <h6>供特店端下載每月請款總結及明細 Excel 檔，需將主機請款回覆檔回寫置資料庫後呈現</h6>
+            <h6>供<h7 class="text-primary">特店端</h7>下載每日或每月請款總結及明細 Excel 檔</h6>
           </div>
           <div class="card-body">
             <div class="row py-3">
