@@ -131,7 +131,7 @@
                   </button>
                   <button
                     @click="downloadResendTrans(item)"
-                    v-if="item.trxStatus==='TRX_FINISH_WITH_ERROR'&&currentFormattedDate === item.submitTime.substr(0,10)"
+                    v-if="cutBtn(item.trxStatus)&&currentFormattedDate === item.submitTime.substr(0,10)"
                     class="btn btn-danger btn-sm"
                     :disabled="!$store.state.pageBtnPermission.includes('execute')"
                   >
@@ -410,6 +410,23 @@ export default {
         case 'REPLY_UPLOAD_SUCCESS':
           return true
         case 'REPLY_DOWNLOAD_SUCCESS':
+          return true
+        case 'TRX_ERROR_REVERSAL':
+          return true
+        case 'TRX_ERROR_FAIL':
+          return true
+        default:
+          return false
+      }
+    },
+    // ? 判斷是否顯示異常切檔按鈕
+    cutBtn (status) {
+      switch (status) {
+        case 'TRX_FINISH_WITH_ERROR':
+          return true
+        case 'TRX_ERROR_REVERSAL':
+          return true
+        case 'TRX_ERROR_FAIL':
           return true
         default:
           return false
