@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">批次交易取消作業</h2>
-            <h6>供<h7 class="text-primary">帳務科經辦</h7>執行整批取消，或單筆取消，僅當日交易完成之批次才可執行取消，若原交易已跨日，請於隔日執行退貨。於營業日<h7 class="text-primary">09:00-17:30</h7>才可執行</h6>
+            <h6>供<h7 class="text-primary">帳務科經辦</h7>執行整批/單筆取消，僅當日交易完成之批次才可執行取消，若原交易已跨日，請於隔日執行退貨。執行時間請於營業日<h7 class="text-primary">09:00-18:00</h7>期間執行</h6>
           </div>
           <div class="card-body">
             <div class="row py-3">

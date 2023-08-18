@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">批次交易檔上傳作業</h2>
-            <h6>供<h7 class="text-primary">帳務科經辦</h7>上傳批次交易資料檔(營業日 <h7 class="text-primary">09:00-18:00</h7> )，批次交易資料檔上傳且格式檢核成功後，按下確認並送出，系統隨開始發動交易。</h6>
+            <h6>供<h7 class="text-primary">帳務科經辦</h7>上傳批次交易資料檔，請於營業日 <h7 class="text-primary">09:00-18:00</h7> 期間執行，批次交易資料檔上傳且格式檢核成功後，按下確認並送出，系統隨開始發動交易。</h6>
             <h6 class="text-danger fw-bold">*檔名為: 商店代碼後九碼 + "." + YYYYMMDD(當天日期) + "." + A(第一次上傳為A，第二次為B，以此類推)+"."txt(大、小寫皆可)。例如：XXXXXXXXX.20230317.A.txt(TXT)。</h6>
             <h6 class="text-danger fw-bold">*上傳檔案均需依約定之密碼規則(約定之加解密密碼+兩碼當月月份)，以ZIP加密，若檔名或解密錯誤或總筆數及總金額不對，此檔直接剔退。</h6>
           </div>
