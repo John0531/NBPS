@@ -119,6 +119,14 @@
                   >
                     下載總計EXCEL
                   </button>
+                  <button
+                    @click="downloadResendTrans(item)"
+                    v-if="cutBtn(item.trxStatus)&&currentFormattedDate === item.submitTime.substr(0,10)"
+                    class="btn btn-danger btn-sm"
+                    :disabled="!$store.state.pageBtnPermission.includes('download')"
+                  >
+                    異常切檔
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -318,6 +326,7 @@ export default {
   },
   data () {
     return {
+      currentDate: null,
       batchList: [],
       OffLineSale: false,
       pageData: {}, // ?分頁資訊
@@ -348,6 +357,13 @@ export default {
     },
     isVoidAuth () {
       return this.batchList.some(item => 'authVoidStatus' in item)
+    },
+    currentFormattedDate () {
+      const now = new Date()
+      const year = now.getFullYear()
+      const month = ('0' + (now.getMonth() + 1)).slice(-2)
+      const day = ('0' + now.getDate()).slice(-2)
+      return `${year}-${month}-${day}`
     }
   },
   methods: {
@@ -384,6 +400,23 @@ export default {
         case 'REPLY_UPLOAD_SUCCESS':
           return true
         case 'REPLY_DOWNLOAD_SUCCESS':
+          return true
+        case 'TRX_ERROR_REVERSAL':
+          return true
+        case 'TRX_ERROR_FAIL':
+          return true
+        default:
+          return false
+      }
+    },
+    // ? 判斷是否顯示異常切檔按鈕
+    cutBtn (status) {
+      switch (status) {
+        case 'TRX_FINISH_WITH_ERROR':
+          return true
+        case 'TRX_ERROR_REVERSAL':
+          return true
+        case 'TRX_ERROR_FAIL':
           return true
         default:
           return false
@@ -465,9 +498,28 @@ export default {
       // 清除暫存
       a.href = ''
       window.URL.revokeObjectURL(url)
+    },
+    async downloadResendTrans (item) {
+      this.$store.commit('changeLoading', true)
+      const result = await service.downloadResendTrans({
+        batchId: item.batchId,
+        storeId: item.batchStoreId
+      })
+      this.$store.commit('changeLoading', false)
+      const a = document.createElement('a')
+      const url = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
+      const fileNameRT = result.headers.get('filename')
+      a.href = url
+      a.style.display = 'none'
+      a.download = fileNameRT
+      a.click()
+      // 清除暫存
+      a.href = ''
+      window.URL.revokeObjectURL(url)
     }
   },
   mounted () {
+    this.currentDate = new Date()
     this.detailModal = new this.$custom.bootstrap.Modal(this.$refs.detailModal, { backdrop: 'static' })
   }
 }

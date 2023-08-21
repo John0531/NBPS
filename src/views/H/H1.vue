@@ -90,7 +90,7 @@
                 <td>{{$custom.currency(item.amt)}}</td>
                 <td>
                   <button v-if="item.batchStatus==='TRX_FINISH'||item.batchStatus==='CALL_BANK_PROCESS'" @click="getDetail(item)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
-                  <button v-if="item.batchStatus ==='CALL_BANK_SUCCESS'" @click="callBankFTP(item)" class="btn btn-success me-2 btn-sm">作業完成</button>
+                  <!-- <button v-if="item.batchStatus ==='CALL_BANK_SUCCESS'" @click="callBankFTP(item)" class="btn btn-success me-2 btn-sm">作業完成</button> -->
                   <!-- <button v-if="item.batchStatus==='VALIDATE_FAIL'" @click="getError(item)" class="btn btn-danger me-2 btn-sm">檢視錯誤</button> -->
                 </td>
               </tr>

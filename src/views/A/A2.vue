@@ -133,7 +133,7 @@
                     @click="downloadResendTrans(item)"
                     v-if="cutBtn(item.trxStatus)&&currentFormattedDate === item.submitTime.substr(0,10)"
                     class="btn btn-danger btn-sm"
-                    :disabled="!$store.state.pageBtnPermission.includes('execute')"
+                    :disabled="!$store.state.pageBtnPermission.includes('download')"
                   >
                     異常切檔
                   </button>
@@ -524,9 +524,10 @@ export default {
       this.$store.commit('changeLoading', false)
       const a = document.createElement('a')
       const url = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
+      const fileNameRT = result.headers.get('filename')
       a.href = url
       a.style.display = 'none'
-      a.download = '異常切檔.zip'
+      a.download = fileNameRT
       a.click()
       // 清除暫存
       a.href = ''
