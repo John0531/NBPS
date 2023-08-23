@@ -433,13 +433,13 @@ export default {
     showDLbtn (status) { // ? 判斷是否顯示下載回覆檔按鈕
       switch (status) {
         case 'TRX_FINISH':
-          return true
+          return false
         case 'REPLY_PROCESS':
-          return true
+          return false
         case 'REPLY_SUCCESS':
           return true
         case 'REPLY_FAIL':
-          return true
+          return false
         case 'REPLY_UPLOAD_SUCCESS':
           return true
         case 'REPLY_DOWNLOAD_SUCCESS':
