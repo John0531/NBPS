@@ -7,6 +7,7 @@
 
 <script>
 import Loading from './components/Loading.vue'
+import './components/vue-quill.snow.css'
 
 export default {
   components: {

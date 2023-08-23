@@ -33,6 +33,8 @@
 
 <script>
 import AuthService from '../services/auth.service'
+import './vue-quill.snow.css'
+
 export default {
   data () {
     return {
@@ -70,8 +72,10 @@ export default {
   }
 }
 </script>
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 <style scoped>
+
 .menu{
   width: 20%;
   max-width: 270px;

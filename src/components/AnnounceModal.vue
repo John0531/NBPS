@@ -37,6 +37,8 @@
 </template>
 
 <script>
+import './vue-quill.snow.css'
+
 export default {
   data () {
     return {
