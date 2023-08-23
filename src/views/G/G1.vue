@@ -421,8 +421,10 @@ export default {
       const url = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
       a.href = url
       a.style.display = 'none'
+      const fileNameR = result.headers.get('filename')
       // a.download = '發卡科回覆檔.zip'
-      a.download = `${item.batchFileNameTxt.substr(0, 24)}.zip`
+      // a.download = `${item.batchFileNameTxt.substr(0, 24)}.zip`
+      a.download = fileNameR
       a.click()
       // 清除暫存
       a.href = ''

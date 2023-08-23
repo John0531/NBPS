@@ -16,7 +16,7 @@
     "@vee-validate/i18n": "^4.5.2",
     "@vee-validate/rules": "^4.5.2",
     "@vuepic/vue-datepicker": "^3.5.2",
-    "@vueup/vue-quill": "^1.2.0",
+    "@vueup/vue-quill": "file:./package/vueup-vue-quill-1.2.0.tgz",
     "archiver": "^5.3.1",
     "archiver-zip-encrypted": "^1.0.11",
     "axios": "^1.1.2",
