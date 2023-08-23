@@ -35,14 +35,17 @@
       </div>
     </div>
   </div>
+  <AnnounceModal></AnnounceModal>
 </template>
 
 <script>
 import AuthService from '@/services/auth.service'
 import CaptchaCode from 'vue-captcha-code'
+import AnnounceModal from '@/components/AnnounceModal.vue'
 export default {
   components: {
-    CaptchaCode
+    CaptchaCode,
+    AnnounceModal
   },
   data () {
     return {
@@ -104,8 +107,13 @@ export default {
       }
     }
   },
-  mounted () {
+  async mounted () {
     // this.user.validateCode = this.CaptchaCode
+    await this.$store.dispatch('openAnnounceModal')
+    const imgArr = document.querySelectorAll('.announce-contents img')
+    imgArr.forEach((item) => {
+      item.classList.add('img-fluid')
+    })
   }
 }
 </script>

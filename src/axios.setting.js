@@ -8,6 +8,7 @@ import Swal from 'sweetalert2/dist/sweetalert2.js'
 
 axios.interceptors.request.use(
   config => {
+    store.commit('changeLoading', true)
     const user = JSON.parse(localStorage.getItem('NBPS_USER')) // ? 取得 LocalStorage 中的登入會員資訊
     if (user) {
       config.headers.Authorization = `Bearer ${user.token}`
@@ -23,9 +24,11 @@ axios.defaults.withCredentials = false
 
 axios.interceptors.response.use(
   config => {
+    store.commit('changeLoading', false)
     return config
   },
   async err => {
+    store.commit('changeLoading', false)
     // ?非 200 或非 401 的狀態顯示(ex. 500 時顯示)
     if (err.response && (err.response.status !== 200 && err.response.status !== 401)) {
       store.commit('changeLoading', false)

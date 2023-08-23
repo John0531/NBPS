@@ -271,7 +271,6 @@ export default {
       const result = await service.getLastTradeData(searchData)
       this.$store.commit('changeLoading', false)
       if (result) {
-        console.log(result)
         this.lastTradeData.storeId = result.storeId
         this.lastTradeData.tidCnt = result.tidCnt
         this.lastTradeData.runTime = result.runTime

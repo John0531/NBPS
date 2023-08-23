@@ -219,6 +219,14 @@ const routes = [
             }
           },
           {
+            path: 'I8',
+            component: () => import('../views/I/I8.vue'),
+            meta: {
+              group: 'I',
+              code: 'I8'
+            }
+          },
+          {
             path: '/:pathMatch(.*)*',
             name: 'error',
             component: () => import('../views/PageNotFound.vue')
