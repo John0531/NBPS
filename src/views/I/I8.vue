@@ -5,7 +5,9 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">系統公告設定</h2>
-            <h6>供經辦設定公告事項</h6>
+            <h6>供<span class="text-primary">經辦</span>設定公告事項(標題、內容、發布時間)</h6>
+            <h6>「公告發布期間」為設定系統公告<span class="text-primary">自動發佈之起始時間</span>與<span class="text-primary">自動撤除之結束時間</span></h6>
+            <h6>「是否如期發佈」為設定公告發布期間後是否<span class="text-primary">如期上架</span>(若為預先填寫但不確定是否要發佈則可勾選"否")。</h6>
           </div>
           <Form
             v-slot="{ errors }"
@@ -16,7 +18,7 @@
               <div class="row py-3">
                 <div class="col-xxl-5 d-flex mb-4 align-items-center">
                   <h5 class="text-nowrap me-3" style="padding-top: 0.375rem">
-                    公告標題:
+                    標題:
                   </h5>
                   <Field
                     name="公告標題"
@@ -33,7 +35,7 @@
                 </div>
                 <div class="col-xxl-8 d-flex mb-4">
                   <h5 class="text-nowrap me-3" style="padding-top: 0.375rem">
-                    確認送出日期:
+                    發布時間:
                   </h5>
                   <div class="input-group">
                     <span class="input-group-text" id="basic-addon1">起日</span>
@@ -58,7 +60,7 @@
                 </div>
                 <div class="col-xxl-12 h-100">
                   <h5 class="text-nowrap" style="padding-top: 0.375rem">
-                    公告內容:
+                    系統公告內容:
                   </h5>
                   <QuillEditor
                     theme="snow"
@@ -69,7 +71,7 @@
                 </div>
                 <div class="col-xxl-6 d-flex mt-3">
                   <h5 class="text-nowrap me-3">
-                    是否發佈:
+                    是否如期發佈:
                   </h5>
                   <div class="form-check form-check-inline">
                     <Field
@@ -116,6 +118,7 @@
 <script>
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
+import '@vueup/vue-quill/dist/vue-quill.bubble.css'
 import service from '@/services/I/I8.service.js'
 import utilService from '@/services/utilities.service.js'
 

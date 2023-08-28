@@ -8,11 +8,13 @@
   >
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
-        <div class="modal-header bg-info">
-          <h4 class="modal-title text-black">公告事項</h4>
+        <div class="modal-header bg-announce">
+          <h4 class="modal-title text-black">
+            <span class="announce-contents fw-bold" v-html="$store.state.announceInfo.ann?$store.state.announceInfo.ann[0].title:''"></span>
+          </h4>
           <button
             type="button"
-            class="btn-close btn-close-white"
+            class="btn-close btn-close-black"
             data-bs-dismiss="modal"
             aria-label="Close"
           ></button>
@@ -39,14 +41,15 @@
 <script>
 import './vue-quill.snow.css'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
-import '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.bubble.css'
 
 export default {
   data () {
     return {
       Modal: null,
       announce: '',
-      isPublish: ''
+      isPublish: '',
+      AnnInfo: {}
     }
   },
   async mounted () {
@@ -67,4 +70,8 @@ export default {
   max-width: 100%;
   height: auto;
 }
+.bg-announce {
+  background-color: #edf06cd4;
+}
+
 </style>

@@ -35,7 +35,7 @@
 import AuthService from '../services/auth.service'
 import './vue-quill.snow.css'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
-import '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.bubble.css'
 
 export default {
   data () {
