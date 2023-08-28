@@ -34,6 +34,8 @@
 <script>
 import AuthService from '../services/auth.service'
 import './vue-quill.snow.css'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
+import '@vueup/vue-quill'
 
 export default {
   data () {
@@ -72,7 +74,6 @@ export default {
   }
 }
 </script>
-import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 <style scoped>
 

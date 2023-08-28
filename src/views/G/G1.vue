@@ -102,7 +102,7 @@
                 <td>{{$custom.currency(item.totalAmt)}}</td>
                 <td>
                   <button v-if="item.trxStatus==='TRX_FINISH'||item.trxStatus==='TRX_FINISH_WITH_ERROR'||item.trxStatus==='TRX_ERROR_REVERSAL'" @click="getDetail(item,defaultDetailPage.page,defaultDetailPage.pageSize)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
-                  <button v-if="showDLbtn(item.batchStatus)&&showDLbtn(item.trxStatus)" @click="downloadReply(item)" class="btn btn-success me-2 btn-sm" :disabled="!($store.state.pageBtnPermission.includes('download'))">下載回覆檔</button>
+                  <button v-if="showDLbtnBatch(item.batchStatus)&&showDLbtn(item.trxStatus)" @click="downloadReply(item)" class="btn btn-success me-2 btn-sm" :disabled="!($store.state.pageBtnPermission.includes('download'))">下載回覆檔</button>
                   <!-- <button v-if="item.batchStatus==='VALIDATE_FAIL'" @click="getError(item)" class="btn btn-danger me-2 btn-sm">檢視錯誤</button> -->
                 </td>
               </tr>
@@ -430,7 +430,7 @@ export default {
       a.href = ''
       window.URL.revokeObjectURL(url)
     },
-    showDLbtn (status) { // ? 判斷是否顯示下載回覆檔按鈕
+    showDLbtn (status) { // ? 判斷是否顯示下載回覆檔按鈕 (Trx)
       switch (status) {
         case 'TRX_FINISH':
           return true
@@ -439,6 +439,22 @@ export default {
         case 'REPLY_SUCCESS':
           return true
         case 'REPLY_FAIL':
+          return true
+        case 'REPLY_UPLOAD_SUCCESS':
+          return true
+        case 'REPLY_DOWNLOAD_SUCCESS':
+          return true
+        case 'TRX_ERROR_REVERSAL':
+          return true
+        case 'TRX_ERROR_FAIL':
+          return true
+        default:
+          return false
+      }
+    },
+    showDLbtnBatch (status) { // ? 判斷是否顯示下載回覆檔按鈕(Batch)
+      switch (status) {
+        case 'REPLY_SUCCESS':
           return true
         case 'REPLY_UPLOAD_SUCCESS':
           return true
