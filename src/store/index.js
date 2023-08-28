@@ -8,7 +8,7 @@ export default createStore({
     user: JSON.parse(localStorage.getItem('NBPS_USER')) ? JSON.parse(localStorage.getItem('NBPS_USER')).user : null,
     pageBtnPermission: [], //* 頁面操作權限
     announceModal: null, //* 公告Modal
-    announceInfo: {}//* 公告api 資訊
+    announceInfo: ''//* 公告api 資訊
   },
   mutations: {
     getPageBtnPermission (state, payload) {

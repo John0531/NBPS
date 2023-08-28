@@ -50,7 +50,6 @@ export default {
   async mounted () {
     this.Modal = new this.$custom.bootstrap.Modal(this.$refs.Modal, { backdrop: 'static' })
     this.$store.commit('getAnnounceModal', this.Modal)
-    await this.$store.dispatch('getAnnounceInfo')
     this.$refs.Modal.addEventListener('show.bs.modal', function (event) {
       const imgArr = document.querySelectorAll('.announce-contents img')
       imgArr.forEach((item) => {

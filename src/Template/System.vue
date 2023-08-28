@@ -20,6 +20,9 @@ export default {
     SideMenu,
     AnnounceBar,
     AnnounceModal
+  },
+  mounted () {
+    this.$store.dispatch('getAnnounceInfo')
   }
 }
 </script>

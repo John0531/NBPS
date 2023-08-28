@@ -157,10 +157,6 @@ export default {
             container: 'z-10000'
           }
         })
-      } else {
-        this.$swal.fire({
-          title: result
-        })
       }
     }
   },
