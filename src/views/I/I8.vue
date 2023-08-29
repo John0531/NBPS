@@ -60,11 +60,12 @@
                 </div>
                 <div class="col-xxl-12 h-100">
                   <h5 class="text-nowrap" style="padding-top: 0.375rem">
-                    系統公告內容:
+                    系統公告內容: (儲存內容後<span class="text-danger fw-bold">粗體字</span>將會標示為<span class="text-danger fw-bold">紅色</span>)
                   </h5>
+                  <!-- toolbar: essential | minimal | full | "" -->
                   <QuillEditor
                     theme="snow"
-                    toolbar="full"
+                    toolbar="minimal"
                     v-model:content="editForm.contents"
                     contentType="html"
                   />
@@ -143,6 +144,7 @@ export default {
       this.editForm = result.ann[0]
     },
     async setAnnounce () {
+      this.editForm.contents = this.editForm.contents.replace(/<strong>/g, '<span class="text-danger fw-bold">').replace(/<\/strong>/g, '</span>')
       const result = await service.setAnnounce(this.editForm)
       if (result === '成功') {
         this.$store.dispatch('getAnnounceInfo')
