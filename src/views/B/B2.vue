@@ -6,7 +6,9 @@
           <div class="card-header">
             <h2 class="fw-bold mb-3">批次交易查詢作業</h2>
             <h6>供<span class="text-primary">特店端</span>依起訖日、特店查詢批次交易結果</h6>
-            <button class="btn btn-cutBtn btn-sm text-white text-nowrap">逾時交易重送</button> 用於下載<span class="text-danger">當日發生逾時交易</span>之資料，便於<span class="text-primary">特店端</span>下載後可<span class="text-primary">立即重新上傳</span>未完成之交易檔。(依需求使用)
+            <div v-if="this.timeOutBtn">
+              <button class="btn btn-cutBtn btn-sm text-white text-nowrap">逾時交易重送</button> 用於下載<span class="text-danger">當日發生逾時交易</span>之資料，便於<span class="text-primary">特店端</span>下載後可<span class="text-primary">立即重新上傳</span>未完成之交易檔。(依需求使用)
+            </div>
           </div>
           <div class="card-body">
             <div class="row py-3">
@@ -128,6 +130,7 @@
                   >
                     逾時交易重送
                   </button>
+                  <div v-if="showTimeOutTxt(cutBtn(item.trxStatus)&&currentFormattedDate === item.submitTime.substr(0,10))"></div>
                 </td>
               </tr>
             </tbody>
@@ -327,6 +330,7 @@ export default {
   },
   data () {
     return {
+      timeOutBtn: false,
       currentDate: null,
       batchList: [],
       OffLineSale: false,
@@ -368,6 +372,12 @@ export default {
     }
   },
   methods: {
+    // ? 判斷是否顯示置頂"逾時交易重送"文字說明
+    showTimeOutTxt (status) {
+      if (status) {
+        this.timeOutBtn = true
+      }
+    },
     // ? 判斷是否顯示檢係明細按鈕
     showBtn (status) {
       switch (status) {
