@@ -239,6 +239,10 @@ export default {
             item.eventName = '請款結果查詢及對帳單產製失敗'
           } else if (item.event === 'BIN_UPDATED_FAIL') {
             item.eventName = 'BIN碼更新失敗'
+          } else if (item.event === 'REPLY_FILE_SUCCESS') {
+            item.eventName = '回覆檔產製完成'
+          } else if (item.event === 'CB_UNDONE') {
+            item.eventName = 'CALL BANK未完成'
           }
           switch (item.storeType) {
             case 'ACQUIRING':
