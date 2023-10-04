@@ -264,8 +264,6 @@ export default {
       })
     },
     modifyCode (item) {
-      item.modifyCodeH = this.$custom.validate.OnlyNumPress(item.modifyCodeH)
-      item.modifyAuthCode = this.$custom.validate.OnlyNumPress(item.modifyAuthCode)
       if (item.modifyCodeH !== '00') {
         item.modifyAuthCode = ''
       }
