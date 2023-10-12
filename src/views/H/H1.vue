@@ -80,6 +80,7 @@
                   <span v-if="item.trxStatus==='TRX_ALL_VOID_FAIL'">交易整批取消錯誤</span>
                   <span v-if="item.trxStatus==='TRX_FINISH_REVERSAL'">交易已取消</span>
                   <span v-if="item.trxStatus==='TRX_FINISH'">交易處理完成</span>
+                  <span v-if="item.trxStatus==='CALL_BANK_PROCESS'">Call Bank作業中</span>
                   <span v-if="item.trxStatus==='REPLY_PROCESS'">回覆檔產製中</span>
                   <span v-if="item.trxStatus==='REPLY_SUCCESS'">已下載回覆檔</span>
                   <span v-if="item.trxStatus==='REPLY_FAIL'">下傳回覆檔失敗</span>
