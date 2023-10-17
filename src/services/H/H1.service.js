@@ -60,6 +60,36 @@ const service = {
         }
       }
     }
+  },
+  async getData () { // find call bank event emails
+    try {
+      const url = `${process.env.VUE_APP_BASE_API}/h1/findCBEventMail`
+      const res = await axios.post(url, {})
+      return res.data
+    } catch (error) {
+      if (error.response.status === 401) {
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
+        if (user) {
+          return service.getData()
+        }
+      }
+    }
+  },
+  async editEventMail (postData) {
+    try {
+      const url = `${process.env.VUE_APP_BASE_API}/h1/updateCBEventMailById`
+      const res = await axios.post(url, postData)
+      if (res.data) {
+        return true
+      }
+    } catch (error) {
+      if (error.response.status === 401) {
+        const user = JSON.parse(localStorage.getItem('NBPS_USER'))
+        if (user) {
+          return service.editEventMail(postData)
+        }
+      }
+    }
   }
 }
 

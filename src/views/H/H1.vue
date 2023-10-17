@@ -5,24 +5,62 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">CALL BANK作業</h2>
-            <h6>供發Call Bank 經辦修改授權碼及回應碼，當有CALL BANK條件之交易時，回寄信通知指定的信箱。</h6>
+            <h6>供<span class="text-primary">授權科經辦</span>修改<span class="text-primary">回應碼(2碼)</span>及<span class="text-success">授權回應碼(6碼)</span>，當尚有<span class="text-danger">未完成</span>之CALL BANK事件時，系統<span class="text-danger">每10分鐘</span>自動發送通知至指定信箱。</h6>
+            <h6><span class="text-danger">*</span>若<span class="text-danger">尚有未完成</span>之Call Bank事件，則會顯示 <button class="btn btn-primary btn-sm">檢視明細</button> 按鈕，當事件<span class="text-danger">全部完成</span>後按鈕即消失，當接續作業完成後並<span class="text-primary">產製回覆檔</span>，系統會發送通知信至<span class="text-primary">發卡科經辦</span>(指定信箱)。</h6>
+            <h6><span class="text-danger">*</span>若交易授權成功時(回應碼為<span class="text-primary">00</span>)，需填寫<span class="text-success">授權回應碼</span>，反之則不必填寫(系統自動保留空白)。<button class="btn btn-cutBtn btn-sm text-white text-nowrap" @click.prevent="authCodeList">回應代碼表</button> (請點選)</h6>
+            <!-- <h6 class="text-dark fw-bold">常用回應代碼:</h6>
+            <table class="table table-bordered table-warning text-nowrap">
+              <tr>
+                <td><span class="text-primary">00</span> 交易授權成功</td>
+                <td><span class="text-danger">14</span> 卡號不正確</td>
+                <td><span class="text-danger">25</span> 交易不存在</td>
+                <td><span class="text-danger">13</span> 無效金額</td>
+              </tr>
+              <tr>
+                <td><span class="text-danger">05</span> 拒絕交易</td>
+                <td><span class="text-danger">51</span> 餘額不足</td>
+                <td><span class="text-danger">54</span> 過期卡</td>
+                <td><span class="text-danger">1E</span> 身分證號錯誤</td>
+              </tr>
+            </table> -->
           </div>
           <div class="card-body">
             <div class="row py-3">
-              <div class="col-xxl-8 d-flex mb-4">
-                <h5 class="text-nowrap me-3" style="padding-top:0.375rem;">確認送出日期:</h5>
+              <div class="col-xxl-8 mb-4">
                 <div class="input-group">
+                <h5 class="text-nowrap fw-bold me-3" style="padding-top:0.375rem;">查詢資料時間：</h5>
                   <span class="input-group-text" id="basic-addon1">起日</span>
                   <Datepicker auto-apply enable-seconds v-model="searchForm.startDate" model-type="yyyy-MM-dd" format="yyyy/MM/dd "></Datepicker>
-                </div>
-                <div class="input-group">
+                  <span class="mb-4 me-3"></span>
                   <span class="input-group-text" id="basic-addon1">迄日</span>
                   <Datepicker auto-apply enable-seconds v-model="searchForm.endDate" model-type="yyyy-MM-dd" format="yyyy/MM/dd"></Datepicker>
+                  <span class="mb-4 me-3"></span>
+                  <button @click="getData" class="btn btn-primary me-3 px-4" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button>
                 </div>
               </div>
-              <div class="col-xxl-7"></div>
+              <div>
+              <table class="table">
+                <thead class="table-eventLlist">
+                  <tr>
+                    <th scope="col">通知事件</th>
+                    <th scope="col">事件類型</th>
+                    <th scope="col">信箱(以逗號分隔)</th>
+                    <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in EventMailList.gridData" :key="item.id">
+                    <th scope="row">{{item.eventName}}</th>
+                    <th scope="row">{{item.eventType}}</th>
+                    <td class="wrap-text">{{item.emails.join()}}</td>
+                    <td>
+                      <button @click="openEditModal(item)" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('modify')">修改信箱</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              </div>
             </div>
-            <button @click="getData" class="btn btn-primary me-3 px-4" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button>
           </div>
         </div>
         <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
@@ -162,6 +200,175 @@
       </div>
     </div>
   </div>
+
+  <!-- 修改信箱 Modal -->
+  <div class="modal fade" ref="editModal" tabindex="-1" aria-labelledby="editModal" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-success">
+            <h5 class="modal-title text-white">修改信箱</h5>
+            <button @click.prevent="closeEditModel" type="button" class="btn-close btn-close-white" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <Form
+              ref="form"
+              v-slot="{ errors }"
+            >
+              <div class="row mb-3">
+                <label for="event" class="col-sm-2 col-form-label">事件</label>
+                <div class="col-sm-10">
+                  <Field
+                    name="事件"
+                    type="text"
+                    class="form-control"
+                    rules="required"
+                    :class="{ 'is-invalid': errors['事件'] }"
+                    id="event"
+                    v-model="editForm.eventName"
+                    disabled
+                  />
+                  <ErrorMessage
+                    name="事件"
+                    class="invalid-feedback"
+                  />
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="event" class="col-sm-2 col-form-label">類型</label>
+                <div class="col-sm-10">
+                  <Field
+                    name="事件類型"
+                    type="text"
+                    class="form-control"
+                    rules="required"
+                    :class="{ 'is-invalid': errors['事件類型'] }"
+                    id="eventType"
+                    v-model="editForm.eventType"
+                    disabled
+                  />
+                  <ErrorMessage
+                    name="事件"
+                    class="invalid-feedback"
+                  />
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="row mb-3">
+                <label for="event" class="col-sm-2 col-form-label">通知信標題</label>
+                <div class="col-sm-10">
+                  <Field
+                    name="通知信標題"
+                    type="text"
+                    class="form-control"
+                    :class="{ 'is-invalid': errors['通知信標題'] }"
+                    id="title"
+                    v-model="editForm.title"
+                  />
+                  <ErrorMessage
+                    name="通知信標題"
+                    class="invalid-feedback"
+                  />
+                </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="row mb-3">
+                <label for="event" class="col-sm-2 col-form-label">通知信內容</label>
+                <div class="col-sm-10">
+                  <Field
+                    name="通知信內容"
+                    as="textarea"
+                    class="form-control"
+                    :class="{ 'is-invalid': errors['通知信內容'] }"
+                    id="title"
+                    v-model="editForm.contents"
+                  />
+                  <ErrorMessage
+                    name="通知信內容"
+                    class="invalid-feedback"
+                  />
+                </div>
+              </div>
+                <label for="email" class="col-sm-2 col-form-label">新增信箱</label>
+                <div class="col-sm-8">
+                  <Field
+                    name="新增信箱"
+                    class="form-control"
+                    rules="required|email"
+                    :class="{ 'is-invalid': errors['新增信箱'] }"
+                    id="email"
+                    v-model="editForm.addEmail"
+                  />
+                  <ErrorMessage
+                    name="新增信箱"
+                    class="invalid-feedback"
+                  />
+                </div>
+                <div class="col-sm-2">
+                  <button @click.prevent="addEmail" class="btn btn-primary px-4">新增</button>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-12">
+                  <div class="tbl-container table-responsive">
+                    <table class="table table-striped table-bordered table-hover">
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">信箱</th>
+                          <th scope="col"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="(item,index) in editForm.emailList" :key="`A${index}`">
+                          <th scope="row">{{index+1}}</th>
+                          <td>
+                            <Field
+                              :name="`信箱${index+1}`"
+                              class="form-control"
+                              rules="required|email"
+                              :class="{ 'is-invalid': errors[`信箱${index+1}`] }"
+                              v-model="item.email"
+                            />
+                            <span class="text-danger">
+                              {{errors[`信箱${index+1}`]}}
+                            </span>
+                          </td>
+                          <td>
+                            <button @click.prevent="removeEmail(index)" class="btn btn-danger btn-sm">刪除</button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex justify-content-end">
+                <button @click.prevent="editEmail" class="btn btn-success px-4">儲存</button>
+              </div>
+            </Form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 授權碼列表 Modal -->
+  <div class="modal fade" ref="authCodeListModal" tabindex="-1" aria-labelledby="authCodeListModal" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-info">
+          <h5 class="modal-title text-black">常用回應代碼表</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <img class="img-fluid rounded mx-auto d-block" src="~@/assets/img/ACL.png" alt="">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -174,6 +381,13 @@ export default {
   },
   data () {
     return {
+      MailPageData: {}, // ?分頁資訊
+      EventMailList: {
+        originData: [],
+        gridData: []
+      },
+      editModal: '',
+      editForm: {},
       searchForm: {
         startDate: `${this.$custom.moment().format('YYYY-MM-DD')}`,
         endDate: `${this.$custom.moment().format('YYYY-MM-DD')}`
@@ -197,11 +411,130 @@ export default {
     }
   },
   methods: {
+    authCodeList () {
+      this.authCodeListModal.show()
+    },
+    async getEmailData () {
+      this.$store.commit('changeLoading', true)
+      const result = await service.getData()
+      this.$store.commit('changeLoading', false)
+      if (result) {
+        // * 傳送分頁資訊(僅第一次打api取得所有資料)
+        this.PageData = {
+          totalElements: result.eventMailList.length,
+          currentPage: 1,
+          totalPages: Math.ceil(result.eventMailList.length / 10)
+        }
+        this.EventMailList.originData = result.eventMailList
+        // ? 資料格式處理
+        this.EventMailList.originData.forEach((item) => {
+          if (item.event === 'CB_NOTIFY') {
+            item.eventName = 'CALL BANK通知'
+          } else if (item.event === 'REPLY_FILE_SUCCESS') {
+            item.eventName = '回覆檔產製完成'
+          } else if (item.event === 'CB_UNDONE') {
+            item.eventName = 'CALL BANK未完成'
+          }
+          switch (item.storeType) {
+            case 'PUBLIC_UTILITIES':
+              item.eventType = '公共事業'
+              break
+            case 'MAIL_ORDER':
+              item.eventType = '郵購'
+              break
+            case 'ISSUE_CARD':
+              item.eventType = '新消貸'
+              break
+            default:
+              break
+          }
+        })
+        // ? 資料格式處理 end
+        this.EventMailList.gridData = this.EventMailList.originData.slice(0, 10)
+        // * 傳送分頁資訊(僅第一次打api取得所有資料) end
+        // * 將每頁資料數初始化
+        // this.$refs.ValveMainData.PageInfo.pageSize = 10
+      }
+    },
+    openEditModal (item) {
+      this.editForm = JSON.parse(JSON.stringify(item))
+      this.editForm.emailList = this.editForm.emails.map((item) => {
+        return { email: item }
+      })
+      this.editModal.show()
+    },
+    async addEmail () {
+      const result = await this.$refs.form.validateField('新增信箱')
+      if (result.valid) {
+        this.editForm.emailList.push({
+          email: this.editForm.addEmail
+        })
+      }
+    },
+    async removeEmail (index) {
+      this.$swal.fire({
+        title: '確認是否刪除?',
+        showCancelButton: true,
+        confirmButtonColor: '#0d6efd',
+        cancelButtonColor: '#4D4D4D',
+        confirmButtonText: '確認',
+        cancelButtonText: '取消',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.editForm.emailList.splice(index, 1)
+        }
+      })
+    },
+    closeEditModel () {
+      this.$swal.fire({
+        title: '關閉後不會儲存修改資料，確認是否關閉?',
+        showCancelButton: true,
+        confirmButtonColor: '#0d6efd',
+        cancelButtonColor: '#4D4D4D',
+        confirmButtonText: '確認',
+        cancelButtonText: '取消',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.editModal.hide()
+        }
+      })
+    },
+    async editEmail () {
+      this.$refs.form.setErrors({})
+      this.$refs.form.setFieldError('新增信箱', '')
+      for (let i = 0; i < this.editForm.emailList.length; i++) {
+        await this.$refs.form.validateField(`信箱${i + 1}`)
+      }
+      const errors = this.$refs.form.getErrors()
+      if (Object.keys(errors).length === 0) {
+        this.editForm.emails = this.editForm.emailList.map(item => {
+          return item.email
+        })
+        this.editForm.eventType = this.editForm.event
+        this.$store.commit('changeLoading', true)
+        const result = await service.editEventMail(this.editForm)
+        this.$store.commit('changeLoading', false)
+        if (result) {
+          this.editModal.hide()
+          this.getEmailData()
+        }
+      }
+    },
     // ? 取得 MainData 元件分頁資訊
     getPageInfo (PageInfo) {
       this.searchForm.page = PageInfo.page
       this.searchForm.pageSize = PageInfo.pageSize
       this.getData()
+      // * 傳送分頁資訊
+      this.MailPageData = {
+        totalElements: this.EventMailList.originData.length,
+        currentPage: PageInfo.page,
+        totalPages: Math.ceil(this.EventMailList.originData.length / PageInfo.pageSize)
+      }
+      // * 前端取得分頁資料(不打api)
+      this.EventMailList.gridData = this.EventMailList.originData.slice((PageInfo.page - 1) * PageInfo.pageSize, PageInfo.page * PageInfo.pageSize)
     },
     // ? 取得 MainData 元件詳細分頁資訊
     getDetailPageInfo (PageInfo) {
@@ -380,7 +713,35 @@ export default {
     }
   },
   mounted () {
+    this.getEmailData()
     this.detailModal = new this.$custom.bootstrap.Modal(this.$refs.detailModal, { backdrop: 'static' })
+    this.editModal = new this.$custom.bootstrap.Modal(this.$refs.editModal, { backdrop: 'static' })
+    this.authCodeListModal = new this.$custom.bootstrap.Modal(this.$refs.authCodeListModal, { backdrop: 'static' })
   }
 }
 </script>
+
+<style scoped>
+.table-eventLlist{
+  background-color: rgb(73, 151, 108);
+  color: white;
+}
+.wrap-text {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: inherit;
+  max-width: 800px; /* 列宽 */
+}
+.btn-cutBtn{
+  background-color: rgb(49, 196, 233);
+}
+
+.btn-cutBtn:hover{
+  background-color: rgb(49, 196, 233);
+}
+
+.img-fluid{
+  max-width: 100%;
+  height: auto;
+}
+</style>

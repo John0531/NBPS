@@ -5,7 +5,8 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">批次交易查詢作業</h2>
-            <h6>供發卡業務經辦查詢批次交易進度</h6>
+            <h6>供<span class="text-primary">發卡業務經辦</span>查詢批次交易進度</h6>
+            <button class="btn btn-danger btn-sm text-white text-nowrap">異常切檔</button> 用於下載<span class="text-danger">當日發生逾時交易</span>之資料，便於<span class="text-primary">發卡業務經辦</span>下載後可<span class="text-primary">立即重新上傳</span>未完成之交易檔。
           </div>
           <div class="card-body">
             <div class="row py-3">
@@ -104,6 +105,7 @@
                 <td>
                   <button v-if="item.trxStatus==='TRX_FINISH'||item.trxStatus==='TRX_FINISH_WITH_ERROR'||item.trxStatus==='TRX_ERROR_REVERSAL'" @click="getDetail(item,defaultDetailPage.page,defaultDetailPage.pageSize)" class="btn btn-primary me-2 btn-sm">檢視明細</button>
                   <button v-if="showDLbtnBatch(item.batchStatus)&&showDLbtn(item.trxStatus)" @click="downloadReply(item)" class="btn btn-success me-2 btn-sm" :disabled="!($store.state.pageBtnPermission.includes('download'))">下載回覆檔</button>
+                  <button @click="downloadResendTrans(item)" v-if="item.storeType==='MAIL_ORDER'&&cutBtn(item.trxStatus)&&currentFormattedDate === item.submitTime.substr(0,10)" class="btn btn-danger btn-sm text-white text-nowrap" :disabled="!$store.state.pageBtnPermission.includes('download')">異常切檔</button>
                   <!-- <button v-if="item.batchStatus==='VALIDATE_FAIL'" @click="getError(item)" class="btn btn-danger me-2 btn-sm">檢視錯誤</button> -->
                 </td>
               </tr>
@@ -319,6 +321,7 @@ export default {
   },
   data () {
     return {
+      currentDate: null,
       defaultDetailPage: { // ?檢視詳細資料第一次的分頁資訊
         page: 1,
         pageSize: 10
@@ -348,6 +351,21 @@ export default {
         gridData: []
       },
       errorPageData: {}// ?錯誤分頁資訊
+    }
+  },
+  computed: {
+    isVoidSettle () {
+      return this.batchList.some(item => 'settleVoidStatus' in item)
+    },
+    isVoidAuth () {
+      return this.batchList.some(item => 'authVoidStatus' in item)
+    },
+    currentFormattedDate () {
+      const now = new Date()
+      const year = now.getFullYear()
+      const month = ('0' + (now.getMonth() + 1)).slice(-2)
+      const day = ('0' + now.getDate()).slice(-2)
+      return `${year}-${month}-${day}`
     }
   },
   methods: {
@@ -465,6 +483,20 @@ export default {
           return false
       }
     },
+
+    // ? 判斷是否顯示異常切檔按鈕
+    cutBtn (status) {
+      switch (status) {
+        case 'TRX_FINISH_WITH_ERROR':
+          return true
+        case 'TRX_ERROR_REVERSAL':
+          return true
+        case 'TRX_ERROR_FAIL':
+          return true
+        default:
+          return false
+      }
+    },
     async getError (item) {
       if (item) {
         this.errorDataPost.batchId = item.batchId
@@ -480,6 +512,24 @@ export default {
         this.errorData.gridData = result.batchErrorList
       }
       this.errorModal.show()
+    },
+    async downloadResendTrans (item) {
+      this.$store.commit('changeLoading', true)
+      const result = await service.downloadResendTrans({
+        batchId: item.batchId,
+        storeId: item.batchFileNameTxt.substr(0, 15)
+      })
+      this.$store.commit('changeLoading', false)
+      const a = document.createElement('a')
+      const url = window.URL.createObjectURL(new Blob([result.data], { type: result.headers['content-type'] }))
+      const fileNameRT = result.headers.get('filename')
+      a.href = url
+      a.style.display = 'none'
+      a.download = fileNameRT
+      a.click()
+      // 清除暫存
+      a.href = ''
+      window.URL.revokeObjectURL(url)
     }
   },
   mounted () {
