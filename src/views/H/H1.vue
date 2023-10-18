@@ -5,24 +5,12 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">CALL BANK作業</h2>
-            <h6>供<span class="text-primary">授權科經辦</span>修改<span class="text-primary">回應碼(2碼)</span>及<span class="text-success">授權回應碼(6碼)</span>，當尚有<span class="text-danger">未完成</span>之CALL BANK事件時，系統<span class="text-danger">每10分鐘</span>自動發送通知至指定信箱。</h6>
-            <h6><span class="text-danger">*</span>若<span class="text-danger">尚有未完成</span>之Call Bank事件，則會顯示 <button class="btn btn-primary btn-sm">檢視明細</button> 按鈕，當事件<span class="text-danger">全部完成</span>後按鈕即消失，當接續作業完成後並<span class="text-primary">產製回覆檔</span>，系統會發送通知信至<span class="text-primary">發卡科經辦</span>(指定信箱)。</h6>
-            <h6><span class="text-danger">*</span>若交易授權成功時(回應碼為<span class="text-primary">00</span>)，需填寫<span class="text-success">授權回應碼</span>，反之則不必填寫(系統自動保留空白)。<button class="btn btn-cutBtn btn-sm text-white text-nowrap" @click.prevent="authCodeList">回應代碼表</button> (請點選)</h6>
-            <!-- <h6 class="text-dark fw-bold">常用回應代碼:</h6>
-            <table class="table table-bordered table-warning text-nowrap">
-              <tr>
-                <td><span class="text-primary">00</span> 交易授權成功</td>
-                <td><span class="text-danger">14</span> 卡號不正確</td>
-                <td><span class="text-danger">25</span> 交易不存在</td>
-                <td><span class="text-danger">13</span> 無效金額</td>
-              </tr>
-              <tr>
-                <td><span class="text-danger">05</span> 拒絕交易</td>
-                <td><span class="text-danger">51</span> 餘額不足</td>
-                <td><span class="text-danger">54</span> 過期卡</td>
-                <td><span class="text-danger">1E</span> 身分證號錯誤</td>
-              </tr>
-            </table> -->
+            <h6>供<span class="text-primary">授權科經辦</span>修改<span class="text-primary">回應碼(2碼)</span>與<span class="text-success">授權回應碼(6碼)</span>，當<span class="text-danger">尚有未完成</span>的CALL BANK事件時，系統<span class="text-danger">每10分鐘</span>自動發送通知至<span class="text-mail">指定信箱</span>。</h6>
+            <h6><span class="text-danger">*</span>若該筆交易有<span class="text-danger">未完成</span>的Call Bank作業，則會顯示 <button class="btn btn-primary btn-sm">檢視明細</button> 按鈕；當作業<span class="text-danger">全部完成</span>後按鈕即消失，接續流程並成功<span class="text-primary">產製回覆檔</span>後，系統會發送通知至<span class="text-mail">指定信箱</span> (主要通知對象:<span class="text-primary"> 發卡科經辦</span>)。</h6>
+            <h6><span class="text-danger">*</span><span class="text-primary">回應碼</span>同意為<span class="text-primary">00</span>，需填寫<span class="text-success">授權回應碼</span>；不同意為<span class="text-danger">05</span>，無需填寫<span class="text-success">授權回應碼</span>(系統自動保留空白)。</h6>
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                <img class="img-fluid" src="~@/assets/img/email.png" alt=""><span class="text-mail">事件通知設定(點此)</span>
+            </button>
           </div>
           <div class="card-body">
             <div class="row py-3">
@@ -38,30 +26,34 @@
                   <button @click="getData" class="btn btn-primary me-3 px-4" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button>
                 </div>
               </div>
-              <div>
-              <table class="table">
-                <thead class="table-eventLlist">
-                  <tr>
-                    <th scope="col">通知事件</th>
-                    <th scope="col">事件類型</th>
-                    <th scope="col">信箱(以逗號分隔)</th>
-                    <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="item in EventMailList.gridData" :key="item.id">
-                    <th scope="row">{{item.eventName}}</th>
-                    <th scope="row">{{item.eventType}}</th>
-                    <td class="wrap-text">{{item.emails.join()}}</td>
-                    <td>
-                      <button @click="openEditModal(item)" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('modify')">修改信箱</button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                <div class="accordion-item">
+                  <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body">
+                      <table class="table">
+                        <thead class="table-eventLlist">
+                          <tr>
+                            <th scope="col">通知事件</th>
+                            <th scope="col">事件類型</th>
+                            <th scope="col">信箱(以逗號分隔)</th>
+                            <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="item in EventMailList.gridData" :key="item.id">
+                            <th scope="row">{{item.eventName}}</th>
+                            <th scope="row">{{item.eventType}}</th>
+                            <td class="wrap-text">{{item.emails.join()}}</td>
+                            <td>
+                              <button @click="openEditModal(item)" class="btn btn-success me-2 btn-sm" :disabled="!$store.state.pageBtnPermission.includes('modify')">修改信箱</button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+        </div>
+     </div>
         </div>
         <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">
           <template #default>
@@ -742,6 +734,19 @@ export default {
 
 .img-fluid{
   max-width: 100%;
-  height: auto;
+  /* height: auto; */
+}
+.accordion-button{
+  /* background-color: rgb(49, 196, 233); */
+  max-width: 18%;
+  margin-right: auto;
+}
+.img-fluid{
+  max-width: 10%;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+.text-mail{
+  color: #e97e1a;
 }
 </style>
