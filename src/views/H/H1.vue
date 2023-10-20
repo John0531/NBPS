@@ -5,28 +5,14 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">CALL BANK作業</h2>
-            <h6>供<span class="text-primary">授權科經辦</span>修改<span class="text-primary">回應碼(2碼)</span>與<span class="text-success">授權回應碼(6碼)</span>，當<span class="text-danger">尚有未完成</span>的CALL BANK事件時，系統<span class="text-danger">每10分鐘</span>自動發送通知至<span class="text-mail">指定信箱</span>。</h6>
-            <h6><span class="text-danger">*</span>若該筆交易有<span class="text-danger">未完成</span>的Call Bank作業，則會顯示 <button class="btn btn-primary btn-sm">檢視明細</button> 按鈕；當作業<span class="text-danger">全部完成</span>後按鈕即消失，接續流程並成功<span class="text-primary">產製回覆檔</span>後，系統會發送通知至<span class="text-mail">指定信箱</span> (主要通知對象:<span class="text-primary"> 發卡科經辦</span>)。</h6>
-            <h6><span class="text-danger">*</span>回應碼<span class="text-primary">同意</span>為<span class="text-primary">00</span>，需填寫<span class="text-success">授權回應碼</span>；<span class="text-danger">不同意</span>為<span class="text-danger">05</span>，無需填寫<span class="text-success">授權回應碼</span>(系統自動保留空白)。</h6>
+            <h6>供<span class="text-primary">授權科經辦</span>修改<span class="text-primary">回應碼(2碼)</span>與<span class="text-success">授權回應碼(6碼)</span>，當<span class="text-danger">尚有未完成</span>的CALL BANK事件時，系統<span class="text-danger">每10分鐘</span>自動發送通知至<span class="text-mail">事件通知指定信箱</span>。</h6>
+            <h6><span class="text-danger">*</span>若該筆交易有<span class="text-danger">未完成</span>的CALL BANK作業，則會顯示 <button class="btn btn-primary btn-sm">檢視明細</button> 按鈕；當作業<span class="text-danger">全部完成</span>後按鈕即消失，接續流程並成功<span class="text-primary">產製回覆檔</span>後，系統會發送通知至<span class="text-mail">事件通知指定信箱</span> (主要通知對象:<span class="text-primary"> 發卡科經辦</span>)。</h6>
+            <h6><span class="text-danger">*</span>CALL BANK交易「<span class="text-primary">更改回應碼</span>」欄位預設為<span class="text-primary">00同意</span>，需填寫「<span class="text-success">更改授權碼</span>」欄位6碼；<span class="text-danger">不同意</span>時「<span class="text-primary">更改回應碼</span>」欄位請更改為<span class="text-danger">05</span>，無需填寫<span class="text-success">授權回應碼</span>(系統自動保留空白)。</h6>
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                <img class="img-fluid" src="~@/assets/img/email.png" alt=""><span class="text-mail">事件通知設定(點此)</span>
+                <img class="img-fluid" src="~@/assets/img/email.png" alt=""><span class="text-mail">事件通知指定信箱設定(點此)</span>
             </button>
           </div>
-          <div class="card-body">
-            <div class="row py-3">
-              <div class="col-xxl-8 mb-4">
-                <div class="input-group">
-                <h5 class="text-nowrap fw-bold me-3" style="padding-top:0.375rem;">查詢資料時間：</h5>
-                  <span class="input-group-text" id="basic-addon1">起日</span>
-                  <Datepicker auto-apply enable-seconds v-model="searchForm.startDate" model-type="yyyy-MM-dd" format="yyyy/MM/dd "></Datepicker>
-                  <span class="mb-4 me-3"></span>
-                  <span class="input-group-text" id="basic-addon1">迄日</span>
-                  <Datepicker auto-apply enable-seconds v-model="searchForm.endDate" model-type="yyyy-MM-dd" format="yyyy/MM/dd"></Datepicker>
-                  <span class="mb-4 me-3"></span>
-                  <button @click="getData" class="btn btn-primary me-3 px-4" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button>
-                </div>
-              </div>
-                <div class="accordion-item">
+          <div class="accordion-item">
                   <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
                     <div class="accordion-body">
                       <table class="table">
@@ -50,6 +36,20 @@
                         </tbody>
                       </table>
                   </div>
+                </div>
+              </div>
+          <div class="card-body">
+            <div class="row py-3">
+              <div class="col-xxl-8 mb-4">
+                <div class="input-group">
+                <h5 class="text-nowrap fw-bold me-3" style="padding-top:0.375rem;">查詢資料時間：</h5>
+                  <span class="input-group-text" id="basic-addon1">起日</span>
+                  <Datepicker auto-apply enable-seconds v-model="searchForm.startDate" model-type="yyyy-MM-dd" format="yyyy/MM/dd "></Datepicker>
+                  <span class="mb-4 me-3"></span>
+                  <span class="input-group-text" id="basic-addon1">迄日</span>
+                  <Datepicker auto-apply enable-seconds v-model="searchForm.endDate" model-type="yyyy-MM-dd" format="yyyy/MM/dd"></Datepicker>
+                  <span class="mb-4 me-3"></span>
+                  <button @click="getData" class="btn btn-primary me-3 px-4" :disabled="!$store.state.pageBtnPermission.includes('view')">搜尋</button>
                 </div>
               </div>
         </div>
