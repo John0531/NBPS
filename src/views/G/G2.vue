@@ -5,7 +5,13 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">批次交易檔上傳作業</h2>
-            <h6>供發卡科經辦上傳批次交易資料檔，批次交易資料檔上傳且格式檢核成功後，按下確認並送出，系統隨開始發動交易。</h6>
+            <h6>供<span class="text-primary">發卡業務經辦</span>上傳批次交易資料檔，<span class="text-primary">上傳</span>及<span class="text-primary">檔案格式</span>檢核成功後，系統將<span class="text-primary">自動進行</span>交易流程。</h6>
+            <h6 class="fw-bold"><span class="text-danger">*</span>上傳檔案格式均為<span class="text-danger">壓縮檔(.zip)</span>，壓縮檔內的檔案格式如下說明(壓縮時需加密)：</h6>
+            <h6 class="fw-bold">【郵購業務】</h6>
+            <h6>檔名: <span class="text-primary">特店代碼(15碼)</span> + "." + <span class="text-info">YYYYMMDD(當天日期)</span> + "." + <span class="text-success">A~Z流水號</span>(第一次上傳為A，第二次為B，以此類推)+"."+<span class="text-danger">txt(大、小寫皆可)</span>。例如：<span class="text-primary">000001999999990</span>.<span class="text-info">20231026</span>.<span class="text-success">A</span>.<span class="text-danger">txt(TXT)</span></h6>
+            <h6 class="fw-bold">【公共事業、新消貸業務】</h6>
+            <h6>檔名: <span class="text-primary">特店代碼(15碼)</span> + "." + <span class="text-info">YYYYMMDD(當天日期)</span> + "." + <span class="text-success">任意英數字</span>(01,41,A,B)。例如：<span class="text-primary">000001999999999</span>.<span class="text-info">20231026</span>.<span class="text-success">41</span></h6>
+            <h6 class="fw-bold"><span class="text-danger">*</span>注意：<span class="text-primary">公共事業</span>、<span class="text-primary">新消貸</span>業務類型的<span class="text-primary">壓縮檔內檔案格式</span>需為<span class="text-danger">非文字檔格式(.txt)</span></h6>
             <!-- <h6 class="text-danger fw-bold">*檔名不檢核</h6> -->
           </div>
           <div class="card-body">

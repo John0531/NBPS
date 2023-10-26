@@ -477,6 +477,8 @@ export default {
           return true
         case 'REPLY_UPLOAD_SUCCESS':
           return true
+        case 'REPLY_UPLOAD_FAIL':
+          return true
         case 'REPLY_DOWNLOAD_SUCCESS':
           return true
         default:
