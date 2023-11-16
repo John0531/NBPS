@@ -368,10 +368,10 @@ export default {
   },
   computed: {
     isVoidSettle () {
-      return this.batchList.some(item => 'settleVoidStatus' in item)
+      return this.detailData.gridData.some(item => 'settleVoidStatus' in item)
     },
     isVoidAuth () {
-      return this.batchList.some(item => 'authVoidStatus' in item)
+      return this.detailData.gridData.some(item => 'authVoidStatus' in item)
     },
     currentFormattedDate () {
       const now = new Date()
