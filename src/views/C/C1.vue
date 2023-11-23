@@ -335,6 +335,7 @@
                     <option value="" selected>請選擇</option>
                     <option value="09:00-15:30">營業日09:00 - 15:30</option>
                     <option value="09:00-17:30">營業日09:00 - 17:30</option>
+                    <option value="09:00-19:00">營業日09:00 - 19:00</option>
                   </Field>
                   <ErrorMessage
                     name="作業時間"
