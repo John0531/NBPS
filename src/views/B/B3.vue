@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">批次交易取消作業</h2>
-            <h6>供<span class="text-primary">特店端</span>執行整批取消，或單筆取消，僅當日交易完成之批次才可執行取消，若原交易已跨日，請於隔日執行退貨。於營業日<span class="text-primary">09:00-17:30</span>才可執行</h6>
+            <h6>供<span class="text-primary">特店端</span>執行整批取消，或單筆取消，僅<span class="text-danger">當日交易完成</span>之批次才可執行取消，若原交易已跨日，請於隔日執行退貨。於營業日<span class="text-primary">09:00-17:30</span>才可執行</h6>
           </div>
         </div>
         <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">

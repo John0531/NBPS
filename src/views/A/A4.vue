@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">分析報表下載作業</h2>
-            <h6>供<span class="text-primary">帳務科經辦</span>下載「特店每日請款總結及明細」或 依年月份「下載每月分析報表」(皆為Excel檔)。</h6>
+            <h6>供<span class="text-primary">帳務科經辦</span>下載「<span class="text-primary">特店每日請款總結及明細</span>」或依年/月份「<span class="text-primary">下載每月分析報表</span>」(皆為<span class="text-success">Excel</span>檔)。</h6>
           </div>
           <div class="card-body">
             <div class="row py-3">

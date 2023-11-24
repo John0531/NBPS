@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">特店帳號維護</h2>
-            <h6>供經辦查詢、新增、修改、刪除特店帳號</h6>
+            <h6>供<span class="text-primary">商推科經辦</span>新增、修改、查詢、刪除特店帳號</h6>
           </div>
           <div class="card-body">
             <div class="row py-3">

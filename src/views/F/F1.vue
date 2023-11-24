@@ -5,7 +5,8 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">帳號維護</h2>
-            <h6>供經辦新增、修改、刪除及匯出帳號EXCEL，若使用超級權限帳號登入，則只可看到資訊科權限帳號，若使用資訊科權限帳號登入，則只可看到內部人員帳號，資訊科權限亦能看資訊處帳號，但不能異動</h6>
+            <h6>供<span class="text-primary">資訊科經辦</span>新增、修改、刪除及匯出帳號EXCEL。</h6>
+            <h6>若使用<span class="text-danger">超級權限</span>帳號登入，則只可看到<span class="text-primary">資訊科權限</span>帳號，若使用<span class="text-primary">資訊科權限</span>帳號登入，則只可看到<span class="text-primary">內部人員</span>帳號，<span class="text-primary">資訊科權限</span>亦能看<span class="text-primary">資訊處</span>帳號，但不能異動。</h6>
           </div>
           <div class="card-body">
             <!-- <div class="row py-3">

@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">特店群組權限維護</h2>
-            <h6>供經辦新增、修改、刪除及匯出群組設定EXCEL</h6>
+            <h6>供<span class="text-primary">商推科經辦</span>新增、修改、刪除及<span class="text-primary">匯出群組設定EXCEL</span></h6>
           </div>
           <div class="card-body">
             <!-- <div class="row py-3">

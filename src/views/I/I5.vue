@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">事件通知設定</h2>
-            <h6>供經辦設定事件通知之信箱</h6>
+            <h6>供<span class="text-primary">經辦</span>設定事件通知之信箱</h6>
           </div>
         </div>
         <MainData ref="ValveMainData" :Page="PageData" @ChangePageInfo="getPageInfo">

@@ -5,7 +5,10 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">群組權限維護</h2>
-            <h6>供經辦新增、修改、刪除及匯出群組設定EXCEL。1. 超級帳號才看得到所有權縣(A~~~Z) 2.資訊科特權除了B、F以外都看的到 3. 內部帳號只看的到B系列</h6>
+            <h6>供<span class="text-primary">資訊科經辦</span>新增、修改、刪除及匯出群組設定EXCEL。</h6>
+            <h6>1. <span class="text-primary">超級帳號</span>可觀看所有權限之帳號。</h6>
+            <h6>2. <span class="text-primary">資訊科特權</span>除了特店(B)、資訊科作業權限(F)之外皆可觀看。</h6>
+            <h6>3. <span class="text-primary">內部帳號</span>僅能觀看特店(B)系列。</h6>
           </div>
           <div class="card-body">
             <!-- <div class="row py-3">

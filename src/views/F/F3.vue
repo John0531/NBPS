@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">帳號解鎖</h2>
-            <h6>供經辦解鎖錯誤超過N次而被鎖之帳號(僅限非AD使用者帳號)</h6>
+            <h6>供<span class="text-primary">資訊科經辦</span>解鎖<span class="text-primary">錯誤超過3次</span>而被鎖之帳號(僅限<span class="text-danger">非AD使用者</span>帳號)</h6>
           </div>
         </div>
         <MainData :Page="pageData" @ChangePageInfo="getPageInfo" @updatePageInfo="getPageInfo">

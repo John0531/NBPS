@@ -5,7 +5,8 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">特店資料維護</h2>
-            <h6>供經辦新增、修改、查詢、刪除特店資料</h6>
+            <h6>供<span class="text-primary">商推科經辦</span>新增、修改、查詢、刪除特店資料</h6>
+            <h6><span class="text-danger">*</span>若特店作業類型為「<span class="text-primary">自行上傳(收單流程)</span>」，其「作業時間」以<span class="text-primary">營業日09:00-17:30</span>為主，如有<span class="text-danger">特殊需求</span>(例如：希望將營業日時間延長至19:00)，則需先與<span class="text-primary">帳務科經辦</span>洽談。</h6>
           </div>
           <div class="card-body">
             <div class="row py-3">
@@ -717,6 +718,7 @@
                     <option value="" selected>請選擇</option>
                     <option value="09:00-15:30">營業日09:00 - 15:30</option>
                     <option value="09:00-17:30">營業日09:00 - 17:30</option>
+                    <option value="09:00-19:00">營業日09:00 - 19:00</option>
                   </Field>
                   <ErrorMessage
                     name="作業時間"

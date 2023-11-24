@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-header">
             <h2 class="fw-bold mb-3">請款對帳單</h2>
-            <h6>供<span class="text-primary">特店端</span>下載每日或每月請款總結及明細 Excel 檔</h6>
+            <h6>供<span class="text-primary">特店端</span>下載每日或每月<span class="text-primary">請款總結</span>及<span class="text-primary">明細Excel檔</span></h6>
           </div>
           <div class="card-body">
             <div class="row py-3">
