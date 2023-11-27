@@ -140,6 +140,7 @@
                     <th scope="col">金額</th>
                     <th scope="col">回應碼</th>
                     <th scope="col">授權碼</th>
+                    <th scope="col">交易取消結果</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -154,6 +155,11 @@
                     <td>{{$custom.currency(item.amt)}}</td>
                     <td>{{item.codeH}}</td>
                     <td>{{item.authCode}}</td>
+                    <td>
+                      <span v-if="((item.errCode!=null&&item.authVoidStatus==='00')||(item.authVoidStatus==='00'&&item.settleVoidStatus==='0000'))">取消成功</span>
+                      <span v-if="(item.authVoidStatus==null&&item.settleVoidStatus==null)"></span>
+                      <span v-if="((item.errCode!=null&&item.authVoidStatus!='00')||(item.errCode===null&&(item.authVoidStatus!='00'||item.settleVoidStatus!='0000')))">取消失敗</span>
+                    </td>
                   </tr>
                 </tbody>
               </template>
