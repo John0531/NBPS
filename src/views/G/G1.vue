@@ -473,6 +473,8 @@ export default {
           return true
         case 'TRX_ERROR_FAIL':
           return true
+        case 'TRX_FINISH_WITH_ERROR':
+          return true
         default:
           return false
       }
